@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.6;
+pragma solidity ^0.8.15;
 
 // I did this a lil hacky so I didn't get stuck in dependency hell
 

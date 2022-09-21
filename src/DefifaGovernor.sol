@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.15;
 
 import "prb-math/PRBMath.sol";
 
 import "./interfaces/IJBTiered721Delegate.sol";
+import "./interfaces/IDefifaScoreCardVerifier.sol";
 
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
@@ -27,10 +28,14 @@ contract DefifaGovernor is
     uint256 constant MAX_VOTING_POWER_TIER = 1_000_000_000;
 
    // The datasource for votingpower
-    IJBTiered721Delegate jbTieredRewards;
+    IJBTiered721Delegate immutable jbTieredRewards;
+
+    // Scorecard verifier
+    IDefifaScoreCardVerifier immutable defifaScoreCardVerifier;
 
     constructor(
         IJBTiered721Delegate _jbTieredRewards,
+        IDefifaScoreCardVerifier _defifaScoreCardVerifier,
         TimelockController _timelock
     )
         Governor("DefifaGovernor")
@@ -42,6 +47,7 @@ contract DefifaGovernor is
         GovernorTimelockControl(_timelock)
     {
         jbTieredRewards = _jbTieredRewards;
+        defifaScoreCardVerifier = _defifaScoreCardVerifier;
     }
 
     /**
@@ -149,6 +155,7 @@ contract DefifaGovernor is
         bytes[] memory calldatas,
         string memory description
     ) public override(Governor, IGovernor) returns (uint256) {
+        // TODO Verify the scorecard we will need a different method for it and after verification we call propose
         return super.propose(targets, values, calldatas, description);
     }
 
