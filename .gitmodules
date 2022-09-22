@@ -7,3 +7,6 @@
 [submodule "lib/prb-math"]
 	path = lib/prb-math
 	url = https://github.com/paulrberg/prb-math
+[submodule "lib/murky.git"]
+	path = lib/murky.git
+	url = https://github.com/viraj124/murky.git
