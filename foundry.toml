@@ -5,7 +5,8 @@ libs = ['lib']
 
 remappings = [
     "@paulrberg/contracts/math/=lib/prb-math/contracts/",
-    "@openzeppelin/=lib/openzeppelin-contracts"
+    "@openzeppelin/=lib/openzeppelin-contracts",
+    "murky/=lib/murky/src/"
 ]
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config
