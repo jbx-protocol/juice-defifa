@@ -9,11 +9,9 @@ interface IDefifaScoreCardVerifier {
     @param merkleProof merkel proof for the tier id.
     */
     struct ScoreCard {
-        uint256 index;
         uint256 tierID;
         uint256 redemptionPercent;
-        bytes32[] merkleProof;
     }
 
-    function validate(ScoreCard[] memory scorecards, bytes32 _merkleRoot) external view;
+    function generateRoot(ScoreCard[] memory _scorecards) external view returns(bytes32);
 }

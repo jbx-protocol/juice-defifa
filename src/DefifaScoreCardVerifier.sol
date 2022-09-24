@@ -1,6 +1,7 @@
 pragma solidity ^0.8.15;
 
 import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
+import "murky/Merkle.sol";
 import "./interfaces/IDefifaScoreCardVerifier.sol";
 
 
@@ -9,28 +10,20 @@ Custom Errors
 */
 error INVALID_SCORECARD();
 
-contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier {
+contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     // for handling precision
     uint256 MAX_TOTAL_REDEMPTION_PERCENT = 10**6;
     
     /**
-    @notice Validates scorecards with the merkel root passed.
+    @notice Generates scorecard based on the raw scorecard data passed.
     @param _scorecards array of the scorcard struct.
-    @param _merkleRoot merkel root.
     */
-    function validate(ScoreCard[] memory _scorecards, bytes32 _merkleRoot) external view override {   
+    function generateRoot(ScoreCard[] memory _scorecards) external view override returns(bytes32) {   
         uint256 totalRedemptionPercent;
+        bytes32[] memory data = new bytes32[](_scorecards.length);
         // Verify the merkle proof.
         for (uint256 i = 0; i < _scorecards.length; ) {
-            bytes32 node = keccak256(
-                abi.encodePacked(
-                    _scorecards[i].index,
-                    _scorecards[i].tierID,
-                    _scorecards[i].redemptionPercent
-                )
-            );
-            if (!MerkleProof.verify(_scorecards[i].merkleProof, _merkleRoot, node))
-              revert INVALID_SCORECARD();
+            data[i] = keccak256(abi.encodePacked(_scorecards[i].tierID, _scorecards[i].redemptionPercent));
             totalRedemptionPercent += _scorecards[i].redemptionPercent;
             unchecked {
                 ++ i;
@@ -38,5 +31,6 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier {
         }
         if (totalRedemptionPercent > MAX_TOTAL_REDEMPTION_PERCENT)
           revert INVALID_SCORECARD();  
+        return getRoot(data);
     }
 }
