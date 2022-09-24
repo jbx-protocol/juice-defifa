@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.6;
+pragma solidity ^0.8.6;
 
 import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721Delegate.sol";
 
@@ -31,39 +31,39 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
     @param _directory The directory of terminals and controllers for projects.
     @param _name The name of the token.
     @param _symbol The symbol that the token should be represented by.
+    @param _fundingCycleStore A contract storing all funding cycle configurations.
     @param _baseUri A URI to use as a base for full token URIs.
     @param _tokenUriResolver A contract responsible for resolving the token URI for each token ID.
     @param _contractUri A URI where contract metadata can be found. 
     @param _tiers The tiers according to which token distribution will be made. Must be passed in order of contribution floor, with implied increasing value.
     @param _store A contract that stores the NFT's data.
-    @param _lockReservedTokenChanges A flag indicating if reserved tokens can change over time by adding new tiers with a reserved rate.
-    @param _lockVotingUnitChanges A flag indicating if voting unit expectations can change over time by adding new tiers with voting units.
+    @param _flags A set of flags that help define how this contract works.
   */
     constructor(
         uint256 _projectId,
         IJBDirectory _directory,
         string memory _name,
         string memory _symbol,
+        IJBFundingCycleStore _fundingCycleStore,
         string memory _baseUri,
         IJBTokenUriResolver _tokenUriResolver,
         string memory _contractUri,
         JB721TierParams[] memory _tiers,
         IJBTiered721DelegateStore _store,
-        bool _lockReservedTokenChanges,
-        bool _lockVotingUnitChanges
+        JBTiered721Flags memory _flags
     )
         JBTiered721Delegate(
             _projectId,
             _directory,
             _name,
             _symbol,
+            _fundingCycleStore,
             _baseUri,
             _tokenUriResolver,
             _contractUri,
             _tiers,
             _store,
-            _lockReservedTokenChanges,
-            _lockVotingUnitChanges
+            _flags
         )
     {}
 
@@ -132,7 +132,13 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
 
     @return The total weight.
   */
-    function _totalRedemptionWeight() internal view virtual override returns (uint256) {
+    function _totalRedemptionWeight()
+        internal
+        view
+        virtual
+        override
+        returns (uint256)
+    {
         return TOTAL_REDEMPTION_WEIGHT;
     }
 }

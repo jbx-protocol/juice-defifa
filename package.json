@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "@jbx-protocol/contracts-v2": "^8.0.3",
-    "@jbx-protocol/juice-nft-rewards": "^4.0.0"
+    "@jbx-protocol/juice-contracts-v3": "^2.0.0",
+    "@jbx-protocol/juice-nft-rewards": "^5.0.0"
   }
 }
