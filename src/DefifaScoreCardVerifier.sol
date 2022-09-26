@@ -10,6 +10,7 @@ Custom Errors
 */
 error INVALID_SCORECARD();
 
+//TODO: We should transfer the ownership of the verifier to the governer
 contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     // for handling precision
     uint256 MAX_TOTAL_REDEMPTION_PERCENT = 10**6;
