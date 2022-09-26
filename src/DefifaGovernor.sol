@@ -3,20 +3,18 @@ pragma solidity ^0.8.13;
 
 import "prb-math/PRBMath.sol";
 
-import "./interfaces/IJBTiered721Delegate.sol";
+import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721Delegate.sol";
 
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
-import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 
 // TODO: Set/enforce a starting time after which proposals may be accepted (prevent a propsal being made after first mint)
 contract DefifaGovernor is
     Governor,
     GovernorSettings,
-    GovernorCountingSimple,
-    GovernorTimelockControl
+    GovernorCountingSimple
 {
 
    // We need to know what range of tiers is included
@@ -30,8 +28,7 @@ contract DefifaGovernor is
     IJBTiered721Delegate jbTieredRewards;
 
     constructor(
-        IJBTiered721Delegate _jbTieredRewards,
-        TimelockController _timelock
+        IJBTiered721Delegate _jbTieredRewards
     )
         Governor("DefifaGovernor")
         GovernorSettings(
@@ -39,7 +36,6 @@ contract DefifaGovernor is
             45818, /* 1 week */
             0
         )
-        GovernorTimelockControl(_timelock)
     {
         jbTieredRewards = _jbTieredRewards;
     }
@@ -137,7 +133,7 @@ contract DefifaGovernor is
     function state(uint256 proposalId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (ProposalState)
     {
         return super.state(proposalId);
@@ -148,7 +144,7 @@ contract DefifaGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         string memory description
-    ) public override(Governor, IGovernor) returns (uint256) {
+    ) public override(Governor) returns (uint256) {
         return super.propose(targets, values, calldatas, description);
     }
 
@@ -167,7 +163,7 @@ contract DefifaGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) {
+    ) internal override(Governor) {
         super._execute(proposalId, targets, values, calldatas, descriptionHash);
     }
 
@@ -176,14 +172,14 @@ contract DefifaGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) returns (uint256) {
+    ) internal override(Governor) returns (uint256) {
         return super._cancel(targets, values, calldatas, descriptionHash);
     }
 
     function _executor()
         internal
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (address)
     {
         return super._executor();
@@ -192,7 +188,7 @@ contract DefifaGovernor is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
