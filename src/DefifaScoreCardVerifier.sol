@@ -34,23 +34,20 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
         return getRoot(data);
     }
 
+    
     /**
     @notice Verifies scorecard after quorum is reached or game end time reaches.
-    @param _scorecards array of the scorcard struct.
+    @param _leaves leaves of the root.
     @param _merkelRoot merkel root to verify.
     */
-    function verifyScorecard(ScoreCard[] memory _scorecards, bytes32 _merkelRoot) external pure override {
-        bytes32[] memory data = new bytes32[](_scorecards.length);
-        // avoiding another for loop hence verifying leaves one by one in the samme loop
-        for (uint256 i = 0; i < _scorecards.length; ) {
-            // replace the first index after every iteration to avoid another loop
-            data[0] = keccak256(abi.encodePacked(_scorecards[i].tierID, _scorecards[i].redemptionPercent));
-            bytes32[] memory proof = getProof(data, 0);
-            bool verified = verifyProof(_merkelRoot, proof, data[0]);
+    function verifyScorecard(bytes32[] memory _leaves, bytes32 _merkelRoot) external pure override {         
+        for (uint256 j = 0; j < _leaves.length; ) {
+            bytes32[] memory proof = getProof(_leaves, j);
+            bool verified = verifyProof(_merkelRoot, proof, _leaves[j]);
             if (!verified)
               revert INVALID_SCORECARD();
             unchecked {
-                ++ i;
+                ++ j;
             }
         }
     }
