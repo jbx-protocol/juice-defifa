@@ -19,25 +19,78 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     function setUp() virtual override public {
         super.setUp();
 
+        
+    }
+
+    function testReceiveVotingPower(uint8 nTiers, uint8 tier) public {
+        vm.assume(nTiers >= tier);
+        vm.assume(tier != 0);
+
+        address _user = address(bytes20(keccak256('user')));
+
+       (
+           uint256 _projectId,
+           DefifaTiered721Delegate _nft,
+           DefifaGovernor _governor
+       ) = createDefifaProject(uint256(nTiers));
+
+        // User should have no voting power
+        assertEq(
+            _governor.getVotes(_user, block.number - 1),
+            0
+        );
+
+        // fund user
+        vm.deal(_user, 1 ether);
+
+        // Build metadata to buy specific NFT
+        uint16[] memory rawMetadata = new uint16[](1);
+        rawMetadata[0] = uint16(tier); // reward tier
+        bytes memory metadata = abi.encode(
+            bytes32(0),
+            type(IJB721Delegate).interfaceId,
+            false,
+            false,
+            false,
+            rawMetadata
+        );
+
+        // Pay to the project and mint an NFT
+        vm.prank(_user);
+       _terminals[0].pay{value: 1 ether}(
+           _projectId,
+           1 ether,
+           address(0),
+           _user,
+           0,
+           true,
+           "",
+           metadata
+       );
+
+       // Set the delegate as the user themselves
+       vm.prank(_user);
+       _nft.setTierDelegate(_user, uint256(tier));
+
+       // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
+       vm.roll(block.number + 1);
+        assertEq(
+          _governor.MAX_VOTING_POWER_TIER(),
+          _governor.getVotes(_user, block.number - 1)
+       );
+    }
+
+    // ----- internal helpers ------
+    function createDefifaProject(uint256 nTiers) internal returns (uint256 projectId, DefifaTiered721Delegate nft, DefifaGovernor governor) {
         (
             JBDeployTiered721DelegateData memory NFTRewardDeployerData,
             JBLaunchProjectData memory launchProjectData
-        ) = createData();
+        ) = createData(nTiers);
 
-        uint256 _projectId = _jbController.launchProjectFor(
-            projectOwner, // owner
-            launchProjectData.projectMetadata,
-            launchProjectData.data,
-            launchProjectData.metadata,
-            launchProjectData.mustStartAtOrAfter,
-            launchProjectData.groupedSplits,
-            launchProjectData.fundAccessConstraints,
-            launchProjectData.terminals,
-            launchProjectData.memo
-        );
+        projectId = _jbController.projects().count() + 1;
 
-        nfts = new DefifaTiered721Delegate(
-            _projectId,
+        nft = new DefifaTiered721Delegate(
+            projectId,
             NFTRewardDeployerData.directory,
             NFTRewardDeployerData.name,
             NFTRewardDeployerData.symbol,
@@ -50,18 +103,30 @@ contract DefifaGovernorTest is TestBaseWorkflow {
             NFTRewardDeployerData.flags
         );
 
+        launchProjectData.metadata.dataSource = address(nft);
+        launchProjectData.metadata.useDataSourceForPay = true;
+        launchProjectData.metadata.useDataSourceForRedeem = true;
+
+        _jbController.launchProjectFor(
+            projectOwner, // owner
+            launchProjectData.projectMetadata,
+            launchProjectData.data,
+            launchProjectData.metadata,
+            launchProjectData.mustStartAtOrAfter,
+            launchProjectData.groupedSplits,
+            launchProjectData.fundAccessConstraints,
+            launchProjectData.terminals,
+            launchProjectData.memo
+        );
+
+        
+
         governor = new DefifaGovernor(
-            nfts
+            nft
         );
     }
 
-    function testSetup() public {
-        governor.proposalThreshold();
-    }
-
-    // ----- internal helpers ------
     // Create launchProjectFor(..) payload
-
     string name = 'NAME';
     string symbol = 'SYM';
     string baseUri = 'http://www.null.com/';
@@ -81,24 +146,24 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89)
     ];
     
-    function createData()
+    function createData(uint256 n_tiers)
         internal
         returns (
             JBDeployTiered721DelegateData memory NFTRewardDeployerData,
             JBLaunchProjectData memory launchProjectData
         )
     {
-        JB721TierParams[] memory tierParams = new JB721TierParams[](10);
+        JB721TierParams[] memory tierParams = new JB721TierParams[](n_tiers);
 
-        for (uint256 i; i < 10; i++) {
+        for (uint256 i; i < n_tiers; i++) {
             tierParams[i] = JB721TierParams({
-                contributionFloor: uint80((i + 1) * 10),
-                lockedUntil: uint48(0),
-                initialQuantity: uint40(10),
-                votingUnits: uint16((i + 1) * 10),
-                reservedRate: uint16(JBConstants.MAX_RESERVED_RATE),
-                reservedTokenBeneficiary: reserveBeneficiary,
-                encodedIPFSUri: tokenUris[i],
+                contributionFloor: 1 ether,
+                lockedUntil: 0,
+                initialQuantity: 1000,
+                votingUnits: 100,
+                reservedRate: 1001,
+                reservedTokenBeneficiary: address(0),
+                encodedIPFSUri: tokenUris[i % tokenUris.length], // this way we dont need more tokenUris
                 shouldUseBeneficiaryAsDefault: false
             });
         }

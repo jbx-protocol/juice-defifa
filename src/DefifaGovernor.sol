@@ -16,13 +16,8 @@ contract DefifaGovernor is
     GovernorSettings,
     GovernorCountingSimple
 {
-
-   // We need to know what range of tiers is included
-    uint256 constant STARTING_ID = 0;
-    uint256 constant ENDING_ID = 12;
-
    // The max voting power 1 tier has if everyone votes
-    uint256 constant MAX_VOTING_POWER_TIER = 1_000_000_000;
+    uint256 public constant MAX_VOTING_POWER_TIER = 1_000_000_000;
 
    // The datasource for votingpower
     IJBTiered721Delegate jbTieredRewards;
@@ -56,19 +51,23 @@ contract DefifaGovernor is
 
         // Loop over all tiers gathering the voting share of the user
         for (uint256 _i; _i < _tiers_length; ) {
+            uint256 _tierVotingPower = jbTieredRewards.getPastTierVotes(
+                account,
+                _tiers[_i],
+                blockNumber
+            );
+
             unchecked {
-                votingPower += PRBMath.mulDiv(
-                    jbTieredRewards.getPastTierVotes(
-                        account,
-                        _tiers[_i],
-                        blockNumber
-                    ),
-                    MAX_VOTING_POWER_TIER,
-                    jbTieredRewards.getPastTierTotalVotes(
-                        _tiers[_i],
-                        blockNumber
-                    )
-                );
+                if (_tierVotingPower != 0){
+                    votingPower += PRBMath.mulDiv(
+                        _tierVotingPower,
+                        MAX_VOTING_POWER_TIER,
+                        jbTieredRewards.getPastTierTotalVotes(
+                            _tiers[_i],
+                            blockNumber
+                        )
+                    );
+                }
 
                 ++_i;
             }
@@ -86,18 +85,20 @@ contract DefifaGovernor is
         returns (bytes memory)
     {
        // TODO: should we do this on every time or should we just store this, what is cheaper...
-       uint256 _count = ENDING_ID - STARTING_ID;
+       uint256 _count = jbTieredRewards.store().maxTierId(address(jbTieredRewards));
        uint256[] memory _ids = new uint256[](_count);
 
-       for(uint256 _i; _i < _count;){
-          _ids[_i] = STARTING_ID + _i;
+      // Add all tiers to the array
+      for(uint256 _i; _i < _count;){
+          // Tiers start counting from 1
+         _ids[_i] = _i + 1;
 
-          unchecked{ 
-             ++_i;
-          }
-       }
+         unchecked{ 
+            ++_i;
+         }
+      }
 
-        return abi.encodePacked(_ids);
+        return abi.encode(_ids);
     }
 
     // Overrides we have to do
