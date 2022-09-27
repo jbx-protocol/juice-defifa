@@ -19,14 +19,16 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     @notice Generates merkel root based on the raw scorecard data passed.
     @param _scorecards array of the scorcard struct.
     */
-    function generateRoot(ScoreCard[] memory _scorecards) external view override returns(bytes32) {   
+    function generateRoot(DefifaScoreCard[] calldata _scorecards) external view override returns(bytes32) {   
         uint256 totalRedemptionPercent;
-        bytes32[] memory data = new bytes32[](_scorecards.length);
+        // get a refrence to the scorecard array length
+        uint256 scorecardLength = _scorecards.length;
+        bytes32[] memory data = new bytes32[](scorecardLength);
         // generate the merkle proof.
-        for (uint256 i = 0; i < _scorecards.length; ) {
-            data[i] = keccak256(abi.encodePacked(_scorecards[i].tierID, _scorecards[i].redemptionPercent));
-            totalRedemptionPercent += _scorecards[i].redemptionPercent;
+        for (uint256 i = 0; i < scorecardLength; ) {
+            data[i] = keccak256(abi.encodePacked(_scorecards[i].tierID, _scorecards[i].redemptionPercent));   
             unchecked {
+                totalRedemptionPercent += _scorecards[i].redemptionPercent;
                 ++ i;
             }
         }
@@ -41,8 +43,10 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     @param _leaves leaves of the root.
     @param _merkelRoot merkel root to verify.
     */
-    function verifyScorecard(bytes32[] memory _leaves, bytes32 _merkelRoot) external pure override {         
-        for (uint256 j = 0; j < _leaves.length; ) {
+    function verifyScorecard(bytes32[] calldata _leaves, bytes32 _merkelRoot) external pure override {      
+        // get a refrence to the leave array length
+        uint256 leavesLength = _leaves.length;   
+        for (uint256 j = 0; j < leavesLength; ) {
             bytes32[] memory proof = getProof(_leaves, j);
             bool verified = verifyProof(_merkelRoot, proof, _leaves[j]);
             if (!verified)
