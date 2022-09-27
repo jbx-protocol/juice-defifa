@@ -1,6 +1,5 @@
 pragma solidity ^0.8.15;
 
-import "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import "murky/Merkle.sol";
 import "./interfaces/IDefifaScoreCardVerifier.sol";
 
