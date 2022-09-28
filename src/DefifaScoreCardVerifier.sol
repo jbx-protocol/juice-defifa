@@ -1,6 +1,7 @@
 pragma solidity ^0.8.15;
 
 import "murky/Merkle.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IDefifaScoreCardVerifier.sol";
 
 
@@ -9,8 +10,8 @@ Custom Errors
 */
 error INVALID_SCORECARD();
 
-//TODO: We should transfer the ownership of the verifier to the governer
-contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
+// Transfer ownership to governer on deploymment.
+contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle, Ownable {
     // for handling precision so max is 100 %
     uint256 MAX_TOTAL_REDEMPTION_PERCENT = 10**6;
     
@@ -18,7 +19,7 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     @notice Generates merkel root based on the raw scorecard data passed.
     @param _scorecards array of the scorcard struct.
     */
-    function generateRoot(DefifaScoreCard[] calldata _scorecards) external view override returns(bytes32) {   
+    function generateRoot(DefifaScoreCard[] calldata _scorecards) external view override onlyOwner returns(bytes32) {   
         uint256 totalRedemptionPercent;
         // get a refrence to the scorecard array length
         uint256 scorecardLength = _scorecards.length;
@@ -42,7 +43,7 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     @param _leaves leaves of the root.
     @param _merkelRoot merkel root to verify.
     */
-    function verifyScorecard(bytes32[] calldata _leaves, bytes32 _merkelRoot) external pure override {      
+    function verifyScorecard(bytes32[] calldata _leaves, bytes32 _merkelRoot) external view onlyOwner override {      
         // get a refrence to the leave array length
         uint256 leavesLength = _leaves.length;   
         for (uint256 j = 0; j < leavesLength; ) {

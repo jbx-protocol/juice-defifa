@@ -6,5 +6,5 @@ interface IDefifaScoreCardVerifier {
 
     function generateRoot(DefifaScoreCard[] calldata _scorecards) external view returns(bytes32);
 
-    function verifyScorecard(bytes32[] calldata _leaves, bytes32 _merkelRoot) external pure;
+    function verifyScorecard(bytes32[] calldata _leaves, bytes32 _merkelRoot) external view;
 }
