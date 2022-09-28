@@ -14,27 +14,32 @@ error INVALID_SCORECARD();
 contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle, Ownable {
     // for handling precision so max is 100 %
     uint256 MAX_TOTAL_REDEMPTION_PERCENT = 10**6;
+
+    // EVENTS
+    event RootGenerated(bytes32 root, DefifaScoreCard[] scorecards, bytes32[] leaves);
     
     /**
     @notice Generates merkel root based on the raw scorecard data passed.
     @param _scorecards array of the scorcard struct.
     */
-    function generateRoot(DefifaScoreCard[] calldata _scorecards) external view override onlyOwner returns(bytes32) {   
+    function generateRoot(DefifaScoreCard[] calldata _scorecards) external override onlyOwner returns(bytes32 root) {   
         uint256 totalRedemptionPercent;
         // get a refrence to the scorecard array length
         uint256 scorecardLength = _scorecards.length;
-        bytes32[] memory data = new bytes32[](scorecardLength);
+        bytes32[] memory leaves = new bytes32[](scorecardLength);
         // generate the merkle proof.
         for (uint256 i = 0; i < scorecardLength; ) {
-            data[i] = keccak256(abi.encodePacked(_scorecards[i].tierID, _scorecards[i].redemptionPercent));   
+            leaves[i] = keccak256(abi.encodePacked(_scorecards[i].tierID, _scorecards[i].redemptionPercent));   
             unchecked {
                 totalRedemptionPercent += _scorecards[i].redemptionPercent;
                 ++ i;
             }
         }
         if (totalRedemptionPercent > MAX_TOTAL_REDEMPTION_PERCENT)
-          revert INVALID_SCORECARD();  
-        return getRoot(data);
+          revert INVALID_SCORECARD();
+
+        root = getRoot(leaves);
+        emit RootGenerated(root, _scorecards, leaves);
     }
 
     
