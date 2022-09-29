@@ -20,7 +20,7 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
     uint256 constant TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
 
     // Tiers are limited to ID 100
-    uint256[100] tierRedemptionWeights;
+    uint256[100] public tierRedemptionWeights;
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
