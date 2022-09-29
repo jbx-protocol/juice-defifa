@@ -6,7 +6,9 @@ libs = ['lib']
 remappings = [
     "@paulrberg/contracts/math/=lib/prb-math/contracts/",
     "@openzeppelin/=lib/openzeppelin-contracts",
-    "murky/=lib/murky/src/"
+    "murky/=lib/murky/src/",
+    "@jbx-protocol/juice-nft-rewards=node_modules/@jbx-protocol/juice-nft-rewards",
+    "@jbx-protocol/juice-contracts-v3=node_modules/@jbx-protocol/juice-contracts-v3"
 ]
 
 # See more config options https://github.com/foundry-rs/foundry/tree/master/config

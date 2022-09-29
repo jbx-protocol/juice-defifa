@@ -3,40 +3,27 @@ pragma solidity ^0.8.15;
 
 import "prb-math/PRBMath.sol";
 
-import "./interfaces/IJBTiered721Delegate.sol";
-import "./interfaces/IDefifaScoreCardVerifier.sol";
+import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721Delegate.sol";
 
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
-import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 
 // TODO: Set/enforce a starting time after which proposals may be accepted (prevent a propsal being made after first mint)
 contract DefifaGovernor is
     Governor,
     GovernorSettings,
-    GovernorCountingSimple,
-    GovernorTimelockControl
+    GovernorCountingSimple
 {
-
-   // We need to know what range of tiers is included
-    uint256 constant STARTING_ID = 0;
-    uint256 constant ENDING_ID = 12;
-
    // The max voting power 1 tier has if everyone votes
-    uint256 constant MAX_VOTING_POWER_TIER = 1_000_000_000;
+    uint256 public constant MAX_VOTING_POWER_TIER = 1_000_000_000;
 
    // The datasource for votingpower
     IJBTiered721Delegate immutable jbTieredRewards;
 
-    // Scorecard verifier
-    IDefifaScoreCardVerifier immutable defifaScoreCardVerifier;
-
     constructor(
-        IJBTiered721Delegate _jbTieredRewards,
-        IDefifaScoreCardVerifier _defifaScoreCardVerifier,
-        TimelockController _timelock
+        IJBTiered721Delegate _jbTieredRewards
     )
         Governor("DefifaGovernor")
         GovernorSettings(
@@ -44,10 +31,8 @@ contract DefifaGovernor is
             45818, /* 1 week */
             0
         )
-        GovernorTimelockControl(_timelock)
     {
         jbTieredRewards = _jbTieredRewards;
-        defifaScoreCardVerifier = _defifaScoreCardVerifier;
     }
 
     /**
@@ -66,19 +51,23 @@ contract DefifaGovernor is
 
         // Loop over all tiers gathering the voting share of the user
         for (uint256 _i; _i < _tiers_length; ) {
+            uint256 _tierVotingPower = jbTieredRewards.getPastTierVotes(
+                account,
+                _tiers[_i],
+                blockNumber
+            );
+
             unchecked {
-                votingPower += PRBMath.mulDiv(
-                    jbTieredRewards.getPastTierVotes(
-                        account,
-                        _tiers[_i],
-                        blockNumber
-                    ),
-                    MAX_VOTING_POWER_TIER,
-                    jbTieredRewards.getPastTierTotalVotes(
-                        _tiers[_i],
-                        blockNumber
-                    )
-                );
+                if (_tierVotingPower != 0){
+                    votingPower += PRBMath.mulDiv(
+                        _tierVotingPower,
+                        MAX_VOTING_POWER_TIER,
+                        jbTieredRewards.getPastTierTotalVotes(
+                            _tiers[_i],
+                            blockNumber
+                        )
+                    );
+                }
 
                 ++_i;
             }
@@ -96,18 +85,20 @@ contract DefifaGovernor is
         returns (bytes memory)
     {
        // TODO: should we do this on every time or should we just store this, what is cheaper...
-       uint256 _count = ENDING_ID - STARTING_ID;
+       uint256 _count = jbTieredRewards.store().maxTierId(address(jbTieredRewards));
        uint256[] memory _ids = new uint256[](_count);
 
-       for(uint256 _i; _i < _count;){
-          _ids[_i] = STARTING_ID + _i;
+      // Add all tiers to the array
+      for(uint256 _i; _i < _count;){
+          // Tiers start counting from 1
+         _ids[_i] = _i + 1;
 
-          unchecked{ 
-             ++_i;
-          }
-       }
+         unchecked{ 
+            ++_i;
+         }
+      }
 
-        return abi.encodePacked(_ids);
+        return abi.encode(_ids);
     }
 
     // Overrides we have to do
@@ -143,7 +134,7 @@ contract DefifaGovernor is
     function state(uint256 proposalId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (ProposalState)
     {
         return super.state(proposalId);
@@ -154,8 +145,7 @@ contract DefifaGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         string memory description
-    ) public override(Governor, IGovernor) returns (uint256) {
-        // TODO Verify the scorecard we will need a different method for it and after verification we call propose
+    ) public override(Governor) returns (uint256) {
         return super.propose(targets, values, calldatas, description);
     }
 
@@ -174,7 +164,7 @@ contract DefifaGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) {
+    ) internal override(Governor) {
         super._execute(proposalId, targets, values, calldatas, descriptionHash);
     }
 
@@ -183,14 +173,14 @@ contract DefifaGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         bytes32 descriptionHash
-    ) internal override(Governor, GovernorTimelockControl) returns (uint256) {
+    ) internal override(Governor) returns (uint256) {
         return super._cancel(targets, values, calldatas, descriptionHash);
     }
 
     function _executor()
         internal
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (address)
     {
         return super._executor();
@@ -199,7 +189,7 @@ contract DefifaGovernor is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(Governor, GovernorTimelockControl)
+        override(Governor)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
