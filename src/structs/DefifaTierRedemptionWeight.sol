@@ -4,8 +4,9 @@ pragma solidity ^0.8.6;
 /**
   @member id The tier's ID.
   @member redemptionWeight the weight that each token of this tier can redeem for
+  packing to reduce calldata size
 */
 struct DefifaTierRedemptionWeight {
-  uint256 id;
-  uint256 redemptionWeight;
+  uint128 id;
+  uint128 redemptionWeight;
 }

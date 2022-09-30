@@ -15,22 +15,22 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     uint256 MAX_TOTAL_REDEMPTION_PERCENT = 10**6;
 
     // EVENTS
-    event RootGenerated(bytes32 root, DefifaScoreCard[] scorecards, bytes32[] leaves);
+    event RootGenerated(bytes32 root, DefifaTierRedemptionWeight[] scorecards, bytes32[] leaves);
     
     /**
     @notice Generates merkel root based on the raw scorecard data passed.
     @param _scorecards array of the scorcard struct.
     */
-    function generateRoot(DefifaScoreCard[] calldata _scorecards) external override returns(bytes32 root) {   
+    function generateRoot(DefifaTierRedemptionWeight[] calldata _scorecards) external override returns(bytes32 root) {   
         uint256 totalRedemptionPercent;
         // get a refrence to the scorecard array length
         uint256 scorecardLength = _scorecards.length;
         bytes32[] memory leaves = new bytes32[](scorecardLength);
         // generate the merkle proof.
         for (uint256 i = 0; i < scorecardLength; ) {
-            leaves[i] = keccak256(abi.encodePacked(_scorecards[i].tierID, _scorecards[i].redemptionPercent));   
+            leaves[i] = keccak256(abi.encodePacked(_scorecards[i].id, _scorecards[i].redemptionWeight));   
             unchecked {
-                totalRedemptionPercent += _scorecards[i].redemptionPercent;
+                totalRedemptionPercent += _scorecards[i].redemptionWeight;
                 ++ i;
             }
         }

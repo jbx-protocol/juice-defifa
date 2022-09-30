@@ -141,9 +141,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         // Generate the scorecards 
         DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
 
-        for (uint i = 0; i < scorecards.length; i++) {
+        for (uint128 i = 0; i < scorecards.length; i++) {
             scorecards[i].id = i + 1;
-            scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
+            scorecards[i].redemptionWeight = uint128(1_000_000_000 / scorecards.length);
         }
 
         targets[0] = address(_nft);
@@ -184,13 +184,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         );
 
         // Verify that the redemptionWeights actually changed
-        for (uint i = 0; i < scorecards.length; i++) {
+        for (uint128 i = 0; i < scorecards.length; i++) {
             assertEq(
                 _nft.tierRedemptionWeights(scorecards[i].id),
                 scorecards[i].redemptionWeight
             );
             scorecards[i].id = i + 1;
-            scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
+            scorecards[i].redemptionWeight = uint128(1_000_000_000 / scorecards.length);
         }
     }
 
