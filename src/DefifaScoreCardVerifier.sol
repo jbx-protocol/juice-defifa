@@ -10,8 +10,7 @@ Custom Errors
 */
 error INVALID_SCORECARD();
 
-// Transfer ownership to governer on deploymment.
-contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle, Ownable {
+contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     // for handling precision so max is 100 %
     uint256 MAX_TOTAL_REDEMPTION_PERCENT = 10**6;
 
@@ -22,7 +21,7 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle, Ownable {
     @notice Generates merkel root based on the raw scorecard data passed.
     @param _scorecards array of the scorcard struct.
     */
-    function generateRoot(DefifaScoreCard[] calldata _scorecards) external override onlyOwner returns(bytes32 root) {   
+    function generateRoot(DefifaScoreCard[] calldata _scorecards) external override returns(bytes32 root) {   
         uint256 totalRedemptionPercent;
         // get a refrence to the scorecard array length
         uint256 scorecardLength = _scorecards.length;
@@ -48,7 +47,7 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle, Ownable {
     @param _leaves leaves of the root.
     @param _merkelRoot merkel root to verify.
     */
-    function verifyScorecard(bytes32[] calldata _leaves, bytes32 _merkelRoot) external view onlyOwner override {      
+    function verifyScorecard(bytes32[] calldata _leaves, bytes32 _merkelRoot) external pure override {      
         // get a refrence to the leave array length
         uint256 leavesLength = _leaves.length;   
         for (uint256 j = 0; j < leavesLength; ) {
