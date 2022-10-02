@@ -10,6 +10,8 @@ import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 
+import "./interfaces/IDefifaScoreCardVerifier.sol";
+
 // TODO: Set/enforce a starting time after which proposals may be accepted (prevent a propsal being made after first mint)
 contract DefifaGovernor is
     Governor,
@@ -21,9 +23,15 @@ contract DefifaGovernor is
 
    // The datasource for votingpower
     IJBTiered721Delegate immutable jbTieredRewards;
+    
+    // scorecard verifier
+    IDefifaScoreCardVerifier immutable socrecardVerifier;
+
+    mapping(uint256 => bytes32) public proposalScorecardRoot;
 
     constructor(
-        IJBTiered721Delegate _jbTieredRewards
+        IJBTiered721Delegate _jbTieredRewards,
+        IDefifaScoreCardVerifier _socrecardVerifier
     )
         Governor("DefifaGovernor")
         GovernorSettings(
@@ -33,6 +41,7 @@ contract DefifaGovernor is
         )
     {
         jbTieredRewards = _jbTieredRewards;
+        socrecardVerifier = _socrecardVerifier;
     }
 
     /**
@@ -146,6 +155,15 @@ contract DefifaGovernor is
         bytes[] memory calldatas,
         string memory description
     ) public override(Governor) returns (uint256) {
+        // TODO Need to figure out a way to decode the scorecard value from the calldata because encodeCall & decode don't work well togethet
+        // uint256 _calldataLength = calldatas.length;
+        // for (uint128 i = 0; i < _calldataLength;) {
+        // DefifaTierRedemptionWeight[] memory _scorecards = abi.decode(calldatas[i][4:], (DefifaTierRedemptionWeight[]));
+        // // bytes32 _root = socrecardVerifier.generateRoot(_scorecards);
+        // unchecked {
+        //     ++i;
+        // }
+        // }
         return super.propose(targets, values, calldatas, description);
     }
 

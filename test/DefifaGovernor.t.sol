@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../src/DefifaGovernor.sol";
 import "../src/DefifaTiered721Delegate.sol";
+import "../src/DefifaScoreCardVerifier.sol";
 
 import "@jbx-protocol/juice-nft-rewards/contracts/forge-test/utils/TestBaseWorkflow.sol";
 import "@jbx-protocol/juice-nft-rewards/contracts/structs/JBDeployTiered721DelegateData.sol";
@@ -11,8 +12,9 @@ import "@jbx-protocol/juice-nft-rewards/contracts/structs/JBLaunchProjectData.so
 import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721DelegateStore.sol";
 
 contract DefifaGovernorTest is TestBaseWorkflow {
-    DefifaGovernor public governor;
+    // DefifaGovernor public governor;
     DefifaTiered721Delegate public nfts;
+    DefifaScoreCardVerifier public verifier;
 
     address projectOwner = address(bytes20(keccak256('projectOwner')));
 
@@ -149,6 +151,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         targets[0] = address(_nft);
         calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
 
+        // abi.decodeCall()
+
         // Create the proposal
         uint256 _proposalId = _governor.propose(
             targets,
@@ -233,8 +237,11 @@ contract DefifaGovernorTest is TestBaseWorkflow {
             launchProjectData.memo
         );
 
+        verifier = new DefifaScoreCardVerifier();
+
         governor = new DefifaGovernor(
-            nft
+            nft,
+            verifier
         );
 
         // Transfer the ownership so governance can control the settings of the RewardsNFT
