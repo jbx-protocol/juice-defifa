@@ -17,11 +17,11 @@ contract DefifaScoreCardVerifierTest is Test, Merkle {
         DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](2);
         scorecards[0] = DefifaTierRedemptionWeight({
             id: 1,
-            redemptionWeight: 600_000
+            redemptionWeight: 600_000_000
         });
         scorecards[1] = DefifaTierRedemptionWeight({
             id: 2,
-            redemptionWeight: 600_000
+            redemptionWeight: 600_000_000
         });
         vm.expectRevert(abi.encodeWithSignature("INVALID_SCORECARD()"));
         verifier.generateRoot(scorecards);
@@ -31,11 +31,11 @@ contract DefifaScoreCardVerifierTest is Test, Merkle {
         DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](2);
         scorecards[0] = DefifaTierRedemptionWeight({
             id: 1,
-            redemptionWeight: 600_000
+            redemptionWeight: 600_000_000
         });
         scorecards[1] = DefifaTierRedemptionWeight({
             id: 2,
-            redemptionWeight: 400_000
+            redemptionWeight: 400_000_000
         });
         verifier.generateRoot(scorecards);
     }
@@ -44,18 +44,18 @@ contract DefifaScoreCardVerifierTest is Test, Merkle {
         DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](2);
         scorecards[0] = DefifaTierRedemptionWeight({
             id: 1,
-            redemptionWeight: 600_000
+            redemptionWeight: 600_000_000
         });
         scorecards[1] = DefifaTierRedemptionWeight({
             id: 2,
-            redemptionWeight: 400_000
+            redemptionWeight: 400_000_000
         });
         bytes32 root = verifier.generateRoot(scorecards);
 
         // pass in inccorrect leaves for verification
         scorecards[0] = DefifaTierRedemptionWeight({
             id: 2,
-            redemptionWeight: 600_000
+            redemptionWeight: 600_000_000
         });
         bytes32[] memory leaves = new bytes32[](2);
         leaves[0] = keccak256(
@@ -78,11 +78,11 @@ contract DefifaScoreCardVerifierTest is Test, Merkle {
         DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](2);
         scorecards[0] = DefifaTierRedemptionWeight({
             id: 1,
-            redemptionWeight: 600_000
+            redemptionWeight: 600_000_000
         });
         scorecards[1] = DefifaTierRedemptionWeight({
             id: 4,
-            redemptionWeight: 400_000
+            redemptionWeight: 400_000_000
         });
         bytes32 root = verifier.generateRoot(scorecards);
 
@@ -112,7 +112,7 @@ contract DefifaScoreCardVerifierTest is Test, Merkle {
         vm.assume(_scorecards.length <= 20);
         for (uint256 i = 0; i < _scorecards.length; ) {
             // assuming max. scorecard entires as 20 hence making sure we don't have reverts since already tested the reverts above
-            vm.assume(_scorecards[i].redemptionWeight <= 50_000);
+            vm.assume(_scorecards[i].redemptionWeight <= 50_000_000);
             unchecked {
                 ++i;
             }
@@ -129,7 +129,7 @@ contract DefifaScoreCardVerifierTest is Test, Merkle {
         vm.assume(_scorecards.length <= 20);
         for (uint256 i = 0; i < _scorecards.length; ) {
             // assuming max. scorecard entires as 20 hence making sure we don't have reverts since already tested the reverts above
-            vm.assume(_scorecards[i].redemptionWeight <= 50_000);
+            vm.assume(_scorecards[i].redemptionWeight <= 50_000_000);
             unchecked {
                 ++i;
             }

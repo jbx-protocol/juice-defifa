@@ -12,7 +12,7 @@ error INVALID_SCORECARD();
 
 contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
     // for handling precision so max is 100 %
-    uint256 MAX_TOTAL_REDEMPTION_PERCENT = 10**6;
+    uint256 TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
 
     // EVENTS
     event RootGenerated(bytes32 root, DefifaTierRedemptionWeight[] scorecards, bytes32[] leaves);
@@ -34,7 +34,7 @@ contract DefifaScoreCardVerifier is IDefifaScoreCardVerifier, Merkle {
                 ++ i;
             }
         }
-        if (totalRedemptionPercent > MAX_TOTAL_REDEMPTION_PERCENT)
+        if (totalRedemptionPercent > TOTAL_REDEMPTION_WEIGHT)
           revert INVALID_SCORECARD();
 
         root = getRoot(leaves);
