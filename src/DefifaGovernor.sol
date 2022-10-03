@@ -181,6 +181,28 @@ contract DefifaGovernor is
         return super.proposalThreshold();
     }
 
+    function verifyProofsAndExecute(
+        uint256 proposalId,
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        bytes32 descriptionHash,
+        bytes32[] calldata _leaves
+    ) external {
+        bytes32 _root = proposalScorecardRoot[proposalId];
+        socrecardVerifier.verifyScorecard(_leaves, _root);
+        super.execute(targets, values, calldatas, descriptionHash);
+    }
+
+    function execute(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        bytes32 descriptionHash
+    ) public payable override(Governor)returns (uint256) {
+        revert("use verifyProofsAndExecute");
+    }
+
     function _execute(
         uint256 proposalId,
         address[] memory targets,

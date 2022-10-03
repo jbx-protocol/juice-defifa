@@ -142,16 +142,17 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
         // Generate the scorecards 
         DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
+        bytes32[] memory leaves = new bytes32[](nTiers);
+
 
         for (uint128 i = 0; i < scorecards.length; i++) {
             scorecards[i].id = i + 1;
             scorecards[i].redemptionWeight = uint128(1_000_000_000 / scorecards.length);
+            leaves[i] = keccak256(abi.encodePacked(scorecards[i].id, scorecards[i].redemptionWeight));
         }
 
         targets[0] = address(_nft);
         calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
-
-        // abi.decodeCall()
 
         // Create the proposal
         (uint256 _proposalId, ) = _governor.proposeAndGenerateScorecardRoot(
@@ -181,11 +182,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         vm.roll(_governor.proposalDeadline(_proposalId) + 1);
         
         // Execute the proposal
-        _governor.execute(
+        _governor.verifyProofsAndExecute(
+            _proposalId,
             targets,
             values,
             calldatas,
-            keccak256("Governance!")
+            keccak256("Governance!"),
+            leaves
         );
 
         // Verify that the redemptionWeights actually changed
