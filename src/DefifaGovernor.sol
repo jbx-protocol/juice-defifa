@@ -26,7 +26,8 @@ contract DefifaGovernor is
     
     // scorecard verifier
     IDefifaScoreCardVerifier immutable socrecardVerifier;
-
+    
+    // track the proposal id's and the scorecard root
     mapping(uint256 => bytes32) public proposalScorecardRoot;
 
     constructor(
@@ -149,22 +150,26 @@ contract DefifaGovernor is
         return super.state(proposalId);
     }
 
+    function proposeAndGenerateScorecardRoot(
+        address[] memory targets,
+        uint256[] memory values,
+        bytes[] memory calldatas,
+        string memory description,
+        DefifaTierRedemptionWeight[] memory scorecards
+    ) external returns (uint256, bytes32) {
+         bytes32 _root = socrecardVerifier.generateRoot(scorecards);
+         uint256 _proposald = super.propose(targets, values, calldatas, description);
+         proposalScorecardRoot[_proposald] = _root;
+         return (_proposald, _root);
+    }
+
     function propose(
         address[] memory targets,
         uint256[] memory values,
         bytes[] memory calldatas,
         string memory description
     ) public override(Governor) returns (uint256) {
-        // TODO Need to figure out a way to decode the scorecard value from the calldata because encodeCall & decode don't work well togethet
-        // uint256 _calldataLength = calldatas.length;
-        // for (uint128 i = 0; i < _calldataLength;) {
-        // DefifaTierRedemptionWeight[] memory _scorecards = abi.decode(calldatas[i][4:], (DefifaTierRedemptionWeight[]));
-        // // bytes32 _root = socrecardVerifier.generateRoot(_scorecards);
-        // unchecked {
-        //     ++i;
-        // }
-        // }
-        return super.propose(targets, values, calldatas, description);
+        revert("use proposeAndGenerateScorecardRoot");
     }
 
     function proposalThreshold()

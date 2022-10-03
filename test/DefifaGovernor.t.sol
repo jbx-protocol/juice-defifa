@@ -154,11 +154,12 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         // abi.decodeCall()
 
         // Create the proposal
-        uint256 _proposalId = _governor.propose(
+        (uint256 _proposalId, ) = _governor.proposeAndGenerateScorecardRoot(
             targets,
             values,
             calldatas,
-            "Governance!"
+            "Governance!",
+            scorecards
         );
 
         // Forward time so voting becomes active
