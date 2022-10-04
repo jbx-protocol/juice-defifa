@@ -25,14 +25,14 @@ contract DefifaGovernor is
     IJBTiered721Delegate immutable jbTieredRewards;
     
     // scorecard verifier
-    IDefifaScoreCardVerifier immutable socrecardVerifier;
+    IDefifaScoreCardVerifier immutable scorecardVerifier;
     
     // track the proposal id's and the scorecard root
     mapping(uint256 => bytes32) public proposalScorecardRoot;
 
     constructor(
         IJBTiered721Delegate _jbTieredRewards,
-        IDefifaScoreCardVerifier _socrecardVerifier
+        IDefifaScoreCardVerifier _scorecardVerifier
     )
         Governor("DefifaGovernor")
         GovernorSettings(
@@ -42,7 +42,7 @@ contract DefifaGovernor is
         )
     {
         jbTieredRewards = _jbTieredRewards;
-        socrecardVerifier = _socrecardVerifier;
+        scorecardVerifier = _scorecardVerifier;
     }
 
     /**
@@ -157,7 +157,7 @@ contract DefifaGovernor is
         string memory description,
         DefifaTierRedemptionWeight[] memory scorecards
     ) external returns (uint256, bytes32) {
-         bytes32 _root = socrecardVerifier.generateRoot(scorecards);
+         bytes32 _root = scorecardVerifier.generateRoot(scorecards);
          uint256 _proposald = super.propose(targets, values, calldatas, description);
          proposalScorecardRoot[_proposald] = _root;
          return (_proposald, _root);
@@ -190,7 +190,7 @@ contract DefifaGovernor is
         bytes32[] calldata _leaves
     ) external {
         bytes32 _root = proposalScorecardRoot[proposalId];
-        socrecardVerifier.verifyScorecard(_leaves, _root);
+        scorecardVerifier.verifyScorecard(_leaves, _root);
         super.execute(targets, values, calldatas, descriptionHash);
     }
 
