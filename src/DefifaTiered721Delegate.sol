@@ -19,8 +19,8 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
     // The total weight that can be divided among tiers
     uint256 constant TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
 
-    // Tiers are limited to ID 100
-    uint256[100] public tierRedemptionWeights;
+    // mapping to track tier id & redemption to tackle duplicate tier id's
+    mapping(uint256 => uint256) public tierRedemptionWeights;
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -74,8 +74,6 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
     function setTierRedemptionWeights(
         DefifaTierRedemptionWeight[] memory _tierWeights
     ) external onlyOwner {
-        delete tierRedemptionWeights;
-
         uint256 _cumulativeRedemptionWeight;
         for (uint256 _i; _i < _tierWeights.length; ) {
             tierRedemptionWeights[_tierWeights[_i].id] = _tierWeights[_i].redemptionWeight;

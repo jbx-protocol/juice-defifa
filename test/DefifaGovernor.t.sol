@@ -14,12 +14,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     DefifaGovernor public governor;
     DefifaTiered721Delegate public nfts;
 
-    address projectOwner = address(bytes20(keccak256('projectOwner')));
+    address projectOwner = address(bytes20(keccak256("projectOwner")));
 
-    function setUp() virtual override public {
+    function setUp() public virtual override {
         super.setUp();
-
-        
     }
 
     function testReceiveVotingPower(uint8 nTiers, uint8 tier) public {
@@ -138,7 +136,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         uint256[] memory values = new uint256[](1);
         bytes[] memory calldatas = new bytes[](1);
 
-        // Generate the scorecards 
+        // Generate the scorecards
         DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
 
         for (uint i = 0; i < scorecards.length; i++) {
@@ -160,7 +158,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         // Forward time so voting becomes active
         vm.roll(block.number + _governor.votingDelay() + 1);
 
-        // All the users vote 
+        // All the users vote
         // 0 = Against
         // 1 = For
         // 2 = Abstain
@@ -174,7 +172,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
         // Forward time to the block after voting closes
         vm.roll(_governor.proposalDeadline(_proposalId) + 1);
-        
+
         // Execute the proposal
         _governor.execute(
             targets,
@@ -193,7 +191,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
             scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
         }
     }
-
 
     function testWithInvalidRedemptionRates() public {
         uint8 nTiers = 10;
@@ -253,7 +250,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         uint256[] memory values = new uint256[](1);
         bytes[] memory calldatas = new bytes[](1);
 
-        // Generate the scorecards 
+        // Generate the scorecards
         DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
 
         for (uint i = 0; i < scorecards.length; i++) {
@@ -275,7 +272,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         // Forward time so voting becomes active
         vm.roll(block.number + _governor.votingDelay() + 1);
 
-        // All the users vote 
+        // All the users vote
         // 0 = Against
         // 1 = For
         // 2 = Abstain
@@ -289,7 +286,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
         // Forward time to the block after voting closes
         vm.roll(_governor.proposalDeadline(_proposalId) + 1);
-        
+
         vm.expectRevert(abi.encodeWithSignature("INVALID_REDEMPTION_WEIGHTS()"));
         // Execute the proposal
         _governor.execute(
@@ -339,20 +336,18 @@ contract DefifaGovernorTest is TestBaseWorkflow {
             launchProjectData.memo
         );
 
-        governor = new DefifaGovernor(
-            nft
-        );
+        governor = new DefifaGovernor(nft);
 
         // Transfer the ownership so governance can control the settings of the RewardsNFT
         nft.transferOwnership(address(governor));
     }
 
     // Create launchProjectFor(..) payload
-    string name = 'NAME';
-    string symbol = 'SYM';
-    string baseUri = 'http://www.null.com/';
-    string contractUri = 'ipfs://null';
-    address reserveBeneficiary = address(bytes20(keccak256('reserveBeneficiary')));
+    string name = "NAME";
+    string symbol = "SYM";
+    string baseUri = "http://www.null.com/";
+    string contractUri = "ipfs://null";
+    address reserveBeneficiary = address(bytes20(keccak256("reserveBeneficiary")));
     //QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz
     bytes32[] tokenUris = [
         bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
@@ -366,7 +361,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
         bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89)
     ];
-    
+
     function createData(uint256 n_tiers)
         internal
         returns (
