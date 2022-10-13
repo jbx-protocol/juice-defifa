@@ -10,7 +10,9 @@ import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 
-// TODO: Set/enforce a starting time after which proposals may be accepted (prevent a propsal being made after first mint)
+// errors
+error PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
+
 contract DefifaGovernor is
     Governor,
     GovernorSettings,
@@ -22,8 +24,12 @@ contract DefifaGovernor is
    // The datasource for votingpower
     IJBTiered721Delegate jbTieredRewards;
 
+    // proposal creation threshold time
+    uint256 public immutable proposalCreationThreshold;
+
     constructor(
-        IJBTiered721Delegate _jbTieredRewards
+        IJBTiered721Delegate _jbTieredRewards,
+        uint256 _proposalCreationThreshold
     )
         Governor("DefifaGovernor")
         GovernorSettings(
@@ -33,6 +39,7 @@ contract DefifaGovernor is
         )
     {
         jbTieredRewards = _jbTieredRewards;
+        proposalCreationThreshold = _proposalCreationThreshold;
     }
 
     /**
@@ -146,6 +153,9 @@ contract DefifaGovernor is
         bytes[] memory calldatas,
         string memory description
     ) public override(Governor) returns (uint256) {
+        if (block.timestamp <= proposalCreationThreshold) {
+            revert PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
+        }
         return super.propose(targets, values, calldatas, description);
     }
 
