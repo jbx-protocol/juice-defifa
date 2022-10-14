@@ -528,120 +528,129 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         }
     }
 
-    //    function testFuzzSetRedemptionRates(
-    //         DefifaTierRedemptionWeight[] calldata scorecards,
-    //         uint8 nTiers
-    //     ) public {
-    //         // to make sure quorum is reached
-    //         vm.assume(nTiers > 1);
-    //         address[] memory _users = new address[](nTiers);
+    // function testFuzzSetRedemptionRates(
+    //     DefifaTierRedemptionWeight[] calldata scorecards,
+    //     uint8 nTiers
+    // ) public {
+    //     vm.assume(scorecards.length > 0);
+    //     // to make sure quorum is reached
+    //     vm.assume(nTiers > 1);
 
-    //         (
-    //             uint256 _projectId,
-    //             DefifaTiered721Delegate _nft,
-    //             DefifaGovernor _governor
-    //         ) = createDefifaProject(uint256(nTiers));
+    //     address[] memory _users = new address[](nTiers);
+    //     (
+    //         uint256 _projectId,
+    //         DefifaTiered721Delegate _nft,
+    //         DefifaGovernor _governor
+    //     ) = createDefifaProject(uint256(nTiers));
 
-    //         for (uint256 i = 0; i < scorecards.length; i++) {
-    //             vm.assume(scorecards[i].redemptionWeight <= 1_000_000_000 / scorecards.length);
-    //         }
+    //     for (uint256 i = 0; i < scorecards.length; i++) {
+    //         vm.assume(scorecards[i].id < 500);
+    //         vm.assume(scorecards[i].redemptionWeight <= 1_000_000_000 / scorecards.length);
+    //     }
 
-    //         for (uint256 i = 0; i < nTiers; i++) {
-    //             // Generate a new address for each tier
-    //             _users[i] = address(
-    //                 bytes20(keccak256(abi.encode("user", Strings.toString(i))))
-    //             );
-
-    //             // fund user
-    //             vm.deal(_users[i], 1 ether);
-
-    //             // Build metadata to buy specific NFT
-    //             uint16[] memory rawMetadata = new uint16[](1);
-    //             rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
-    //             bytes memory metadata = abi.encode(
-    //                 bytes32(0),
-    //                 type(IJB721Delegate).interfaceId,
-    //                 false,
-    //                 false,
-    //                 false,
-    //                 rawMetadata
-    //             );
-
-    //             // Pay to the project and mint an NFT
-    //             vm.prank(_users[i]);
-    //             _terminals[0].pay{value: 1 ether}(
-    //                 _projectId,
-    //                 1 ether,
-    //                 address(0),
-    //                 _users[i],
-    //                 0,
-    //                 true,
-    //                 "",
-    //                 metadata
-    //             );
-
-    //             // Set the delegate as the user themselves
-    //             vm.prank(_users[i]);
-    //             _nft.setTierDelegate(_users[i], uint256(i + 1));
-
-    //             // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
-    //             vm.roll(block.number + 1);
-    //             assertEq(
-    //                 _governor.MAX_VOTING_POWER_TIER(),
-    //                 _governor.getVotes(_users[i], block.number - 1)
-    //             );
-    //         }
-
-    //         address[] memory targets = new address[](1);
-    //         uint256[] memory values = new uint256[](1);
-    //         bytes[] memory calldatas = new bytes[](1);
-
-    //         targets[0] = address(_nft);
-    //         calldatas[0] = abi.encodeCall(
-    //             _nft.setTierRedemptionWeights,
-    //             scorecards
+    //     for (uint256 i = 0; i < nTiers; i++) {
+    //         // Generate a new address for each tier
+    //         _users[i] = address(
+    //             bytes20(keccak256(abi.encode("user", Strings.toString(i))))
     //         );
 
-    //         // Create the proposal
-    //         uint256 _proposalId = _governor.propose(
-    //             targets,
-    //             values,
-    //             calldatas,
-    //             "Governance!"
+    //         // fund user
+    //         vm.deal(_users[i], 1 ether);
+
+    //         // Build metadata to buy specific NFT
+    //         uint16[] memory rawMetadata = new uint16[](1);
+    //         rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
+    //         bytes memory metadata = abi.encode(
+    //             bytes32(0),
+    //             type(IJB721Delegate).interfaceId,
+    //             false,
+    //             false,
+    //             false,
+    //             rawMetadata
     //         );
 
-    //         // Forward time so voting becomes active
-    //         vm.roll(block.number + _governor.votingDelay() + 1);
+    //         // Pay to the project and mint an NFT
+    //         vm.prank(_users[i]);
+    //         _terminals[0].pay{value: 1 ether}(
+    //             _projectId,
+    //             1 ether,
+    //             address(0),
+    //             _users[i],
+    //             0,
+    //             true,
+    //             "",
+    //             metadata
+    //         );
 
-    //         // All the users vote
-    //         // 0 = Against
-    //         // 1 = For
-    //         // 2 = Abstain
-    //         for (uint256 i = 0; i < _users.length; i++) {
-    //             vm.prank(_users[i]);
-    //             _governor.castVote(_proposalId, 1);
-    //         }
+    //         // Set the delegate as the user themselves
+    //         vm.prank(_users[i]);
+    //         _nft.setTierDelegate(_users[i], uint256(i + 1));
 
-    //         // Forward time to the block after voting closes
-    //         vm.roll(_governor.proposalDeadline(_proposalId) + 1);
+    //         // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
+    //         vm.roll(block.number + 1);
+    //         assertEq(
+    //             _governor.MAX_VOTING_POWER_TIER(),
+    //             _governor.getVotes(_users[i], block.number - 1)
+    //         );
+    //     }
 
-    //         for (uint256 i = 0; i < scorecards.length; i++) {
-    //             // index out of bounds
-    //             if (scorecards[i].id >= 100)
-    //                 vm.expectRevert();
-    //         }
+    //     address[] memory targets = new address[](1);
+    //     uint256[] memory values = new uint256[](1);
+    //     bytes[] memory calldatas = new bytes[](1);
 
-    //         // // Execute the proposal
-    //         _governor.execute(targets, values, calldatas, keccak256("Governance!"));
+    //     targets[0] = address(_nft);
+    //     calldatas[0] = abi.encodeCall(
+    //         _nft.setTierRedemptionWeights,
+    //         scorecards
+    //     );
 
-    //         // Verify that the redemptionWeights actually changed
-    //         for (uint256 i = 0; i < scorecards.length; i++) {
-    //             // since there can be a case of duplicate id's hence modified this check & to make sure we have enough inputs the redemption weight can be 0 as well
-    //             if (scorecards[i].redemptionWeight != 0) {
-    //                 assert(_nft.tierRedemptionWeights(scorecards[i].id) >= 0);
-    //             }
+    //     // Forward time so proposals can be created
+    //     vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
+
+    //     // Create the proposal
+    //     uint256 _proposalId = _governor.propose(
+    //         targets,
+    //         values,
+    //         calldatas,
+    //         "Governance!"
+    //     );
+
+    //     // Forward time so voting becomes active
+    //     vm.roll(block.number + _governor.votingDelay() + 1);
+
+    //     // All the users vote
+    //     // 0 = Against
+    //     // 1 = For
+    //     // 2 = Abstain
+    //     for (uint256 i = 0; i < _users.length; i++) {
+    //         vm.prank(_users[i]);
+    //         _governor.castVote(_proposalId, 1);
+    //     }
+
+    //     // Forward time to the block after voting closes
+    //     vm.roll(_governor.proposalDeadline(_proposalId) + 1);
+
+    //     // uint256 _cumulativeRedemptionWeight;
+    //     // for (uint256 i = 0; i < scorecards.length; i++) {
+    //     //     _cumulativeRedemptionWeight += scorecards[i].redemptionWeight;
+    //     // }
+    //     // if (_cumulativeRedemptionWeight > 1_000_000_000) {
+    //     //     vm.expectRevert(
+    //     //         abi.encodeWithSignature("INVALID_REDEMPTION_WEIGHTS()")
+    //     //     );
+    //     // }
+
+    //     // // Execute the proposal
+    //     _governor.execute(targets, values, calldatas, keccak256("Governance!"));
+
+    //     // Verify that the redemptionWeights actually changed
+    //     for (uint256 i = 0; i < scorecards.length; i++) {
+    //         // since there can be a case of duplicate id's hence modified this check & to make sure we have enough inputs the redemption weight can be 0 as well
+    //         if (scorecards[i].redemptionWeight != 0) {
+    //             assert(_nft.tierRedemptionWeights(scorecards[i].id) >= 0);
     //         }
     //     }
+    // }
 
     // ----- internal helpers ------
     function createDefifaProject(uint256 nTiers)
