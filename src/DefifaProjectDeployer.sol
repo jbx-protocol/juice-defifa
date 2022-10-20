@@ -110,7 +110,6 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         JBDeployTiered721DelegateData memory _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData
     ) external override returns (uint256 projectId) {
-        //TODO: _launchProjectData input validations
         _owner; // avoid compiler warnings
         // Get the project ID, optimistically knowing it will be one greater than the current count.
         projectId = controller.projects().count() + 1;
@@ -124,14 +123,28 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         // Set the delegate address as the data source of the provided metadata.
         _launchProjectData.metadata.dataSource = address(_delegate);
 
-        // Set the project to use the data source for its pay function.
+        // TODO: check if validating & reverting is more cheaper than these MSTORE's
+        // Set the project to use the data source for its redeem function.
         _launchProjectData.metadata.useDataSourceForPay = true;
+
+        // Set the project to use the data source for its redeem function.
+        _launchProjectData.metadata.useDataSourceForRedeem = true;
+
+        // for the 1st FC not allow distributions
+        _launchProjectData.metadata.pauseDistributions = true;
+
+       // 100 % redemption rate
+        _launchProjectData.metadata.redemptionRate = 10000;
+
+       // set duration of 1st FC aka Mint Phase Duration
+        _launchProjectData.data.duration = mintPhaseDuration;
 
         // Launch the project.
         _launchProjectFor(address(this), _launchProjectData);
     }
 
-    /**
+
+  /**
     @notice
     Launches funding cycle's for a project with a delegate attached.
 
@@ -152,7 +165,7 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         external
         override
         returns (uint256 configuration)
-    {   //TODO: _launchFundingCyclesData input validations
+    {
         // Deploy the delegate contract.
         IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
             _projectId,
@@ -162,8 +175,24 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         // Set the delegate address as the data source of the provided metadata.
         _launchFundingCyclesData.metadata.dataSource = address(_delegate);
 
-        // Set the project to use the data source for its pay function.
+ // Set the delegate address as the data source of the provided metadata.
+        _launchFundingCyclesData.metadata.dataSource = address(_delegate);
+
+        // TODO: check if validating & reverting is more cheaper than these MSTORE's
+        // Set the project to use the data source for its redeem function.
         _launchFundingCyclesData.metadata.useDataSourceForPay = true;
+
+        // Set the project to use the data source for its redeem function.
+        _launchFundingCyclesData.metadata.useDataSourceForRedeem = true;
+
+        // for the 1st FC not allow distributions
+        _launchFundingCyclesData.metadata.pauseDistributions = true;
+
+       // 100 % redemption rate
+        _launchFundingCyclesData.metadata.redemptionRate = 10000;
+
+       // set duration of 1st FC aka Mint Phase Duration
+        _launchFundingCyclesData.data.duration = mintPhaseDuration;
 
         // Launch the funding cycles.
         return _launchFundingCyclesFor(_projectId, _launchFundingCyclesData);
@@ -193,7 +222,6 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
     {
         //TODO: _reconfigureFundingCyclesData input validations
         //TODO: queuue checks
-
         // Deploy the delegate contract.
         IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
             _projectId,
