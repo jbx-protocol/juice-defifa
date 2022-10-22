@@ -63,6 +63,12 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
     */
     uint256 public immutable endPhaseTimestamp;
 
+    /** 
+    @notice
+    Distribution limit to be used in 2nd fc. 
+    */
+    uint256 public immutable distributionLimit;
+
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -78,7 +84,8 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         uint256 _mintPhaseDuration,
         uint256 _startPhaseTimestamp,
         uint256 _tradePhaseTimestamp,
-        uint256 _endPhaseTimestamp
+        uint256 _endPhaseTimestamp,
+        uint256 _distributionLimit
     ) {
         controller = _controller;
         delegateDeployer = _delegateDeployer;
@@ -89,6 +96,7 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         startPhaseTimestamp = _startPhaseTimestamp;
         tradePhaseTimestamp = _tradePhaseTimestamp;
         endPhaseTimestamp = _endPhaseTimestamp;
+        distributionLimit = _distributionLimit;
     }
 
     //*********************************************************************//
