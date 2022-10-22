@@ -120,18 +120,19 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
             _deployTiered721DelegateData
         );
 
+        if (_launchProjectData.fundAccessConstraints.length != 0) {
+          revert INVALID_FC_CONFIGURATION();
+        }
+
         // Set the delegate address as the data source of the provided metadata.
         _launchProjectData.metadata.dataSource = address(_delegate);
 
         // TODO: check if validating & reverting is more cheaper than these MSTORE's
-        // Set the project to use the data source for its redeem function.
+        // Set the project to use the data source for its pay function.
         _launchProjectData.metadata.useDataSourceForPay = true;
 
         // Set the project to use the data source for its redeem function.
         _launchProjectData.metadata.useDataSourceForRedeem = true;
-
-        // for the 1st FC not allow distributions
-        _launchProjectData.metadata.pauseDistributions = true;
 
        // 100 % redemption rate
         _launchProjectData.metadata.redemptionRate = 10000;
@@ -172,21 +173,19 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
             _deployTiered721DelegateData
         );
 
+        if (_launchFundingCyclesData.fundAccessConstraints.length != 0) {
+          revert INVALID_FC_CONFIGURATION();
+        }
+
         // Set the delegate address as the data source of the provided metadata.
         _launchFundingCyclesData.metadata.dataSource = address(_delegate);
 
- // Set the delegate address as the data source of the provided metadata.
-        _launchFundingCyclesData.metadata.dataSource = address(_delegate);
-
         // TODO: check if validating & reverting is more cheaper than these MSTORE's
-        // Set the project to use the data source for its redeem function.
+        // Set the project to use the data source for its pay function.
         _launchFundingCyclesData.metadata.useDataSourceForPay = true;
 
         // Set the project to use the data source for its redeem function.
         _launchFundingCyclesData.metadata.useDataSourceForRedeem = true;
-
-        // for the 1st FC not allow distributions
-        _launchFundingCyclesData.metadata.pauseDistributions = true;
 
        // 100 % redemption rate
         _launchFundingCyclesData.metadata.redemptionRate = 10000;
