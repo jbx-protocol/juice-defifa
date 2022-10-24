@@ -157,8 +157,22 @@ contract DefifaGovernorTest is TestBaseWorkflow {
             "Governance!"
         );
 
+        // The voting delay has to be the intial one
+        assertEq(
+            _governor.votingDelay(),
+            _governor.INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT() / 12
+        );
+
         // Forward time so voting becomes active
         vm.roll(block.number + _governor.votingDelay() + 1);
+        // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
+        vm.warp(block.timestamp + _governor.INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT() + 1);
+
+        // The initial voting delay should now have passed and it should be using the regular one
+        assertEq(
+            _governor.votingDelay(),
+            _governor.VOTING_DELAY() / 12
+        );
 
         // All the users vote 
         // 0 = Against

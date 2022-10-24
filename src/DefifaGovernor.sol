@@ -16,8 +16,19 @@ contract DefifaGovernor is
     GovernorSettings,
     GovernorCountingSimple
 {
-   // The max voting power 1 tier has if everyone votes
+
+    error INCORRECT_TIER_ORDER(uint256, uint256[]);
+
+    // The max voting power 1 tier has if everyone votes
     uint256 public constant MAX_VOTING_POWER_TIER = 1_000_000_000;
+    // How many seconds does 1 block take
+    uint256 internal constant BLOCKTIME_SECONDS = 12;
+    // The votingDelay that is set after the contract gets deployed
+    uint256 public constant INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT = 1 weeks;
+    // After the `INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT` has expired, how long should the delay be then
+    uint256 public constant VOTING_DELAY = 1 days;
+
+    uint256 internal immutable DEPLOYED_AT;
 
    // The datasource for votingpower
     IJBTiered721Delegate jbTieredRewards;
@@ -32,6 +43,7 @@ contract DefifaGovernor is
             0
         )
     {
+        DEPLOYED_AT = block.timestamp;
         jbTieredRewards = _jbTieredRewards;
     }
 
@@ -47,10 +59,14 @@ contract DefifaGovernor is
         uint256[] memory _tiers = abi.decode(params, (uint[]));
         uint256 _tiers_length = _tiers.length;
 
-        // TODO: IMPORTANT! Enforce there are no duplicates in _tiers
-
         // Loop over all tiers gathering the voting share of the user
+        uint256 _prevTier;
         for (uint256 _i; _i < _tiers_length; ) {
+            // Enforce the tiers to be in ascending order, reverts if 
+            // there are any duplicates or the tiers are incorrecly sorted
+            if(_tiers[_i] <= _prevTier) revert INCORRECT_TIER_ORDER(_i, _tiers);
+            _prevTier = _tiers[_i];
+
             uint256 _tierVotingPower = jbTieredRewards.getPastTierVotes(
                 account,
                 _tiers[_i],
@@ -109,7 +125,12 @@ contract DefifaGovernor is
         override(IGovernor, GovernorSettings)
         returns (uint256)
     {
-        return super.votingDelay();
+        // After the contract initially deploys there is a long delay, once this long delay has passed we use `VOTING_DELAY`
+        if(DEPLOYED_AT + INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT - VOTING_DELAY > block.timestamp){
+            return ((DEPLOYED_AT + INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT) - block.timestamp) / BLOCKTIME_SECONDS;
+        }
+
+        return VOTING_DELAY / BLOCKTIME_SECONDS;
     }
 
     function votingPeriod()
