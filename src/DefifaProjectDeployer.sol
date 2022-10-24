@@ -4,14 +4,16 @@ pragma solidity ^0.8.16;
 import "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController.sol";
 import "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBProjects.sol";
 import "@jbx-protocol/juice-contracts-v3/contracts/libraries/JBOperations.sol";
+import "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycle.sol";
 import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721Delegate.sol";
 import "@jbx-protocol/juice-nft-rewards/contracts/interfaces/IJBTiered721DelegateProjectDeployer.sol";
-
 
 //*********************************************************************//
 // --------------------------- custom errors ------------------------- //
 //*********************************************************************//
 error INVALID_FC_CONFIGURATION();
+error FC_ALREADY_RECONFIGURED();
+error RECONFIGURATION_OVER();
 
 /**
   @notice
@@ -21,8 +23,7 @@ error INVALID_FC_CONFIGURATION();
   Adheres to -
   IJBTiered721DelegateProjectDeployer: General interface for the generic controller methods in this contract that interacts with funding cycles and tokens according to the protocol's rules.
 */
-contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
-{
+contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer {
     //*********************************************************************//
     // --------------- public immutable stored properties ---------------- //
     //*********************************************************************//
@@ -69,12 +70,11 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
     */
     uint256 public immutable distributionLimit;
 
-
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
 
-  /**
+    /**
     @param _controller The controller with which new projects should be deployed. 
     @param _delegateDeployer The deployer of delegates.
   */
@@ -90,7 +90,7 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         controller = _controller;
         delegateDeployer = _delegateDeployer;
         // checking in 1 block to avoidd duplication of similar checks
-        if (_tradePhaseTimestamp < _startPhaseTimestamp || _endPhaseTimestamp < _startPhaseTimestamp || _endPhaseTimestamp < _tradePhaseTimestamp)
+        if (_tradePhaseTimestamp < _startPhaseTimestamp ||  _endPhaseTimestamp < _startPhaseTimestamp || _endPhaseTimestamp < _tradePhaseTimestamp) 
           revert INVALID_FC_CONFIGURATION();
         mintPhaseDuration = _mintPhaseDuration;
         startPhaseTimestamp = _startPhaseTimestamp;
@@ -115,7 +115,7 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
   */
     function launchProjectFor(
         address _owner,
-        JBDeployTiered721DelegateData memory _deployTiered721DelegateData,
+        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData
     ) external override returns (uint256 projectId) {
         _owner; // avoid compiler warnings
@@ -123,14 +123,11 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         projectId = controller.projects().count() + 1;
 
         // Deploy the delegate contract.
-        IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
-            projectId,
-            _deployTiered721DelegateData
-        );
-
-        if (_launchProjectData.fundAccessConstraints.length != 0) {
+        IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(projectId, _deployTiered721DelegateData);
+        
+        // ensuring no distribution limit
+        if (_launchProjectData.fundAccessConstraints.length != 0)
           revert INVALID_FC_CONFIGURATION();
-        }
 
         // Set the delegate address as the data source of the provided metadata.
         _launchProjectData.metadata.dataSource = address(_delegate);
@@ -142,18 +139,17 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         // Set the project to use the data source for its redeem function.
         _launchProjectData.metadata.useDataSourceForRedeem = true;
 
-       // 100 % redemption rate
+        // 100 % redemption rate
         _launchProjectData.metadata.redemptionRate = 10000;
 
-       // set duration of 1st FC aka Mint Phase Duration
+        // set duration of 1st FC aka Mint Phase Duration
         _launchProjectData.data.duration = mintPhaseDuration;
 
         // Launch the project.
         _launchProjectFor(address(this), _launchProjectData);
     }
 
-
-  /**
+    /**
     @notice
     Launches funding cycle's for a project with a delegate attached.
 
@@ -168,22 +164,18 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
   */
     function launchFundingCyclesFor(
         uint256 _projectId,
-        JBDeployTiered721DelegateData memory _deployTiered721DelegateData,
+        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchFundingCyclesData memory _launchFundingCyclesData
-    )
-        external
-        override
-        returns (uint256 configuration)
-    {
+    ) external override returns (uint256 configuration) {
         // Deploy the delegate contract.
         IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
             _projectId,
             _deployTiered721DelegateData
         );
 
-        if (_launchFundingCyclesData.fundAccessConstraints.length != 0) {
+        // ensuring no distribution limit
+        if (_launchFundingCyclesData.fundAccessConstraints.length != 0)
           revert INVALID_FC_CONFIGURATION();
-        }
 
         // Set the delegate address as the data source of the provided metadata.
         _launchFundingCyclesData.metadata.dataSource = address(_delegate);
@@ -195,10 +187,10 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
         // Set the project to use the data source for its redeem function.
         _launchFundingCyclesData.metadata.useDataSourceForRedeem = true;
 
-       // 100 % redemption rate
+        // 100 % redemption rate
         _launchFundingCyclesData.metadata.redemptionRate = 10000;
 
-       // set duration of 1st FC aka Mint Phase Duration
+        // set duration of 1st FC aka Mint Phase Duration
         _launchFundingCyclesData.data.duration = mintPhaseDuration;
 
         // Launch the funding cycles.
@@ -220,26 +212,84 @@ contract DefifaProjectDeployer is IJBTiered721DelegateProjectDeployer
   */
     function reconfigureFundingCyclesOf(
         uint256 _projectId,
-        JBDeployTiered721DelegateData memory _deployTiered721DelegateData,
+        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
-    )
-        external
-        override
-        returns (uint256 configuration)
-    {
-        //TODO: _reconfigureFundingCyclesData input validations
-        //TODO: queuue checks
+    ) external override returns (uint256 configuration) {
+        // reference of current FC
+        JBFundingCycle memory currentFundingCycle = _deployTiered721DelegateData.fundingCycleStore.currentOf(_projectId);
+
+        // reference of queued FC
+        JBFundingCycle memory queuedFundingCycle = _deployTiered721DelegateData.fundingCycleStore.queuedOf(_projectId);
+
+        // ensuring no reconfigurations after fc 4
+        if (currentFundingCycle.number > 3) 
+          revert RECONFIGURATION_OVER();
+
+        // ensuring reconfiguration is avoided if a reconfiguration already happened
+        if (currentFundingCycle.configuration != queuedFundingCycle.configuration)
+          revert FC_ALREADY_RECONFIGURED();
+
         // Deploy the delegate contract.
-        IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
-            _projectId,
-            _deployTiered721DelegateData
-        );
+        IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(_projectId, _deployTiered721DelegateData);
 
         // Set the delegate address as the data source of the provided metadata.
         _reconfigureFundingCyclesData.metadata.dataSource = address(_delegate);
+        
+        // custom rules for each of the 3 reconfigurations
+        if (currentFundingCycle.number == 1) {
+            // ensuring only 1 element
+            if (_reconfigureFundingCyclesData.fundAccessConstraints.length != 1)
+              revert INVALID_FC_CONFIGURATION();
+            
+            // setting the distribution limit as the one set during deployment
+            _reconfigureFundingCyclesData.fundAccessConstraints[0].distributionLimit = distributionLimit;
 
-        // Set the project to use the data source for its pay function.
-        _reconfigureFundingCyclesData.metadata.useDataSourceForPay = true;
+            // pausing payments
+            _reconfigureFundingCyclesData.metadata.pausePay = true;
+
+            // setting starting time
+            _reconfigureFundingCyclesData.mustStartAtOrAfter = startPhaseTimestamp;
+
+            // 0 redemption rate
+            _reconfigureFundingCyclesData.metadata.redemptionRate = 0;
+
+            // setting duration
+            unchecked {
+               _reconfigureFundingCyclesData.data.duration = tradePhaseTimestamp - startPhaseTimestamp;
+            }
+        } else if (currentFundingCycle.number == 2) {
+            // ensuring no distribution limit
+            if (_reconfigureFundingCyclesData.fundAccessConstraints.length != 0)
+              revert INVALID_FC_CONFIGURATION();
+
+            // pausing transfers
+            _reconfigureFundingCyclesData.metadata.global.pauseTransfers = true;
+
+            // pausing payments
+            _reconfigureFundingCyclesData.metadata.pausePay = true;
+
+            // setting starting time
+            _reconfigureFundingCyclesData.mustStartAtOrAfter = tradePhaseTimestamp;
+
+            // setting duration
+            unchecked {
+              _reconfigureFundingCyclesData.data.duration = endPhaseTimestamp - tradePhaseTimestamp;
+            }
+
+        } else {
+            // ensuring no distribution limit
+            if (_reconfigureFundingCyclesData.fundAccessConstraints.length != 0) 
+              revert INVALID_FC_CONFIGURATION();
+  
+              // pausing payments
+            _reconfigureFundingCyclesData.metadata.pausePay = true;
+
+            // 100 % redemption rate
+            _reconfigureFundingCyclesData.metadata.redemptionRate = 10000;
+
+            // setting starting time
+            _reconfigureFundingCyclesData.mustStartAtOrAfter = endPhaseTimestamp;
+        }
 
         // Reconfigure the funding cycles.
         return
