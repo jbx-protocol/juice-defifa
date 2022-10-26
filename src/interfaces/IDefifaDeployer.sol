@@ -14,20 +14,27 @@ interface IDefifaDeployer {
         address _owner,
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData,
-        FCParams memory fcParams,
-        DistributionParams memory distributionParams
+        FCParams calldata fcParams,
+        SplitConfig calldata splitParams,
+        DistributionParams calldata distributionParams,
+        JBGroupedSplits[] calldata _groupedSplits
     ) external returns (uint256 projectId);
 
     function queueNextFundingCycleOf(
         uint256 _projectId,
-        JBDeployTiered721DelegateData calldata _deployTieredNFTRewardDelegateData,
-        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
+        JBDeployTiered721DelegateData calldata _deployTieredNFTRewardDelegateData
     ) external returns (uint256 configuration);
 }
 
 struct SplitConfig {
     uint256 group;
     uint256 domain;
+}
+
+struct FundAccessConstraintsConfig {
+     IJBPaymentTerminal terminal;
+     address token;
+     uint256 packedDistributionLimit;
 }
 
 struct FCParams {
@@ -40,7 +47,6 @@ struct FCParams {
 struct DistributionParams {
      uint256 distributionsLimit;
      uint256 distributionLimitCurrency;
-     JBGroupedSplits[] _groupedSplits;
-     uint256 _domain;
-     uint256 _group;
+     IJBPaymentTerminal terminal;
+     address token;
 }
