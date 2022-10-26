@@ -14,11 +14,8 @@ interface IDefifaDeployer {
         address _owner,
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData,
-        uint256 _mintPhaseDuration,
-        uint256 _startPhaseTimestamp,
-        uint256 _tradePhaseTimestamp,
-        uint256 _endPhaseTimestamp,
-        uint256 _price
+        FCParams memory fcParams,
+        DistributionParams memory distributionParams
     ) external returns (uint256 projectId);
 
     function queueNextFundingCycleOf(
@@ -26,4 +23,24 @@ interface IDefifaDeployer {
         JBDeployTiered721DelegateData calldata _deployTieredNFTRewardDelegateData,
         JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
     ) external returns (uint256 configuration);
+}
+
+struct SplitConfig {
+    uint256 group;
+    uint256 domain;
+}
+
+struct FCParams {
+        uint256 _mintPhaseDuration;
+        uint256 _startPhaseTimestamp;
+        uint256 _tradePhaseTimestamp;
+        uint256 _endPhaseTimestamp;
+}
+
+struct DistributionParams {
+     uint256 distributionsLimit;
+     uint256 distributionLimitCurrency;
+     JBGroupedSplits[] _groupedSplits;
+     uint256 _domain;
+     uint256 _group;
 }

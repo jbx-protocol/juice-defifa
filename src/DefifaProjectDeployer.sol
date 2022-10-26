@@ -42,6 +42,9 @@ contract DefifaProjectDeployer is IDefifaDeployer {
   */
     IJBTiered721DelegateDeployer public immutable delegateDeployer;
 
+
+    IJBSplitsStore immutable splitStore;
+
     /** 
     @notice
     Start time of the 2nd fc to be verified when re-configuring the fc. 
@@ -66,6 +69,12 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     */
     mapping(uint256 => uint256) public mintPriceForProject;
 
+    mapping(uint256 => uint256) public packedDistributionLimit;
+
+    mapping(uint256 => SplitConfig) public splitConfigOf;
+
+    
+
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
     //*********************************************************************//
@@ -76,10 +85,12 @@ contract DefifaProjectDeployer is IDefifaDeployer {
   */
     constructor(
         IJBController _controller,
-        IJBTiered721DelegateDeployer _delegateDeployer
+        IJBTiered721DelegateDeployer _delegateDeployer,
+        IJBSplitsStore _splitStore
     ) {
         controller = _controller;
         delegateDeployer = _delegateDeployer;
+        splitStore = _splitStore;
     }
 
     //*********************************************************************//
@@ -100,37 +111,33 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         address _owner,
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData,
-        uint256 _mintPhaseDuration,
-        uint256 _startPhaseTimestamp,
-        uint256 _tradePhaseTimestamp,
-        uint256 _endPhaseTimestamp,
-        uint256 _price
+        FCParams memory fcParams,
+        DistributionParams memory distributionParams
     ) external override returns (uint256 projectId) {
         _owner; // avoid compiler warnings
 
         // checking in 1 block to avoidd duplication of similar checks
-        if (_tradePhaseTimestamp < _startPhaseTimestamp ||  _endPhaseTimestamp < _startPhaseTimestamp || _endPhaseTimestamp < _tradePhaseTimestamp) 
+        if (fcParams._tradePhaseTimestamp < fcParams._startPhaseTimestamp || fcParams._endPhaseTimestamp < fcParams._startPhaseTimestamp || fcParams._endPhaseTimestamp < fcParams._tradePhaseTimestamp) 
           revert INVALID_FC_CONFIGURATION();
 
         // ensuring no distribution limit
         if (_launchProjectData.fundAccessConstraints.length != 0)
           revert INVALID_FC_CONFIGURATION();
+        
+        if (distributionParams.distributionsLimit == 0)
+          revert INVALID_FC_CONFIGURATION();
 
         // Get the project ID, optimistically knowing it will be one greater than the current count.
         projectId = controller.projects().count() + 1;
 
-        startPhaseTimestampForProject[projectId] = _startPhaseTimestamp;
-        tradePhaseTimestampForProject[projectId] = _tradePhaseTimestamp;
-        endPhaseTimestampForProject[projectId] = _endPhaseTimestamp;
+        splitStore.set(projectId, distributionParams._domain, distributionParams._groupedSplits);
 
-        uint256 _tierLength = _deployTiered721DelegateData.tiers.length;
-        for (uint i; i < _tierLength;) {
-            if (_deployTiered721DelegateData.tiers[i].contributionFloor != _price)
-              revert INVALID_FC_CONFIGURATION();
-            unchecked {
-              ++ i;
-            } 
-        }
+        splitConfigOf[projectId] = SplitConfig({group: distributionParams._group, domain: distributionParams._domain});
+
+        startPhaseTimestampForProject[projectId] = fcParams._startPhaseTimestamp;
+        tradePhaseTimestampForProject[projectId] = fcParams._tradePhaseTimestamp;
+        endPhaseTimestampForProject[projectId] = fcParams._endPhaseTimestamp;
+        packedDistributionLimit[projectId] = distributionParams.distributionsLimit | (distributionParams.distributionLimitCurrency << 232);
 
         // Deploy the delegate contract.
         IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(projectId, _deployTiered721DelegateData);
@@ -153,7 +160,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         _launchProjectData.metadata.redemptionRate = 10000;
 
         // set duration of 1st FC aka Mint Phase Duration
-        _launchProjectData.data.duration = _mintPhaseDuration;
+        _launchProjectData.data.duration = fcParams._mintPhaseDuration;
 
         // Launch the project.
         _launchProjectFor(address(this), _launchProjectData);
