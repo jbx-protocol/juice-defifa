@@ -11,7 +11,6 @@ import "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstrain
 
 interface IDefifaDeployer {
     function launchProjectFor(
-        address _owner,
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData,
         FCParams calldata fcParams,
