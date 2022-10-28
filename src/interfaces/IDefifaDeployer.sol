@@ -20,7 +20,6 @@ interface IDefifaDeployer {
     function queueNextFundingCycleOf(
         uint256 _projectId,
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
-        uint256 _splitProjectId,
         JBSplit[] calldata _splits
     ) external returns (uint256 configuration);
 }

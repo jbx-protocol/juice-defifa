@@ -30,6 +30,9 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     // --------------- public immutable stored properties ---------------- //
     //*********************************************************************//
 
+    uint256 public constant splitProjectId = 1;
+    uint256 public constant domain = 1;
+
     /**
     @notice
     The controller with which new projects should be deployed. 
@@ -70,8 +73,8 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @notice
     Fund Access Constraint info to be used in 2nd fc. 
     */
-    mapping(uint256 => FundAccessConstraintsConfig) public fundAccessConstraintOf;
-
+    mapping(uint256 => FundAccessConstraintsConfig)
+        public fundAccessConstraintOf;
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -130,11 +133,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         // Get the project ID, optimistically knowing it will be one greater than the current count.
         projectId = controller.projects().count() + 1;
 
-        _setReconfigurationConfig(
-            projectId,
-            _fcParams,
-          _distributionParams
-        );
+        _setReconfigurationConfig(projectId, _fcParams, _distributionParams);
 
         // Deploy the delegate contract.
         IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
@@ -152,7 +151,8 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         _launchProjectData.metadata.useDataSourceForRedeem = true;
 
         // 100 % redemption rate
-        _launchProjectData.metadata.redemptionRate = 10000;
+        _launchProjectData.metadata.redemptionRate = JBConstants
+            .MAX_REDEMPTION_RATE;
 
         // set duration of 1st FC aka Mint Phase Duration
         _launchProjectData.data.duration = _fcParams._mintPhaseDuration;
@@ -170,7 +170,6 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
     @param _projectId The ID of the project having funding cycles reconfigured.
     @param _deployTiered721DelegateData Data necessary to fulfill the transaction to deploy a delegate.
-    @param _splitProjectId project id to set the split for.
     @param _splits split info that needs to be set.
 
     @return configuration The configuration of the funding cycle that was successfully reconfigured.
@@ -178,7 +177,6 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     function queueNextFundingCycleOf(
         uint256 _projectId,
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
-        uint256 _splitProjectId,
         JBSplit[] calldata _splits
     ) external override returns (uint256 configuration) {
         // reference of current FC
@@ -201,9 +199,11 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         ) revert FC_ALREADY_RECONFIGURED();
 
         // validating the data source
-        (, JBFundingCycleMetadata memory metadata) = controller
-            .getFundingCycleOf(_projectId, currentFundingCycle.configuration);
+        (, JBFundingCycleMetadata memory metadata) = controller.getFundingCycleOf(_projectId, currentFundingCycle.configuration);
+
         address _delegate = metadata.dataSource;
+
+        // checking validity of delegate
         uint256 size;
         assembly {
             size := extcodesize(_delegate)
@@ -213,24 +213,30 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         }
 
         JBReconfigureFundingCyclesData memory reconfigureFundingCyclesData;
-        // prevent stack too deep
-        {
-            reconfigureFundingCyclesData = _generateReconfigurationData(
-                _projectId,
-                currentFundingCycle
-            );
-        }
-        // set the existing data source for reconfiguration
-        reconfigureFundingCyclesData.metadata.dataSource = address(_delegate);
 
         // custom rules for each of the 3 reconfigurations
         if (currentFundingCycle.number == 1) {
-            _queuePhase2(_projectId, reconfigureFundingCyclesData, _splitProjectId, _splits, queuedFundingCycle.configuration);
+            reconfigureFundingCyclesData = _queuePhase2(
+                _projectId,
+                currentFundingCycle,
+                reconfigureFundingCyclesData,
+                _splits
+            );
         } else if (currentFundingCycle.number == 2) {
-            _queuePhase3(_projectId, reconfigureFundingCyclesData);
+            reconfigureFundingCyclesData = _queuePhase3(
+                _projectId,
+                currentFundingCycle,
+                reconfigureFundingCyclesData
+            );
         } else {
-            _queuePhase4(reconfigureFundingCyclesData);
+            reconfigureFundingCyclesData = _queuePhase4(
+                currentFundingCycle,
+                reconfigureFundingCyclesData
+            );
         }
+
+        // set the existing data source for reconfiguration
+        reconfigureFundingCyclesData.metadata.dataSource = address(_delegate);
 
         // Reconfigure the funding cycles.
         return
@@ -382,23 +388,184 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
     /** 
     @notice 
-    Generate fc recongiration params.
-    @param _projectId Project ID to get the params of.
+    Sets reconfiguration params for fc 2.
 
-    @return .fc recongiration params
+    @param _projectId Project ID.
+    @param _currentFundingCycle current fc config.
+    @param _reconfigureFundingCyclesData reconfiguration data.
+    @param _splits split info that needs to be set.
+
+    @return _reconfigureFundingCyclesData Re-Configuration config
     */
-    function _generateReconfigurationData(
+    function _queuePhase2(
         uint256 _projectId,
-        JBFundingCycle memory _currentFundingCycle
+        JBFundingCycle memory _currentFundingCycle,
+        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData,
+        JBSplit[] calldata _splits
+    ) internal returns (JBReconfigureFundingCyclesData memory) {
+        // avoid stack too deep
+        {
+            // construct reconfiguration config for phase 2
+            // set default funding cycle config
+            JBFundingCycleData memory data = getDefaultJBFundingCycleData();
+
+            // set funding cycle metadata config
+            JBFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
+            metadata.pausePay = true;
+
+            // fetching constraint params
+            (
+                uint256 _distributionLimit,
+                uint256 _distributionLimitCurrency,
+                IJBPaymentTerminal _terminal,
+                address _token
+            ) = _getConstraintParams(_projectId);
+
+            // set constraint params
+            JBFundAccessConstraints[] memory fundAccessConstraints = new JBFundAccessConstraints[](1);
+            fundAccessConstraints[0] = JBFundAccessConstraints({
+                terminal: _terminal,
+                token: _token,
+                distributionLimit: _distributionLimit,
+                distributionLimitCurrency: _distributionLimitCurrency,
+                overflowAllowance: 0,
+                overflowAllowanceCurrency: 0
+            });
+
+            // initialize group splits
+            JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
+            _groupedSplits[0] = JBGroupedSplits({
+                group: _projectId,
+                splits: _splits
+            });
+
+            // set splits in split store
+            splitStore.set(splitProjectId, domain, _groupedSplits);
+
+            _reconfigureFundingCyclesData = JBReconfigureFundingCyclesData({
+                data: data,
+                metadata: metadata,
+                mustStartAtOrAfter: _currentFundingCycle.start + _currentFundingCycle.duration,
+                groupedSplits: _groupedSplits,
+                fundAccessConstraints: fundAccessConstraints,
+                memo: "reconfigure fc"
+            });
+        }
+
+        // setting duration
+        unchecked {
+            _reconfigureFundingCyclesData.data.duration =
+                tradePhaseTimestampForProject[_projectId] -
+                startPhaseTimestampForProject[_projectId];
+        }
+        return _reconfigureFundingCyclesData;
+    }
+
+    /** 
+    @notice 
+    Sets reconfiguration params for fc 3.
+
+    @param _projectId Project ID.
+    @param _currentFundingCycle current fc config.
+    @param _reconfigureFundingCyclesData reconfiguration data.
+
+    @return _reconfigureFundingCyclesData Re-Configuration config
+    */
+    function _queuePhase3(
+        uint256 _projectId,
+        JBFundingCycle memory _currentFundingCycle,
+        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
+    ) internal view returns (JBReconfigureFundingCyclesData memory) {
+        // construct reconfiguration config for phase 3
+        // set default funding cycle config
+        JBFundingCycleData memory data = getDefaultJBFundingCycleData();
+
+        // set funding cycle metadata config
+        JBFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
+        metadata.pausePay = true;
+        metadata.metadata = 1;
+
+        // initialize empty fund constraints
+        JBFundAccessConstraints[] memory fundAccessConstraints = new JBFundAccessConstraints[](0);
+
+        // initialize empty group split
+        JBGroupedSplits[] memory splitGroups = new JBGroupedSplits[](0);
+
+        _reconfigureFundingCyclesData = JBReconfigureFundingCyclesData({
+            data: data,
+            metadata: metadata,
+            mustStartAtOrAfter: _currentFundingCycle.start + _currentFundingCycle.duration,
+            groupedSplits: splitGroups,
+            fundAccessConstraints: fundAccessConstraints,
+            memo: "reconfigure fc"
+        });
+
+        // setting duration
+        unchecked {
+            _reconfigureFundingCyclesData.data.duration =
+                endPhaseTimestampForProject[_projectId] -
+                tradePhaseTimestampForProject[_projectId];
+        }
+
+        return _reconfigureFundingCyclesData;
+    }
+
+    /** 
+    @notice 
+    Sets reconfiguration params for fc 4.
+    @param _currentFundingCycle current fc config.
+    @param _reconfigureFundingCyclesData reconfiguration data.
+
+    @return _reconfigureFundingCyclesData Re-Configuration config    */
+    function _queuePhase4(
+        JBFundingCycle memory _currentFundingCycle,
+        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
     ) internal pure returns (JBReconfigureFundingCyclesData memory) {
-        JBFundingCycleData memory data = JBFundingCycleData({
+        // construct reconfiguration config for phase 3
+        // set default funding cycle config
+        JBFundingCycleData memory data = getDefaultJBFundingCycleData();
+
+        // set funding cycle metadata config
+        JBFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
+        metadata.pausePay = true;
+        metadata.redemptionRate = JBConstants.MAX_REDEMPTION_RATE;
+
+        // initialize empty fund constraints
+        JBFundAccessConstraints[] memory fundAccessConstraints = new JBFundAccessConstraints[](0);
+
+        // initialize empty group split
+        JBGroupedSplits[] memory splitGroups = new JBGroupedSplits[](0);
+
+        _reconfigureFundingCyclesData = JBReconfigureFundingCyclesData({
+            data: data,
+            metadata: metadata,
+            mustStartAtOrAfter: _currentFundingCycle.start + _currentFundingCycle.duration,
+            groupedSplits: splitGroups,
+            fundAccessConstraints: fundAccessConstraints,
+            memo: "reconfigure fc"
+        });
+        return _reconfigureFundingCyclesData;
+    }
+
+    /** 
+    @notice 
+    Returns default funding cycle data.
+    */
+    function getDefaultJBFundingCycleData() internal pure returns (JBFundingCycleData memory) {
+        return JBFundingCycleData({
             duration: 0,
             weight: 0,
             discountRate: 0,
             ballot: IJBFundingCycleBallot(address(0))
         });
+    }
 
-        JBFundingCycleMetadata memory metadata = JBFundingCycleMetadata({
+    /** 
+    @notice 
+    Returns default funding cycle metadata.
+    */
+    function getDefaultJBFundingCycleMetadata() internal pure returns (JBFundingCycleMetadata memory) {
+        return JBFundingCycleMetadata({
             global: JBGlobalFundingCycleMetadata({
                 allowSetTerminals: false,
                 allowSetController: false,
@@ -422,144 +589,5 @@ contract DefifaProjectDeployer is IDefifaDeployer {
             dataSource: address(0),
             metadata: 0
         });
-
-        JBFundAccessConstraints[]
-            memory fundAccessConstraints = new JBFundAccessConstraints[](1);
-        fundAccessConstraints[0] = JBFundAccessConstraints({
-            terminal: IJBPaymentTerminal(address(0)),
-            token: address(0),
-            distributionLimit: 0,
-            distributionLimitCurrency: 0,
-            overflowAllowance: 0,
-            overflowAllowanceCurrency: 0
-        });
-
-        JBSplit[] memory defaultSplits = new JBSplit[](1);
-        defaultSplits[0] = JBSplit({
-            preferClaimed: false,
-            preferAddToBalance: false,
-            percent: 0,
-            projectId: _projectId,
-            beneficiary: payable(address(0)),
-            lockedUntil: 0,
-            allocator: IJBSplitAllocator(address(0))
-        });
-
-        JBGroupedSplits[] memory splitGroups = new JBGroupedSplits[](1);
-        splitGroups[0] = JBGroupedSplits({group: 0, splits: defaultSplits});
-
-        return
-            JBReconfigureFundingCyclesData({
-                data: data,
-                metadata: metadata,
-                mustStartAtOrAfter: _currentFundingCycle.start +
-                    _currentFundingCycle.duration,
-                groupedSplits: splitGroups,
-                fundAccessConstraints: fundAccessConstraints,
-                memo: "reconfigure fc"
-            });
-    }
-
-    /** 
-    @notice 
-    Sets reconfiguration params for fc 2.
-
-    @param _projectId Project ID.
-    @param _reconfigureFundingCyclesData reconfiguration data.
-    @param _splitProjectId project id to set the split for.
-    @param _splits split info that needs to be set.
-    @param _domain unique identifier for the split.
-    */
-    function _queuePhase2(
-        uint256 _projectId,
-        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData,
-        uint256 _splitProjectId,
-        JBSplit[] memory _splits,
-        uint256 _domain
-    ) internal {
-        (
-            uint256 distributionLimit,
-            uint256 distributionLimitCurrency,
-            IJBPaymentTerminal terminal,
-            address token
-        ) = _getConstraintParams(_projectId);
-
-        // setting the fund access constraints
-        _reconfigureFundingCyclesData
-            .fundAccessConstraints[0]
-            .distributionLimit = distributionLimit;
-
-        _reconfigureFundingCyclesData
-            .fundAccessConstraints[0]
-            .distributionLimitCurrency = distributionLimitCurrency;
-
-        _reconfigureFundingCyclesData
-            .fundAccessConstraints[0]
-            .terminal = terminal;
-
-        _reconfigureFundingCyclesData.fundAccessConstraints[0].token = token;
-
-        // set group splits
-        JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
-        _groupedSplits[0] = JBGroupedSplits({group: _projectId, splits: _splits});
-
-        // set splits in split store
-        splitStore.set(_splitProjectId, _domain, _groupedSplits);
-
-        _reconfigureFundingCyclesData.groupedSplits[0].group = _projectId;
-
-        _reconfigureFundingCyclesData.groupedSplits[0].splits = _splits;
-
-        // pausing payments
-        _reconfigureFundingCyclesData.metadata.pausePay = true;
-
-        // 0 redemption rate
-        _reconfigureFundingCyclesData.metadata.redemptionRate = 0;
-        // setting duration
-        unchecked {
-            _reconfigureFundingCyclesData.data.duration =
-                tradePhaseTimestampForProject[_projectId] -
-                startPhaseTimestampForProject[_projectId];
-        }
-    }
-
-    /** 
-    @notice 
-    Sets reconfiguration params for fc 3.
-
-    @param _projectId Project ID.
-    @param _reconfigureFundingCyclesData reconfiguration data.
-    */
-    function _queuePhase3(
-        uint256 _projectId,
-        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
-    ) internal view {
-        // pausing transfers
-        _reconfigureFundingCyclesData.metadata.metadata = 1;
-
-        // pausing payments
-        _reconfigureFundingCyclesData.metadata.pausePay = true;
-
-        // setting duration
-        unchecked {
-            _reconfigureFundingCyclesData.data.duration =
-                endPhaseTimestampForProject[_projectId] -
-                tradePhaseTimestampForProject[_projectId];
-        }
-    }
-
-    /** 
-    @notice 
-    Sets reconfiguration params for fc 4.
-    @param _reconfigureFundingCyclesData reconfiguration data.
-    */
-    function _queuePhase4(
-        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
-    ) internal pure {
-        // pausing payments
-        _reconfigureFundingCyclesData.metadata.pausePay = true;
-
-        // 100 % redemption rate
-        _reconfigureFundingCyclesData.metadata.redemptionRate = 10000;
     }
 }
