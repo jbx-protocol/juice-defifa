@@ -13,21 +13,16 @@ interface IDefifaDeployer {
     function launchProjectFor(
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData,
-        FCParams calldata fcParams,
-        SplitConfig calldata splitParams,
-        DistributionParams calldata distributionParams,
-        JBGroupedSplits[] calldata _groupedSplits
+        FCParams calldata _fcParams,
+        DistributionParams calldata _distributionParams
     ) external returns (uint256 projectId);
 
     function queueNextFundingCycleOf(
         uint256 _projectId,
-        JBDeployTiered721DelegateData calldata _deployTieredNFTRewardDelegateData
+        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
+        uint256 _splitProjectId,
+        JBSplit[] calldata _splits
     ) external returns (uint256 configuration);
-}
-
-struct SplitConfig {
-    uint256 group;
-    uint256 domain;
 }
 
 struct FundAccessConstraintsConfig {

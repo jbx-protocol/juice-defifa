@@ -70,14 +70,8 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @notice
     Fund Access Constraint info to be used in 2nd fc. 
     */
-    mapping(uint256 => FundAccessConstraintsConfig)
-        public fundAccessConstraintOf;
+    mapping(uint256 => FundAccessConstraintsConfig) public fundAccessConstraintOf;
 
-    /** 
-    @notice
-    Split config to be used in 2nd fc. 
-    */
-    mapping(uint256 => SplitConfig) public splitConfigOf;
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -108,9 +102,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @param _deployTiered721DelegateData Data necessary to fulfill the transaction to deploy a delegate.
     @param _launchProjectData Data necessary to fulfill the transaction to launch a project.
     @param _fcParams FC Timestamp params.
-    @param _splitParams Splits params.
     @param _distributionParams distribution params.
-    @param _groupedSplits group splits for distribution.
 
     @return projectId The ID of the newly configured project.
   */
@@ -118,9 +110,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData,
         FCParams calldata _fcParams,
-        SplitConfig calldata _splitParams,
-        DistributionParams calldata _distributionParams,
-        JBGroupedSplits[] calldata _groupedSplits
+        DistributionParams calldata _distributionParams
     ) external override returns (uint256 projectId) {
         // checking in 1 block to avoidd duplication of similar checks
         if (
@@ -143,9 +133,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         _setReconfigurationConfig(
             projectId,
             _fcParams,
-            _splitParams,
-            _distributionParams,
-            _groupedSplits
+          _distributionParams
         );
 
         // Deploy the delegate contract.
@@ -182,12 +170,16 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
     @param _projectId The ID of the project having funding cycles reconfigured.
     @param _deployTiered721DelegateData Data necessary to fulfill the transaction to deploy a delegate.
+    @param _splitProjectId project id to set the split for.
+    @param _splits split info that needs to be set.
 
     @return configuration The configuration of the funding cycle that was successfully reconfigured.
   */
     function queueNextFundingCycleOf(
         uint256 _projectId,
-        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData
+        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
+        uint256 _splitProjectId,
+        JBSplit[] calldata _splits
     ) external override returns (uint256 configuration) {
         // reference of current FC
         JBFundingCycle memory currentFundingCycle = _deployTiered721DelegateData
@@ -233,7 +225,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
         // custom rules for each of the 3 reconfigurations
         if (currentFundingCycle.number == 1) {
-            _queuePhase2(_projectId, reconfigureFundingCyclesData);
+            _queuePhase2(_projectId, reconfigureFundingCyclesData, _splitProjectId, _splits, queuedFundingCycle.configuration);
         } else if (currentFundingCycle.number == 2) {
             _queuePhase3(_projectId, reconfigureFundingCyclesData);
         } else {
@@ -365,26 +357,13 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     Sets the reconfiguration config.
     @param _projectId Project ID to get the params of.
     @param _fcParams FC Timestamp params.
-    @param _splitParams Splits params.
     @param _distributionParams distribution params.
-    @param _groupedSplits group splits for distribution.
     */
     function _setReconfigurationConfig(
         uint256 _projectId,
         FCParams calldata _fcParams,
-        SplitConfig calldata _splitParams,
-        DistributionParams calldata _distributionParams,
-        JBGroupedSplits[] calldata _groupedSplits
+        DistributionParams calldata _distributionParams
     ) internal {
-        // set splits in split store
-        splitStore.set(_projectId, _splitParams.domain, _groupedSplits);
-
-        // save the split config so splits can be fetched during reconfiguration
-        splitConfigOf[_projectId] = SplitConfig({
-            group: _splitParams.group,
-            domain: _splitParams.domain
-        });
-
         // save the timestamps so they can be fetched during reconfiguration
         startPhaseTimestampForProject[_projectId] = _fcParams
             ._startPhaseTimestamp;
@@ -487,11 +466,17 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
     @param _projectId Project ID.
     @param _reconfigureFundingCyclesData reconfiguration data.
+    @param _splitProjectId project id to set the split for.
+    @param _splits split info that needs to be set.
+    @param _domain unique identifier for the split.
     */
     function _queuePhase2(
         uint256 _projectId,
-        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
-    ) internal view {
+        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData,
+        uint256 _splitProjectId,
+        JBSplit[] memory _splits,
+        uint256 _domain
+    ) internal {
         (
             uint256 distributionLimit,
             uint256 distributionLimitCurrency,
@@ -514,17 +499,16 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
         _reconfigureFundingCyclesData.fundAccessConstraints[0].token = token;
 
-        // fetch the splits from split store and set it
-        SplitConfig memory splitConfig = splitConfigOf[_projectId];
-        JBSplit[] memory splits = splitStore.splitsOf(
-            _projectId,
-            splitConfig.domain,
-            splitConfig.group
-        );
-        _reconfigureFundingCyclesData.groupedSplits[0].group = splitConfig
-            .group;
+        // set group splits
+        JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
+        _groupedSplits[0] = JBGroupedSplits({group: _projectId, splits: _splits});
 
-        _reconfigureFundingCyclesData.groupedSplits[0].splits = splits;
+        // set splits in split store
+        splitStore.set(_splitProjectId, _domain, _groupedSplits);
+
+        _reconfigureFundingCyclesData.groupedSplits[0].group = _projectId;
+
+        _reconfigureFundingCyclesData.groupedSplits[0].splits = _splits;
 
         // pausing payments
         _reconfigureFundingCyclesData.metadata.pausePay = true;
