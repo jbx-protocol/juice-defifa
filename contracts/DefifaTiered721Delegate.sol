@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
-import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721Delegate.sol";
+import "@jbx-protocol/juice-721-delegate/contracts/JBTiered721Delegate.sol";
 
 import "./structs/DefifaTierRedemptionWeight.sol";
 
@@ -50,22 +50,15 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
         string memory _contractUri,
         JB721TierParams[] memory _tiers,
         IJBTiered721DelegateStore _store,
-        JBTiered721Flags memory _flags
-    )   // TODO: call initialize in accordance to latest nft rewards version
-        // JBTiered721Delegate(
-        //     _projectId,
-        //     _directory,
-        //     _name,
-        //     _symbol,
-        //     _fundingCycleStore,
-        //     _baseUri,
-        //     _tokenUriResolver,
-        //     _contractUri,
-        //     _tiers,
-        //     _store,
-        //     _flags
-        // )
-    {}
+        JBTiered721Flags memory _flags // TODO: call initialize in accordance to latest nft rewards version // JBTiered721Delegate( //     _projectId, //     _directory, //     _name, //     _symbol, //     _fundingCycleStore, //     _baseUri, //     _tokenUriResolver,
+    ) //     _contractUri,
+    //     _tiers,
+    //     _store,
+    //     _flags
+    // )
+    {
+
+    }
 
     //*********************************************************************//
     // ---------------------- external transactions ---------------------- //
@@ -78,7 +71,8 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
 
         uint256 _cumulativeRedemptionWeight;
         for (uint256 _i; _i < _tierWeights.length; ) {
-            tierRedemptionWeights[_tierWeights[_i].id] = _tierWeights[_i].redemptionWeight;
+            tierRedemptionWeights[_tierWeights[_i].id] = _tierWeights[_i]
+                .redemptionWeight;
             _cumulativeRedemptionWeight += _tierWeights[_i].redemptionWeight;
 
             unchecked {
@@ -90,7 +84,7 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
             revert INVALID_REDEMPTION_WEIGHTS();
     }
 
-     /**
+    /**
         @notice 
         Part of IJBFundingCycleDataSource, this function gets called when a project's token holders redeem.
 
@@ -118,16 +112,19 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
         if (_data.tokenCount > 0) revert UNEXPECTED();
 
         // If redemption rate is 0, nothing can be reclaimed from the treasury
-        if (_data.redemptionRate == 0) return (0, _data.memo, delegateAllocations);
+        if (_data.redemptionRate == 0)
+            return (0, _data.memo, delegateAllocations);
 
         // Decode the metadata
         uint256[] memory _ids = abi.decode(_data.metadata, (uint256[]));
 
         // If redemption is max the reclaim Amount is the same as it cost to mint
-        if (_data.redemptionRate == JBConstants.MAX_REDEMPTION_RATE){
-            for(uint256 _i; _i < _ids.length; ){
-                unchecked{
-                    reclaimAmount += store.tierOfTokenId(address(this), _ids[_i]).contributionFloor;
+        if (_data.redemptionRate == JBConstants.MAX_REDEMPTION_RATE) {
+            for (uint256 _i; _i < _ids.length; ) {
+                unchecked {
+                    reclaimAmount += store
+                        .tierOfTokenId(address(this), _ids[_i])
+                        .contributionFloor;
 
                     _i++;
                 }

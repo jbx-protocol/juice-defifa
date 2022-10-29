@@ -6,8 +6,8 @@ import "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBProjects.sol";
 import "@jbx-protocol/juice-contracts-v3/contracts/libraries/JBOperations.sol";
 import "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycle.sol";
 import "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol";
-import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721Delegate.sol";
-import "@jbx-protocol/juice-nft-rewards/contracts/interfaces/IJBTiered721DelegateProjectDeployer.sol";
+import "@jbx-protocol/juice-721-delegate/contracts/JBTiered721Delegate.sol";
+import "@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateProjectDeployer.sol";
 import "./interfaces/IDefifaDeployer.sol";
 
 //*********************************************************************//

@@ -1,4 +1,3 @@
-
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
@@ -6,40 +5,35 @@ import "forge-std/Test.sol";
 import "../src/DefifaGovernor.sol";
 import "../src/DefifaTiered721Delegate.sol";
 
-import "@jbx-protocol/juice-nft-rewards/contracts/forge-test/utils/TestBaseWorkflow.sol";
-import "@jbx-protocol/juice-nft-rewards/contracts/structs/JBDeployTiered721DelegateData.sol";
-import "@jbx-protocol/juice-nft-rewards/contracts/structs/JBLaunchProjectData.sol";
-import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721DelegateStore.sol";
+import "@jbx-protocol/juice-721-delegate/contracts/forge-test/utils/TestBaseWorkflow.sol";
+import "@jbx-protocol/juice-721-delegate/contracts/structs/JBDeployTiered721DelegateData.sol";
+import "@jbx-protocol/juice-721-delegate/contracts/structs/JBLaunchProjectData.sol";
+import "@jbx-protocol/juice-721-delegate/contracts/JBTiered721DelegateStore.sol";
 
 contract DefifaGovernorTest is TestBaseWorkflow {
     DefifaGovernor public governor;
     DefifaTiered721Delegate public nfts;
 
-    address projectOwner = address(bytes20(keccak256('projectOwner')));
+    address projectOwner = address(bytes20(keccak256("projectOwner")));
 
-    function setUp() virtual override public {
+    function setUp() public virtual override {
         super.setUp();
-
-        
     }
 
     function testReceiveVotingPower(uint8 nTiers, uint8 tier) public {
         vm.assume(nTiers >= tier);
         vm.assume(tier != 0);
 
-        address _user = address(bytes20(keccak256('user')));
+        address _user = address(bytes20(keccak256("user")));
 
-       (
-           uint256 _projectId,
-           DefifaTiered721Delegate _nft,
-           DefifaGovernor _governor
-       ) = createDefifaProject(uint256(nTiers));
+        (
+            uint256 _projectId,
+            DefifaTiered721Delegate _nft,
+            DefifaGovernor _governor
+        ) = createDefifaProject(uint256(nTiers));
 
         // User should have no voting power
-        assertEq(
-            _governor.getVotes(_user, block.number - 1),
-            0
-        );
+        assertEq(_governor.getVotes(_user, block.number - 1), 0);
 
         // fund user
         vm.deal(_user, 1 ether);
@@ -58,42 +52,44 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
         // Pay to the project and mint an NFT
         vm.prank(_user);
-       _terminals[0].pay{value: 1 ether}(
-           _projectId,
-           1 ether,
-           address(0),
-           _user,
-           0,
-           true,
-           "",
-           metadata
-       );
+        _terminals[0].pay{value: 1 ether}(
+            _projectId,
+            1 ether,
+            address(0),
+            _user,
+            0,
+            true,
+            "",
+            metadata
+        );
 
-       // Set the delegate as the user themselves
-       vm.prank(_user);
-       _nft.setTierDelegate(_user, uint256(tier));
+        // Set the delegate as the user themselves
+        vm.prank(_user);
+        _nft.setTierDelegate(_user, uint256(tier));
 
-       // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
-       vm.roll(block.number + 1);
+        // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
+        vm.roll(block.number + 1);
         assertEq(
-          _governor.MAX_VOTING_POWER_TIER(),
-          _governor.getVotes(_user, block.number - 1)
-       );
+            _governor.MAX_VOTING_POWER_TIER(),
+            _governor.getVotes(_user, block.number - 1)
+        );
     }
 
-       function testSetRedemptionRates() public {
+    function testSetRedemptionRates() public {
         uint8 nTiers = 10;
         address[] memory _users = new address[](nTiers);
 
-       (
-           uint256 _projectId,
-           DefifaTiered721Delegate _nft,
-           DefifaGovernor _governor
-       ) = createDefifaProject(uint256(nTiers));
+        (
+            uint256 _projectId,
+            DefifaTiered721Delegate _nft,
+            DefifaGovernor _governor
+        ) = createDefifaProject(uint256(nTiers));
 
-        for (uint i = 0; i < nTiers; i++) {
+        for (uint256 i = 0; i < nTiers; i++) {
             // Generate a new address for each tier
-            _users[i] = address(bytes20(keccak256(abi.encode('user', Strings.toString(i)))));
+            _users[i] = address(
+                bytes20(keccak256(abi.encode("user", Strings.toString(i))))
+            );
 
             // fund user
             vm.deal(_users[i], 1 ether);
@@ -139,16 +135,20 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         uint256[] memory values = new uint256[](1);
         bytes[] memory calldatas = new bytes[](1);
 
-        // Generate the scorecards 
-        DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
+        // Generate the scorecards
+        DefifaTierRedemptionWeight[]
+            memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
 
-        for (uint i = 0; i < scorecards.length; i++) {
+        for (uint256 i = 0; i < scorecards.length; i++) {
             scorecards[i].id = i + 1;
             scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
         }
 
         targets[0] = address(_nft);
-        calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
+        calldatas[0] = abi.encodeCall(
+            _nft.setTierRedemptionWeights,
+            scorecards
+        );
 
         // Create the proposal
         uint256 _proposalId = _governor.propose(
@@ -167,39 +167,32 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         // Forward time so voting becomes active
         vm.roll(block.number + _governor.votingDelay() + 1);
         // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
-        vm.warp(block.timestamp + _governor.INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT() + 1);
-
-        // The initial voting delay should now have passed and it should be using the regular one
-        assertEq(
-            _governor.votingDelay(),
-            _governor.VOTING_DELAY() / 12
+        vm.warp(
+            block.timestamp +
+                _governor.INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT() +
+                1
         );
 
-        // All the users vote 
+        // The initial voting delay should now have passed and it should be using the regular one
+        assertEq(_governor.votingDelay(), _governor.VOTING_DELAY() / 12);
+
+        // All the users vote
         // 0 = Against
         // 1 = For
         // 2 = Abstain
-        for (uint i = 0; i < _users.length; i++) {
+        for (uint256 i = 0; i < _users.length; i++) {
             vm.prank(_users[i]);
-            _governor.castVote(
-                _proposalId,
-                1
-            );
+            _governor.castVote(_proposalId, 1);
         }
 
         // Forward time to the block after voting closes
         vm.roll(_governor.proposalDeadline(_proposalId) + 1);
-        
+
         // Execute the proposal
-        _governor.execute(
-            targets,
-            values,
-            calldatas,
-            keccak256("Governance!")
-        );
+        _governor.execute(targets, values, calldatas, keccak256("Governance!"));
 
         // Verify that the redemptionWeights actually changed
-        for (uint i = 0; i < scorecards.length; i++) {
+        for (uint256 i = 0; i < scorecards.length; i++) {
             assertEq(
                 _nft.tierRedemptionWeights(scorecards[i].id),
                 scorecards[i].redemptionWeight
@@ -210,7 +203,14 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
 
     // ----- internal helpers ------
-    function createDefifaProject(uint256 nTiers) internal returns (uint256 projectId, DefifaTiered721Delegate nft, DefifaGovernor governor) {
+    function createDefifaProject(uint256 nTiers)
+        internal
+        returns (
+            uint256 projectId,
+            DefifaTiered721Delegate nft,
+            DefifaGovernor governor
+        )
+    {
         (
             JBDeployTiered721DelegateData memory NFTRewardDeployerData,
             JBLaunchProjectData memory launchProjectData
@@ -248,34 +248,53 @@ contract DefifaGovernorTest is TestBaseWorkflow {
             launchProjectData.memo
         );
 
-        governor = new DefifaGovernor(
-            nft
-        );
+        governor = new DefifaGovernor(nft);
 
         // Transfer the ownership so governance can control the settings of the RewardsNFT
         nft.transferOwnership(address(governor));
     }
 
     // Create launchProjectFor(..) payload
-    string name = 'NAME';
-    string symbol = 'SYM';
-    string baseUri = 'http://www.null.com/';
-    string contractUri = 'ipfs://null';
-    address reserveBeneficiary = address(bytes20(keccak256('reserveBeneficiary')));
+    string name = "NAME";
+    string symbol = "SYM";
+    string baseUri = "http://www.null.com/";
+    string contractUri = "ipfs://null";
+    address reserveBeneficiary =
+        address(bytes20(keccak256("reserveBeneficiary")));
     //QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz
     bytes32[] tokenUris = [
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89),
-        bytes32(0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89)
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        ),
+        bytes32(
+            0x7D5A99F603F231D53A4F39D1521F98D2E8BB279CF29BEBFD0687DC98458E7F89
+        )
     ];
-    
+
     function createData(uint256 n_tiers)
         internal
         returns (

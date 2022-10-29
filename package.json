@@ -10,7 +10,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "@jbx-protocol/juice-721-delegate": "^2.0.0"
+    "@jbx-protocol/juice-721-delegate": "^1.0.0"
   },
   "devDependencies": {
     "prettier": "^2.4.0",
