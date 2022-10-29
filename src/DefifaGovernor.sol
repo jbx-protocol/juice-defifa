@@ -1,16 +1,19 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.16;
 
 import "prb-math/PRBMath.sol";
 
 import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721Delegate.sol";
+import "@jbx-protocol/juice-nft-rewards/contracts/JB721TieredGovernance.sol";
 
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
 
-// TODO: Set/enforce a starting time after which proposals may be accepted (prevent a propsal being made after first mint)
+// errors
+error PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
+
 contract DefifaGovernor is
     Governor,
     GovernorSettings,
@@ -19,11 +22,19 @@ contract DefifaGovernor is
    // The max voting power 1 tier has if everyone votes
     uint256 public constant MAX_VOTING_POWER_TIER = 1_000_000_000;
 
-   // The datasource for votingpower
+   // datasource
     IJBTiered721Delegate jbTieredRewards;
 
+    // The datasource for votingpower
+    IJB721TieredGovernance jbTieredGovernance;
+
+    // proposal creation threshold time
+    uint256 public immutable proposalCreationThreshold;
+
     constructor(
-        IJBTiered721Delegate _jbTieredRewards
+        IJBTiered721Delegate _jbTieredRewards,
+        IJB721TieredGovernance _jbTieredGovernance,
+        uint256 _proposalCreationThreshold
     )
         Governor("DefifaGovernor")
         GovernorSettings(
@@ -33,6 +44,8 @@ contract DefifaGovernor is
         )
     {
         jbTieredRewards = _jbTieredRewards;
+        jbTieredGovernance = _jbTieredGovernance;
+        proposalCreationThreshold = _proposalCreationThreshold;
     }
 
     /**
@@ -47,11 +60,9 @@ contract DefifaGovernor is
         uint256[] memory _tiers = abi.decode(params, (uint[]));
         uint256 _tiers_length = _tiers.length;
 
-        // TODO: IMPORTANT! Enforce there are no duplicates in _tiers
-
         // Loop over all tiers gathering the voting share of the user
         for (uint256 _i; _i < _tiers_length; ) {
-            uint256 _tierVotingPower = jbTieredRewards.getPastTierVotes(
+            uint256 _tierVotingPower = jbTieredGovernance.getPastTierVotes(
                 account,
                 _tiers[_i],
                 blockNumber
@@ -62,7 +73,7 @@ contract DefifaGovernor is
                     votingPower += PRBMath.mulDiv(
                         _tierVotingPower,
                         MAX_VOTING_POWER_TIER,
-                        jbTieredRewards.getPastTierTotalVotes(
+                        jbTieredGovernance.getPastTierTotalVotes(
                             _tiers[_i],
                             blockNumber
                         )
@@ -72,6 +83,18 @@ contract DefifaGovernor is
                 ++_i;
             }
         }
+    }
+
+    /**
+     * @dev See {IGovernor-getVotesWithParams}.
+     * reverting to avoid passsing of duplicate tier id's in params
+     */
+    function getVotesWithParams(
+        address account,
+        uint256 blockNumber,
+        bytes memory params
+    ) public pure override returns (uint256) {
+        revert("use getVotes");
     }
 
     /**
@@ -85,7 +108,7 @@ contract DefifaGovernor is
         returns (bytes memory)
     {
        // TODO: should we do this on every time or should we just store this, what is cheaper...
-       uint256 _count = jbTieredRewards.store().maxTierId(address(jbTieredRewards));
+       uint256 _count = jbTieredRewards.store().maxTierIdOf(address(jbTieredRewards));
        uint256[] memory _ids = new uint256[](_count);
 
       // Add all tiers to the array
@@ -140,12 +163,71 @@ contract DefifaGovernor is
         return super.state(proposalId);
     }
 
+    /**
+     * @dev See {IGovernor-castVoteWithReason}.
+     * reverting to avoid passsing of duplicate tier id's in params
+     */
+    function castVoteWithReason(
+        uint256 proposalId,
+        uint8 support,
+        string calldata reason
+    ) public pure override returns (uint256) {
+        revert("use castVote");
+    }
+
+    /**
+     * @dev See {IGovernor-castVoteWithReasonAndParams}.
+     * reverting to avoid passsing of duplicate tier id's in params
+     */
+    function castVoteWithReasonAndParams(
+        uint256 proposalId,
+        uint8 support,
+        string calldata reason,
+        bytes memory params
+    ) public pure override returns (uint256) {
+        revert("use castVote");
+    }
+
+    /**
+     * @dev See {IGovernor-castVoteBySig}.
+     * reverting to avoid passsing of duplicate tier id's in params
+     */
+    function castVoteBySig(
+        uint256 proposalId,
+        uint8 support,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public pure override returns (uint256) {
+        revert("use castVote");
+    }
+
+
+    /**
+     * @dev See {IGovernor-castVoteWithReasonAndParamsBySig}.
+     * reverting to avoid passsing of duplicate tier id's in params
+     */
+    function castVoteWithReasonAndParamsBySig(
+        uint256 proposalId,
+        uint8 support,
+        string calldata reason,
+        bytes memory params,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) public pure override returns (uint256) {
+        revert("use castVote");
+    }
+
     function propose(
         address[] memory targets,
         uint256[] memory values,
         bytes[] memory calldatas,
         string memory description
     ) public override(Governor) returns (uint256) {
+        if (block.timestamp <= proposalCreationThreshold) {
+            revert PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
+        }
         return super.propose(targets, values, calldatas, description);
     }
 
