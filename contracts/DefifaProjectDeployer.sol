@@ -1,25 +1,15 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
-import '@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController.sol';
-import '@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBProjects.sol';
-import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBOperations.sol';
-import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundingCycle.sol';
+import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBConstants.sol';
+import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBSplitsGroups.sol';
 import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol';
-import '@jbx-protocol/juice-721-delegate/contracts/JBTiered721Delegate.sol';
-import '@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateProjectDeployer.sol';
 import './interfaces/IDefifaDeployer.sol';
-
-//*********************************************************************//
-// --------------------------- custom errors ------------------------- //
-//*********************************************************************//
-error INVALID_FC_CONFIGURATION();
-error FC_ALREADY_RECONFIGURED();
-error RECONFIGURATION_OVER();
+import './structs/DefifaStoredOpsData.sol';
 
 /**
   @notice
-  Deploys a Defifa project.
+  Deploys a Defifa game.
 
   @dev
   Adheres to -
@@ -27,7 +17,31 @@ error RECONFIGURATION_OVER();
 */
 contract DefifaProjectDeployer is IDefifaDeployer {
   //*********************************************************************//
-  // --------------- public immutable stored properties ---------------- //
+  // --------------------------- custom errors ------------------------- //
+  //*********************************************************************//
+  error INVALID_GAME_CONFIGURATION();
+  error PHASE_ALREADY_QUEUED();
+  error GAME_OVER();
+  error UNEXPECTED_TERMINAL_CURRENCY();
+
+  //*********************************************************************//
+  // ----------------------- internal proprties ------------------------ //
+  //*********************************************************************//
+
+  /** 
+    @notice
+    Start time of the 2nd fc when re-configuring the fc. 
+  */
+  mapping(uint256 => DefifaTimeData) internal _timesFor;
+
+  /** 
+    @notice
+    Operations variables for a game.
+  */
+  mapping(uint256 => DefifaStoredOpsData) internal _opsFor;
+
+  //*********************************************************************//
+  // ------------------------ public constants ------------------------- //
   //*********************************************************************//
 
   /**
@@ -37,7 +51,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @dev
     The owner of this project ID must give this contract operator permissions over the SET_SPLITS operation.
   */
-  uint256 public constant SPLIT_PROJECT_ID = 1;
+  uint256 public constant override SPLIT_PROJECT_ID = 1;
 
   /** 
     @notice
@@ -46,73 +60,57 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @dev
     This could be any fixed number.
   */
-  uint256 public constant SPLIT_DOMAIN = 0;
+  uint256 public constant override SPLIT_DOMAIN = 0;
 
-  /**
-    @notice
-    The directory address to be used while deploying the delegate 
-  */
-  IJBDirectory public immutable directory;
+  //*********************************************************************//
+  // --------------- public immutable stored properties ---------------- //
+  //*********************************************************************//
 
-  /**
+  /** 
     @notice
-    The funding cycle store address to be used while deploying the delegate.
+    The token this game is played with.
   */
-  IJBFundingCycleStore public immutable fundingCycleStore;
-
-  /**
-    @notice
-    The tokenUriResolver address to be used while deploying the delegate 
-  */
-  IJBTokenUriResolver public immutable tokenUriResolver;
-
-  /**
-    @notice
-    The store address to be used while deploying the delegate 
-  */
-  IJBTiered721DelegateStore public immutable store;
+  address public override immutable token;
 
   /**
     @notice
     The controller with which new projects should be deployed. 
   */
-  IJBController public immutable controller;
+  IJBController public override immutable controller;
 
   /** 
     @notice
     The contract responsibile for deploying the delegate. 
   */
-  IJBTiered721DelegateDeployer public immutable delegateDeployer;
+  IJBTiered721DelegateDeployer public override immutable delegateDeployer;
 
-  /** 
-    @notice
-    The contract responsibile for setting the splits for distribution. 
-  */
-  IJBSplitsStore immutable splitStore;
+  //*********************************************************************//
+  // ------------------------- external views -------------------------- //
+  //*********************************************************************//
 
-  /** 
-    @notice
-    Start time of the 2nd fc when re-configuring the fc. 
-  */
-  mapping(uint256 => uint256) public startPhaseTimestampFor;
+  function startOf(uint256 _gameId) external view override returns (uint256) {
+    return _timesFor[_gameId].start;
+  }
 
-  /** 
-    @notice
-    Start time of the 3rd fc when re-configuring the fc. 
-  */
-  mapping(uint256 => uint256) public tradePhaseTimestampFor;
+  function tradeDeadlineOf(uint256 _gameId) external view override returns (uint256) {
+    return _timesFor[_gameId].tradeDeadline;
+  }
 
-  /** 
-    @notice
-    Start time of the 4th fc when re-configuring the fc. 
-  */
-  mapping(uint256 => uint256) public endPhaseTimestampFor;
+  function endOf(uint256 _gameId) external view override returns (uint256) {
+    return _timesFor[_gameId].end;
+  }
 
-  /** 
-    @notice
-    Fund Access Constraint info to be used in 2nd fc. 
-  */
-  mapping(uint256 => FundAccessConstraintsConfig) public fundAccessConstraintOf;
+  function terminalOf(uint256 _gameId) external view override returns (IJBPaymentTerminal) {
+    return _opsFor[_gameId].terminal;
+  }
+
+  function distributionLimit(uint256 _gameId) external view override returns (uint256) {
+    return uint256(_opsFor[_gameId].distributionLimit);
+  }
+
+  function holdFeesDuring(uint256 _gameId) external view override returns (bool) {
+    return _opsFor[_gameId].holdFees;
+  }
 
   //*********************************************************************//
   // -------------------------- constructor ---------------------------- //
@@ -125,19 +123,11 @@ contract DefifaProjectDeployer is IDefifaDeployer {
   constructor(
     IJBController _controller,
     IJBTiered721DelegateDeployer _delegateDeployer,
-    IJBSplitsStore _splitStore,
-    IJBDirectory _directory,
-    IJBFundingCycleStore _fundingCycleStore,
-    IJBTokenUriResolver _tokenUriResolver,
-    IJBTiered721DelegateStore _store
+    address _token
   ) {
     controller = _controller;
     delegateDeployer = _delegateDeployer;
-    splitStore = _splitStore;
-    directory = _directory;
-    fundingCycleStore = _fundingCycleStore;
-    tokenUriResolver = _tokenUriResolver;
-    store = _store;
+    token = _token;
   }
 
   //*********************************************************************//
@@ -146,564 +136,155 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
   /**
     @notice
-    Launches a new project with a tiered NFT rewards data source attached.
+    Launches a new project with a Defifa data source attached.
 
-    @param _delegateERC721Data Data necessary to fulfill the transaction to deploy a delegate.
+    @param _delegateData Data necessary to fulfill the transaction to deploy a delegate.
     @param _launchProjectData Data necessary to fulfill the transaction to launch a project.
-    @param _fcParams FC Timestamp params.
-    @param _distributionParams distribution params.
-    @param _splits split info that needs to be set.
 
-    @return projectId The ID of the newly configured project.
+    @return gameId The ID of the newly configured game.
   */
-  function launchProjectFor(
-    DelegateERC721Data calldata _delegateERC721Data,
-    JBLaunchProjectData memory _launchProjectData,
-    FCParams calldata _fcParams,
-    DistributionParams calldata _distributionParams,
-    JBSplit[] calldata _splits
-  ) external override returns (uint256 projectId) {
-    // checking in 1 block to avoidd duplication of similar checks
+  function launchGameWith(
+    DefifaDelegateData calldata _delegateData,
+    DefifaLaunchProjectData calldata _launchProjectData
+  ) external override returns (uint256 gameId) {
+    // Make sure the provided gameplay timestamps are sequential.
     if (
-      _fcParams._tradePhaseTimestamp < _fcParams._startPhaseTimestamp ||
-      _fcParams._endPhaseTimestamp < _fcParams._startPhaseTimestamp ||
-      _fcParams._endPhaseTimestamp < _fcParams._tradePhaseTimestamp
-    ) revert INVALID_FC_CONFIGURATION();
+      _launchProjectData.tradeDeadline < _launchProjectData.start ||
+      _launchProjectData.end < _launchProjectData.start ||
+      _launchProjectData.end < _launchProjectData.tradeDeadline
+    ) revert INVALID_GAME_CONFIGURATION();
 
-    // ensuring no distribution limit
-    if (_launchProjectData.fundAccessConstraints.length != 0) revert INVALID_FC_CONFIGURATION();
+    // Get the game ID, optimistically knowing it will be one greater than the current count.
+    gameId = controller.projects().count() + 1;
 
-    // ensuring the distributionsLimit for fc 2 is valid
-    if (_distributionParams.distributionsLimit == 0) revert INVALID_FC_CONFIGURATION();
+    // Make sure the provided terminal accepts the same currency as this game is being played in.
+    if (!_launchProjectData.terminal.acceptsToken(token, gameId)) revert UNEXPECTED_TERMINAL_CURRENCY();
 
-    // Get the project ID, optimistically knowing it will be one greater than the current count.
-    projectId = controller.projects().count() + 1;
+    // Store the timestamps that'll define the game phases.
+    _timesFor[gameId] = DefifaTimeData({
+      start: _launchProjectData.start,
+      tradeDeadline: _launchProjectData.tradeDeadline,
+      end: _launchProjectData.end
+    });
 
-    // set reconfiguration config to be used later
-    _setReconfigurationConfig(projectId, _fcParams, _distributionParams, _splits);
+    // Store the terminal, distribution limit, and hold fees flag.
+    _opsFor[gameId] = DefifaStoredOpsData({
+      terminal:_launchProjectData.terminal,
+      distributionLimit: _launchProjectData.distributionLimit,
+      holdFees: _launchProjectData.holdFees
+    });
 
-    // getting JBDeployTiered721DelegateData params
-    JBDeployTiered721DelegateData memory _deployTiered721DelegateData = _getTiered721DelegateData(
-      _delegateERC721Data
-    );
+    // Store the splits.
+    JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
+    _groupedSplits[0] = JBGroupedSplits({group: gameId, splits: _launchProjectData.splits});
+    controller.splitsStore().set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
 
     // Deploy the delegate contract.
     IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
-      projectId,
-      _deployTiered721DelegateData
+      gameId,
+      JBDeployTiered721DelegateData({
+        directory: controller.directory(),
+        name: _delegateData.name,
+        symbol: _delegateData.symbol,
+        fundingCycleStore: controller.fundingCycleStore(),
+        baseUri: _delegateData.baseUri,
+        tokenUriResolver: IJBTokenUriResolver(address(0)),
+        contractUri: _delegateData.contractUri,
+        owner: address(this),
+        pricing: JB721PricingParams({
+          tiers: _delegateData.tiers,
+          currency: _launchProjectData.terminal.currencyForToken(token),
+          decimals: _launchProjectData.terminal.decimalsForToken(token),
+          prices: IJBPrices(address(0))
+        }),
+        reservedTokenBeneficiary: address(0),
+        store: _delegateData.store,
+        flags: JBTiered721Flags({
+          lockReservedTokenChanges: false,
+          lockVotingUnitChanges: false,
+          lockManualMintingChanges: false
+        }),
+        governanceType: JB721GovernanceType.TIERED
+      })
     );
 
-    // set 1st fc config
-    _launchProjectData = _queuePhase1(_launchProjectData, _fcParams._mintPhaseDuration);
-
-    // Launch the project.
-    _launchProjectFor(address(this), _launchProjectData, _delegate);
+    // Queue the first phase of the game.
+    _queuePhase1For(_launchProjectData, address(_delegate));
   }
 
   /**
     @notice
-    Reconfigures funding cycles for a project with a delegate attached.
+    Queues the funding cycle that represents the next phase of the game, if it isn't queued already.
 
-    @dev
-    Only a project's owner or a designated operator can configure its funding cycles.
-
-    @param _projectId The ID of the project having funding cycles reconfigured.
+    @param _gameId The ID of the project having funding cycles reconfigured.
 
     @return configuration The configuration of the funding cycle that was successfully reconfigured.
   */
-  function queueNextFundingCycleOf(uint256 _projectId)
+  function queueNextPhaseOf(uint256 _gameId)
     external
     override
     returns (uint256 configuration)
   {
-    // reference of current FC
+    // Get the project's current funding cycle along with its metadata.
     (JBFundingCycle memory currentFundingCycle, JBFundingCycleMetadata memory metadata) = controller
-      .currentFundingCycleOf(_projectId);
+      .currentFundingCycleOf(_gameId);
 
-    // reference of queued FC
-    (JBFundingCycle memory queuedFundingCycle, ) = controller.queuedFundingCycleOf(_projectId);
+    // There are only 4 phases.
+    if (currentFundingCycle.number >= 4) revert GAME_OVER();
 
-    // ensuring no reconfigurations after fc 4
-    if (currentFundingCycle.number > 3) revert RECONFIGURATION_OVER();
+    // Get the project's queued funding cycle.
+    (JBFundingCycle memory queuedFundingCycle, ) = controller.queuedFundingCycleOf(_gameId);
 
-    // ensuring reconfiguration is avoided if a reconfiguration already happened
+    // Make sure the next game phase isn't already queued.
     if (currentFundingCycle.configuration != queuedFundingCycle.configuration)
-      revert FC_ALREADY_RECONFIGURED();
+      revert PHASE_ALREADY_QUEUED();
 
-    // validating the data source
-    address _delegate = metadata.dataSource;
-
-    // checking validity of delegate
-    uint256 size;
-    assembly {
-      size := extcodesize(_delegate)
-    }
-    if (size == 0) {
-      revert INVALID_FC_CONFIGURATION();
-    }
-
-    JBReconfigureFundingCyclesData memory reconfigureFundingCyclesData;
-
-    // custom rules for each of the 3 reconfigurations
-    if (currentFundingCycle.number == 1) {
-      reconfigureFundingCyclesData = _queuePhase2(
-        _projectId,
-        currentFundingCycle,
-        reconfigureFundingCyclesData
-      );
-    } else if (currentFundingCycle.number == 2) {
-      reconfigureFundingCyclesData = _queuePhase3(
-        _projectId,
-        currentFundingCycle,
-        reconfigureFundingCyclesData
-      );
-    } else {
-      reconfigureFundingCyclesData = _queuePhase4(
-        currentFundingCycle,
-        reconfigureFundingCyclesData
-      );
-    }
-
-    // Reconfigure the funding cycles.
-    return
-      _reconfigureFundingCyclesOf(
-        _projectId,
-        reconfigureFundingCyclesData,
-        IJBTiered721Delegate(_delegate)
-      );
+    // Queue the next phase of the game.
+    if (currentFundingCycle.number == 1) return _queuePhase2(_gameId, metadata.dataSource);
+    else if (currentFundingCycle.number == 2) return _queuePhase3(_gameId, metadata.dataSource);
+    else return _queuePhase4(_gameId, metadata.dataSource);
   }
 
   //*********************************************************************//
   // ------------------------ internal functions ----------------------- //
   //*********************************************************************//
 
-  /** 
+  /**
     @notice
-    Launches a project.
+    Launches a Defifa project with phase 1 configured.
 
-    @param _owner The address to set as the owner of the project. 
-    @param _launchProjectData Data necessary to fulfill the transaction to launch the project.
-    @param _dataSource The data source to set.
+    @param _launchProjectData Project data used for launching a 
+    @param _dataSource The address of the Defifa data source.
   */
-  function _launchProjectFor(
-    address _owner,
-    JBLaunchProjectData memory _launchProjectData,
-    IJBTiered721Delegate _dataSource
-  ) internal {
+  function _queuePhase1For(DefifaLaunchProjectData memory _launchProjectData, address _dataSource)
+    internal
+  {
+    // Initialize the terminal array .
+    IJBPaymentTerminal[] memory _terminals = new IJBPaymentTerminal[](1);
+    _terminals[0] = _launchProjectData.terminal;
+
+    // Launch the project with params for phase 1 of the game.
     controller.launchProjectFor(
-      _owner,
+      // Project is owned by this contract.
+      address(this),
       _launchProjectData.projectMetadata,
-      _launchProjectData.data,
-      JBFundingCycleMetadata({
-        global: _launchProjectData.metadata.global,
-        reservedRate: _launchProjectData.metadata.reservedRate,
-        redemptionRate: _launchProjectData.metadata.redemptionRate,
-        ballotRedemptionRate: _launchProjectData.metadata.ballotRedemptionRate,
-        pausePay: _launchProjectData.metadata.pausePay,
-        pauseDistributions: _launchProjectData.metadata.pauseDistributions,
-        pauseRedeem: _launchProjectData.metadata.pauseRedeem,
-        pauseBurn: _launchProjectData.metadata.pauseBurn,
-        allowMinting: _launchProjectData.metadata.allowMinting,
-        allowTerminalMigration: _launchProjectData.metadata.allowTerminalMigration,
-        allowControllerMigration: _launchProjectData.metadata.allowControllerMigration,
-        holdFees: _launchProjectData.metadata.holdFees,
-        preferClaimedTokenOverride: _launchProjectData.metadata.preferClaimedTokenOverride,
-        useTotalOverflowForRedemptions: _launchProjectData.metadata.useTotalOverflowForRedemptions,
-        // Set the project to use the data source for its pay function.
-        useDataSourceForPay: true,
-        useDataSourceForRedeem: _launchProjectData.metadata.useDataSourceForRedeem,
-        // Set the delegate address as the data source of the provided metadata.
-        dataSource: address(_dataSource),
-        metadata: _launchProjectData.metadata.metadata
-      }),
-      _launchProjectData.mustStartAtOrAfter,
-      _launchProjectData.groupedSplits,
-      _launchProjectData.fundAccessConstraints,
-      _launchProjectData.terminals,
-      _launchProjectData.memo
-    );
-  }
-
-  /**
-    @notice
-    Launches funding cycles for a project.
-
-    @param _projectId The ID of the project having funding cycles launched.
-    @param _launchFundingCyclesData Data necessary to fulfill the transaction to launch funding cycles for the project.
-    @param _dataSource The data source to set.
-
-    @return configuration The configuration of the funding cycle that was successfully created.
-  */
-  function _launchFundingCyclesFor(
-    uint256 _projectId,
-    JBLaunchFundingCyclesData memory _launchFundingCyclesData,
-    IJBTiered721Delegate _dataSource
-  ) internal returns (uint256) {
-    return
-      controller.launchFundingCyclesFor(
-        _projectId,
-        _launchFundingCyclesData.data,
-        JBFundingCycleMetadata({
-          global: _launchFundingCyclesData.metadata.global,
-          reservedRate: _launchFundingCyclesData.metadata.reservedRate,
-          redemptionRate: _launchFundingCyclesData.metadata.redemptionRate,
-          ballotRedemptionRate: _launchFundingCyclesData.metadata.ballotRedemptionRate,
-          pausePay: _launchFundingCyclesData.metadata.pausePay,
-          pauseDistributions: _launchFundingCyclesData.metadata.pauseDistributions,
-          pauseRedeem: _launchFundingCyclesData.metadata.pauseRedeem,
-          pauseBurn: _launchFundingCyclesData.metadata.pauseBurn,
-          allowMinting: _launchFundingCyclesData.metadata.allowMinting,
-          allowTerminalMigration: _launchFundingCyclesData.metadata.allowTerminalMigration,
-          allowControllerMigration: _launchFundingCyclesData.metadata.allowControllerMigration,
-          holdFees: _launchFundingCyclesData.metadata.holdFees,
-          preferClaimedTokenOverride: _launchFundingCyclesData.metadata.preferClaimedTokenOverride,
-          useTotalOverflowForRedemptions: _launchFundingCyclesData.metadata.useTotalOverflowForRedemptions,
-          // Set the project to use the data source for its pay function.
-          useDataSourceForPay: true,
-          useDataSourceForRedeem: _launchFundingCyclesData.metadata.useDataSourceForRedeem,
-          // Set the delegate address as the data source of the provided metadata.
-          dataSource: address(_dataSource),
-          metadata: _launchFundingCyclesData.metadata.metadata
-        }),
-        _launchFundingCyclesData.mustStartAtOrAfter,
-        _launchFundingCyclesData.groupedSplits,
-        _launchFundingCyclesData.fundAccessConstraints,
-        _launchFundingCyclesData.terminals,
-        _launchFundingCyclesData.memo
-      );
-  }
-
-  /**
-    @notice
-    Reconfigure funding cycles for a project.
-
-    @param _projectId The ID of the project having funding cycles launched.
-    @param _reconfigureFundingCyclesData Data necessary to fulfill the transaction to launch funding cycles for the project.
-    @param _dataSource The data source to set.
-
-    @return The configuration of the funding cycle that was successfully reconfigured.
-  */
-  function _reconfigureFundingCyclesOf(
-    uint256 _projectId,
-    JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData,
-    IJBTiered721Delegate _dataSource
-  ) internal returns (uint256) {
-    return
-      controller.reconfigureFundingCyclesOf(
-        _projectId,
-        _reconfigureFundingCyclesData.data,
-        JBFundingCycleMetadata({
-          global: _reconfigureFundingCyclesData.metadata.global,
-          reservedRate: _reconfigureFundingCyclesData.metadata.reservedRate,
-          redemptionRate: _reconfigureFundingCyclesData.metadata.redemptionRate,
-          ballotRedemptionRate: _reconfigureFundingCyclesData.metadata.ballotRedemptionRate,
-          pausePay: _reconfigureFundingCyclesData.metadata.pausePay,
-          pauseDistributions: _reconfigureFundingCyclesData.metadata.pauseDistributions,
-          pauseRedeem: _reconfigureFundingCyclesData.metadata.pauseRedeem,
-          pauseBurn: _reconfigureFundingCyclesData.metadata.pauseBurn,
-          allowMinting: _reconfigureFundingCyclesData.metadata.allowMinting,
-          allowTerminalMigration: _reconfigureFundingCyclesData.metadata.allowTerminalMigration,
-          allowControllerMigration: _reconfigureFundingCyclesData.metadata.allowControllerMigration,
-          holdFees: _reconfigureFundingCyclesData.metadata.holdFees,
-          preferClaimedTokenOverride: _reconfigureFundingCyclesData.metadata.preferClaimedTokenOverride,
-          useTotalOverflowForRedemptions: _reconfigureFundingCyclesData.metadata.useTotalOverflowForRedemptions,
-          // Set the project to use the data source for its pay function.
-          useDataSourceForPay: true,
-          useDataSourceForRedeem: _reconfigureFundingCyclesData.metadata.useDataSourceForRedeem,
-          // Set the delegate address as the data source of the provided metadata.
-          dataSource: address(_dataSource),
-          metadata: _reconfigureFundingCyclesData.metadata.metadata
-        }),
-        _reconfigureFundingCyclesData.mustStartAtOrAfter,
-        _reconfigureFundingCyclesData.groupedSplits,
-        _reconfigureFundingCyclesData.fundAccessConstraints,
-        _reconfigureFundingCyclesData.memo
-      );
-  }
-
-  /**
-    @notice
-    Get fund access constraint parameters.
-
-    @param _projectId Project ID to get the params of.
-
-    @return distribution limit & distribution limit currency.
-  */
-  function _getConstraintParams(uint256 _projectId)
-    internal
-    view
-    returns (
-      uint256,
-      uint256,
-      IJBPaymentTerminal,
-      address
-    )
-  {
-    // Get a reference to the packed data.
-    FundAccessConstraintsConfig memory fundAccessConstraintsConfig = fundAccessConstraintOf[
-      _projectId
-    ];
-    // The limit is in bits 0 -231. The currency is in bits 232-255.
-    return (
-      uint256(uint232(fundAccessConstraintsConfig.packedDistributionLimit)),
-      fundAccessConstraintsConfig.packedDistributionLimit >> 232,
-      fundAccessConstraintsConfig.terminal,
-      fundAccessConstraintsConfig.token
-    );
-  }
-
-  /**
-    @notice
-    Sets the reconfiguration config.
-
-    @param _projectId Project ID to get the params of.
-    @param _fcParams FC Timestamp params.
-    @param _distributionParams distribution params.
-    @param _splits split info that needs to be set.
-  */
-  function _setReconfigurationConfig(
-    uint256 _projectId,
-    FCParams calldata _fcParams,
-    DistributionParams calldata _distributionParams,
-    JBSplit[] calldata _splits
-  ) internal {
-    // save the timestamps so they can be fetched during reconfiguration
-    startPhaseTimestampFor[_projectId] = _fcParams._startPhaseTimestamp;
-    tradePhaseTimestampFor[_projectId] = _fcParams._tradePhaseTimestamp;
-    endPhaseTimestampFor[_projectId] = _fcParams._endPhaseTimestamp;
-
-    // save the fund access constraint info so they can be fetched during reconfiguration
-    fundAccessConstraintOf[_projectId] = FundAccessConstraintsConfig({
-      terminal: _distributionParams.terminal,
-      token: _distributionParams.token,
-      packedDistributionLimit: _distributionParams.distributionsLimit |
-        (_distributionParams.distributionLimitCurrency << 232)
-    });
-
-    // initialize group splits
-    JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
-    _groupedSplits[0] = JBGroupedSplits({group: _projectId, splits: _splits});
-
-    // set splits in split store
-    splitStore.set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
-  }
-
-  /**
-    @notice
-    Sets launch params for fc 1.
-
-    @param _launchProjectData launch fc data.
-    @param _duration fc duration.
-
-    @return _launchProjectData Launch config
-  */
-  function _queuePhase1(JBLaunchProjectData memory _launchProjectData, uint256 _duration)
-    internal
-    pure
-    returns (JBLaunchProjectData memory)
-  {
-    // Set the project to use the data source for its redeem function.
-    _launchProjectData.metadata.useDataSourceForRedeem = true;
-
-    // 100 % redemption rate
-    _launchProjectData.metadata.redemptionRate = JBConstants.MAX_REDEMPTION_RATE;
-
-    // set duration of 1st FC aka Mint Phase Duration
-    _launchProjectData.data.duration = _duration;
-
-    return _launchProjectData;
-  }
-
-  /**
-    @notice
-    Sets reconfiguration params for fc 2.
-
-    @param _projectId Project ID.
-    @param _currentFundingCycle current fc config.
-    @param _reconfigureFundingCyclesData reconfiguration data.
-
-    @return _reconfigureFundingCyclesData Re-Configuration config
-  */
-  function _queuePhase2(
-    uint256 _projectId,
-    JBFundingCycle memory _currentFundingCycle,
-    JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
-  ) internal view returns (JBReconfigureFundingCyclesData memory) {
-    // avoid stack too deep
-    {
-      // construct reconfiguration config for phase 2
-      // set default funding cycle config
-      JBFundingCycleData memory data = getDefaultJBFundingCycleData();
-
-      // set funding cycle metadata config
-      JBPayDataSourceFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
-      metadata.pausePay = true;
-
-      // fetching constraint params
-      (
-        uint256 _distributionLimit,
-        uint256 _distributionLimitCurrency,
-        IJBPaymentTerminal _terminal,
-        address _token
-      ) = _getConstraintParams(_projectId);
-
-      // set constraint params
-      JBFundAccessConstraints[] memory fundAccessConstraints = new JBFundAccessConstraints[](1);
-      fundAccessConstraints[0] = JBFundAccessConstraints({
-        terminal: _terminal,
-        token: _token,
-        distributionLimit: _distributionLimit,
-        distributionLimitCurrency: _distributionLimitCurrency,
-        overflowAllowance: 0,
-        overflowAllowanceCurrency: 0
-      });
-
-      // fetch splits
-      JBSplit[] memory _splits = splitStore.splitsOf(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _projectId);
-
-      JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
-      _groupedSplits[0] = JBGroupedSplits({group: _projectId, splits: _splits});
-
-      _reconfigureFundingCyclesData = JBReconfigureFundingCyclesData({
-        data: data,
-        metadata: metadata,
-        mustStartAtOrAfter: _currentFundingCycle.start + _currentFundingCycle.duration,
-        groupedSplits: _groupedSplits,
-        fundAccessConstraints: fundAccessConstraints,
-        memo: 'reconfigure fc'
-      });
-    }
-
-    // setting duration
-    unchecked {
-      _reconfigureFundingCyclesData.data.duration =
-        tradePhaseTimestampFor[_projectId] -
-        startPhaseTimestampFor[_projectId];
-    }
-    return _reconfigureFundingCyclesData;
-  }
-
-  /**
-    @notice
-    Sets reconfiguration params for fc 3.
-
-    @param _projectId Project ID.
-    @param _currentFundingCycle current fc config.
-    @param _reconfigureFundingCyclesData reconfiguration data.
-
-    @return _reconfigureFundingCyclesData Re-Configuration config
-  */
-  function _queuePhase3(
-    uint256 _projectId,
-    JBFundingCycle memory _currentFundingCycle,
-    JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
-  ) internal view returns (JBReconfigureFundingCyclesData memory) {
-    // construct reconfiguration config for phase 3
-    // set default funding cycle config
-    JBFundingCycleData memory data = getDefaultJBFundingCycleData();
-
-    // set funding cycle metadata config
-    JBPayDataSourceFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
-    metadata.pausePay = true;
-    metadata.metadata = 1;
-
-    // initialize empty fund constraints
-    JBFundAccessConstraints[] memory fundAccessConstraints = new JBFundAccessConstraints[](0);
-
-    // initialize empty group split
-    JBGroupedSplits[] memory splitGroups = new JBGroupedSplits[](0);
-
-    _reconfigureFundingCyclesData = JBReconfigureFundingCyclesData({
-      data: data,
-      metadata: metadata,
-      mustStartAtOrAfter: _currentFundingCycle.start + _currentFundingCycle.duration,
-      groupedSplits: splitGroups,
-      fundAccessConstraints: fundAccessConstraints,
-      memo: 'reconfigure fc'
-    });
-
-    // setting duration
-    unchecked {
-      _reconfigureFundingCyclesData.data.duration =
-        endPhaseTimestampFor[_projectId] -
-        tradePhaseTimestampFor[_projectId];
-    }
-
-    return _reconfigureFundingCyclesData;
-  }
-
-  /**
-    @notice
-    Sets reconfiguration params for fc 4.
-
-    @param _currentFundingCycle current fc config.
-    @param _reconfigureFundingCyclesData reconfiguration data.
-
-    @return _reconfigureFundingCyclesData Re-Configuration config
-  */
-  function _queuePhase4(
-    JBFundingCycle memory _currentFundingCycle,
-    JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
-  ) internal pure returns (JBReconfigureFundingCyclesData memory) {
-    // construct reconfiguration config for phase 3
-    // set default funding cycle config
-    JBFundingCycleData memory data = getDefaultJBFundingCycleData();
-
-    // set funding cycle metadata config
-    JBPayDataSourceFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
-    metadata.pausePay = true;
-    metadata.redemptionRate = JBConstants.MAX_REDEMPTION_RATE;
-
-    // initialize empty fund constraints
-    JBFundAccessConstraints[] memory fundAccessConstraints = new JBFundAccessConstraints[](0);
-
-    // initialize empty group split
-    JBGroupedSplits[] memory splitGroups = new JBGroupedSplits[](0);
-
-    _reconfigureFundingCyclesData = JBReconfigureFundingCyclesData({
-      data: data,
-      metadata: metadata,
-      mustStartAtOrAfter: _currentFundingCycle.start + _currentFundingCycle.duration,
-      groupedSplits: splitGroups,
-      fundAccessConstraints: fundAccessConstraints,
-      memo: 'reconfigure fc'
-    });
-    return _reconfigureFundingCyclesData;
-  }
-
-  /**
-      @notice
-      Returns default funding cycle data.
-    */
-  function getDefaultJBFundingCycleData() internal pure returns (JBFundingCycleData memory) {
-    return
-      JBFundingCycleData({
-        duration: 0,
+      JBFundingCycleData ({
+        duration: _launchProjectData.mintDuration,
+        // Don't mint project tokens.
         weight: 0,
         discountRate: 0,
         ballot: IJBFundingCycleBallot(address(0))
-      });
-  }
-
-  /**
-    @notice
-    Returns default funding cycle metadata.
-  */
-  function getDefaultJBFundingCycleMetadata()
-    internal
-    pure
-    returns (JBPayDataSourceFundingCycleMetadata memory)
-  {
-    return
-      JBPayDataSourceFundingCycleMetadata({
+      }),
+      JBFundingCycleMetadata ({
         global: JBGlobalFundingCycleMetadata({
           allowSetTerminals: false,
           allowSetController: false,
           pauseTransfers: false
         }),
         reservedRate: 0,
-        redemptionRate: 0,
-        ballotRedemptionRate: 0,
+        // Full refunds.
+        redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+        ballotRedemptionRate: JBConstants.MAX_REDEMPTION_RATE,
         pausePay: false,
         pauseDistributions: false,
         pauseRedeem: false,
@@ -711,51 +292,222 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         allowMinting: false,
         allowTerminalMigration: false,
         allowControllerMigration: false,
-        holdFees: false,
+        holdFees: _launchProjectData.holdFees,
         preferClaimedTokenOverride: false,
         useTotalOverflowForRedemptions: false,
-        useDataSourceForRedeem: false,
+        useDataSourceForPay: true,
+        useDataSourceForRedeem: true,
+        dataSource: _dataSource,
         metadata: 0
-      });
+      }),
+      _launchProjectData.mustStartAtOrAfter,
+      new JBGroupedSplits[](0),
+      new JBFundAccessConstraints[](0),
+      _terminals,
+      'Defifa game phase 1.'
+    );
   }
 
   /**
     @notice
-    Returns tier delegate data.
+    Gets reconfiguration data for phase 2 of the game.
+
+    @dev
+    Phase 2 freezes the treasury and activates the pre-programmed distribution limit to the specified splits.
+
+    @param _gameId The ID of the project that's being reconfigured.
+    @param _dataSource The data source to use.
+
+    @return configuration The configuration of the funding cycle that was successfully reconfigured.
   */
-  function _getTiered721DelegateData(DelegateERC721Data calldata _delegateERC721Data)
+  function _queuePhase2(uint256 _gameId, address _dataSource)
     internal
-    view
-    returns (JBDeployTiered721DelegateData memory)
+    returns (uint256 configuration)
   {
-    JB721PricingParams memory _pricing = JB721PricingParams({
-      tiers: _delegateERC721Data.tiers,
-      currency: 1,
-      decimals: 18,
-      prices: IJBPrices(address(0))
+    // Get a reference to the terminal being used by the project.
+    DefifaStoredOpsData memory _ops = _opsFor[_gameId];
+
+    // Set fund access constraints.
+    JBFundAccessConstraints[] memory fundAccessConstraints = new JBFundAccessConstraints[](1);
+    fundAccessConstraints[0] = JBFundAccessConstraints({
+      terminal: _ops.terminal,
+      token: token,
+      distributionLimit: _ops.distributionLimit, 
+      distributionLimitCurrency: _ops.terminal.currencyForToken(token),
+      overflowAllowance: 0,
+      overflowAllowanceCurrency: 0
     });
 
-    JBTiered721Flags memory _tierFlags = JBTiered721Flags({
-      lockReservedTokenChanges: false,
-      lockVotingUnitChanges: false,
-      lockManualMintingChanges: false
-    });
+    // Fetch splits.
+    JBSplit[] memory _splits =  controller.splitsStore().splitsOf(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _gameId);
+
+    // Make a group split for ETH payouts.
+    JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
+    _groupedSplits[0] = JBGroupedSplits({group: JBSplitsGroups.ETH_PAYOUT, splits: _splits});
+
+    // Get a reference to the time data.
+    DefifaTimeData memory _times = _timesFor[_gameId];
 
     return
-      JBDeployTiered721DelegateData({
-        directory: directory,
-        name: _delegateERC721Data.name,
-        symbol: _delegateERC721Data.symbol,
-        fundingCycleStore: fundingCycleStore,
-        baseUri: _delegateERC721Data.baseUri,
-        tokenUriResolver: tokenUriResolver,
-        contractUri: _delegateERC721Data.contractUri,
-        owner: address(this),
-        pricing: _pricing,
-        reservedTokenBeneficiary: address(0),
-        store: store,
-        flags: _tierFlags,
-        governanceType: JB721GovernanceType.TIERED
-      });
+      controller.reconfigureFundingCyclesOf(
+        _gameId,
+        JBFundingCycleData ({
+          duration: _times.tradeDeadline - _times.start,
+          // Don't mint project tokens.
+          weight: 0,
+          discountRate: 0,
+          ballot: IJBFundingCycleBallot(address(0))
+        }),
+        JBFundingCycleMetadata({
+         global: JBGlobalFundingCycleMetadata({
+            allowSetTerminals: false,
+            allowSetController: false,
+            pauseTransfers: false
+          }),
+          reservedRate: 0,
+          redemptionRate: 0,
+          ballotRedemptionRate: 0,
+          // No more payments.
+          pausePay: true,
+          pauseDistributions: false,
+          // No redemptions.
+          pauseRedeem: true,
+          pauseBurn: false,
+          allowMinting: false,
+          allowTerminalMigration: false,
+          allowControllerMigration: false,
+          holdFees: _ops.holdFees,
+          preferClaimedTokenOverride: false,
+          useTotalOverflowForRedemptions: false,
+          useDataSourceForPay: true,
+          useDataSourceForRedeem: true,
+          dataSource: _dataSource,
+          metadata: 0
+        }),
+        0,
+         _groupedSplits,
+        fundAccessConstraints,
+        'Defifa game phase 2.'
+      );
+  }
+
+  /**
+    @notice
+    Gets reconfiguration data for phase 3 of the game.
+
+    @dev
+    Phase 3 imposes a trade deadline. 
+
+    @param _gameId The ID of the project that's being reconfigured.
+    @param _dataSource The data source to use.
+
+    @return configuration The configuration of the funding cycle that was successfully reconfigured.
+  */
+  function _queuePhase3(uint256 _gameId, address _dataSource) internal returns (uint256 configuration) {
+
+    // Get a reference to the time data.
+    DefifaTimeData memory _times = _timesFor[_gameId];
+
+    return
+      controller.reconfigureFundingCyclesOf(
+        _gameId,
+        JBFundingCycleData ({
+          duration: _times.end - _times.tradeDeadline,
+          // Don't mint project tokens.
+          weight: 0,
+          discountRate: 0,
+          ballot: IJBFundingCycleBallot(address(0))
+        }),
+        JBFundingCycleMetadata({
+         global: JBGlobalFundingCycleMetadata({
+            allowSetTerminals: false,
+            allowSetController: false,
+            pauseTransfers: false
+          }),
+          reservedRate: 0,
+          redemptionRate: 0,
+          ballotRedemptionRate: 0,
+          // No more payments.
+          pausePay: true,
+          pauseDistributions: false,
+          // No redemptions.
+          pauseRedeem: true,
+          pauseBurn: false,
+          allowMinting: false,
+          allowTerminalMigration: false,
+          allowControllerMigration: false,
+          holdFees: false,
+          preferClaimedTokenOverride: false,
+          useTotalOverflowForRedemptions: false,
+          useDataSourceForPay: true,
+          useDataSourceForRedeem: true,
+          dataSource: _dataSource,
+          // Set a metadata of 1 to impose token non-transferability. 
+          metadata: 1
+        }),
+        0,
+        new JBGroupedSplits[](0),
+        new JBFundAccessConstraints[](0),
+        'Defifa game phase 3.'
+      );
+  }
+
+  /**
+    @notice
+    Gets reconfiguration data for phase 4 of the game.
+
+    @dev
+    Phase 4 removes the trade deadline and open up redemptions.
+
+    @param _gameId The ID of the project that's being reconfigured.
+    @param _dataSource The data source to use.
+
+    @return configuration The configuration of the funding cycle that was successfully reconfigured.
+  */
+  function _queuePhase4(uint256 _gameId, address _dataSource) internal returns (uint256 configuration) {
+    return
+      controller.reconfigureFundingCyclesOf(
+        _gameId,
+        JBFundingCycleData ({
+          // No duration, lasts indefinately. 
+          duration: 0,
+          // Don't mint project tokens.
+          weight: 0,
+          discountRate: 0,
+          ballot: IJBFundingCycleBallot(address(0))
+        }),
+        JBFundingCycleMetadata({
+         global: JBGlobalFundingCycleMetadata({
+            allowSetTerminals: false,
+            allowSetController: false,
+            pauseTransfers: false
+          }),
+          reservedRate: 0,
+          // Linear redemptions.
+          redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+          ballotRedemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+          // No more payments.
+          pausePay: true,
+          pauseDistributions: false,
+          // Redemptions allowed.
+          pauseRedeem: false,
+          pauseBurn: false,
+          allowMinting: false,
+          allowTerminalMigration: false,
+          allowControllerMigration: false,
+          holdFees: false,
+          preferClaimedTokenOverride: false,
+          useTotalOverflowForRedemptions: false,
+          useDataSourceForPay: true,
+          useDataSourceForRedeem: true,
+          dataSource: _dataSource,
+          // Transferability unlocked.
+          metadata: 0
+        }),
+        0,
+        new JBGroupedSplits[](0),
+        new JBFundAccessConstraints[](0),
+        'Defifa game phase 4.'
+      );
   }
 }

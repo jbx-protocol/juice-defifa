@@ -1,50 +1,39 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
+import '@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateDeployer.sol';
 import '@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController.sol';
-import '@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBProjects.sol';
-import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol';
-import '@jbx-protocol/juice-721-delegate/contracts/structs/JBDeployTiered721DelegateData.sol';
-import '@jbx-protocol/juice-721-delegate/contracts/structs/JBLaunchProjectData.sol';
-import '@jbx-protocol/juice-721-delegate/contracts/structs/JBReconfigureFundingCyclesData.sol';
-import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol';
+import '../structs/DefifaLaunchProjectData.sol';
+import '../structs/DefifaDelegateData.sol';
+import '../structs/DefifaTimeData.sol';
 
 interface IDefifaDeployer {
-  function launchProjectFor(
-    DelegateERC721Data calldata _delegateERC721Data,
-    JBLaunchProjectData memory _launchProjectData,
-    FCParams calldata _fcParams,
-    DistributionParams calldata _distributionParams,
-    JBSplit[] calldata _splits
+  function SPLIT_PROJECT_ID() external view returns (uint256);
+
+  function SPLIT_DOMAIN() external view returns (uint256);
+
+  function token() external view returns (address);
+
+  function controller() external view returns (IJBController);
+
+  function delegateDeployer() external view returns (IJBTiered721DelegateDeployer);
+
+  function startOf(uint256 _gameId) external view returns (uint256);
+
+  function tradeDeadlineOf(uint256 _gameId) external view returns (uint256);
+
+  function endOf(uint256 _gameId) external view returns (uint256);
+
+  function terminalOf(uint256 _gameId) external view returns (IJBPaymentTerminal);
+
+  function distributionLimit(uint256 _gameId) external view returns (uint256);
+
+  function holdFeesDuring(uint256 _gameId) external view returns (bool);
+
+  function launchGameWith(
+    DefifaDelegateData calldata _delegateData,
+    DefifaLaunchProjectData calldata _launchProjectData
   ) external returns (uint256 projectId);
 
-  function queueNextFundingCycleOf(uint256 _projectId) external returns (uint256 configuration);
-}
-
-struct FundAccessConstraintsConfig {
-  IJBPaymentTerminal terminal;
-  address token;
-  uint256 packedDistributionLimit;
-}
-
-struct FCParams {
-  uint256 _mintPhaseDuration;
-  uint256 _startPhaseTimestamp;
-  uint256 _tradePhaseTimestamp;
-  uint256 _endPhaseTimestamp;
-}
-
-struct DistributionParams {
-  uint256 distributionsLimit;
-  uint256 distributionLimitCurrency;
-  IJBPaymentTerminal terminal;
-  address token;
-}
-
-struct DelegateERC721Data {
-  string name;
-  string symbol;
-  string baseUri;
-  string contractUri;
-  JB721TierParams[] tiers;
+  function queueNextPhaseOf(uint256 _projectId) external returns (uint256 configuration);
 }
