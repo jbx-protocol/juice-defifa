@@ -106,6 +106,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @param _launchProjectData Data necessary to fulfill the transaction to launch a project.
     @param _fcParams FC Timestamp params.
     @param _distributionParams distribution params.
+    @param _splits split info that needs to be set.
 
     @return projectId The ID of the newly configured project.
   */
@@ -113,7 +114,8 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData,
         FCParams calldata _fcParams,
-        DistributionParams calldata _distributionParams
+        DistributionParams calldata _distributionParams,
+        JBSplit[] calldata _splits
     ) external override returns (uint256 projectId) {
         // checking in 1 block to avoidd duplication of similar checks
         if (
@@ -134,7 +136,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         projectId = controller.projects().count() + 1;
         
         // set reconfiguration config to be used later
-        _setReconfigurationConfig(projectId, _fcParams, _distributionParams);
+        _setReconfigurationConfig(projectId, _fcParams, _distributionParams, _splits);
 
         // Deploy the delegate contract.
         IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
@@ -160,13 +162,11 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     Only a project's owner or a designated operator can configure its funding cycles.
 
     @param _projectId The ID of the project having funding cycles reconfigured.
-    @param _splits split info that needs to be set.
 
     @return configuration The configuration of the funding cycle that was successfully reconfigured.
   */
     function queueNextFundingCycleOf(
-        uint256 _projectId,
-        JBSplit[] calldata _splits
+        uint256 _projectId
     ) external override returns (uint256 configuration) {
 
         // reference of current FC
@@ -203,8 +203,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
             reconfigureFundingCyclesData = _queuePhase2(
                 _projectId,
                 currentFundingCycle,
-                reconfigureFundingCyclesData,
-                _splits
+                reconfigureFundingCyclesData
             );
         } else if (currentFundingCycle.number == 2) {
             reconfigureFundingCyclesData = _queuePhase3(
@@ -348,11 +347,13 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @param _projectId Project ID to get the params of.
     @param _fcParams FC Timestamp params.
     @param _distributionParams distribution params.
+    @param _splits split info that needs to be set.
     */
     function _setReconfigurationConfig(
         uint256 _projectId,
         FCParams calldata _fcParams,
-        DistributionParams calldata _distributionParams
+        DistributionParams calldata _distributionParams,
+        JBSplit[] calldata _splits
     ) internal {
         // save the timestamps so they can be fetched during reconfiguration
         startPhaseTimestampForProject[_projectId] = _fcParams
@@ -368,6 +369,16 @@ contract DefifaProjectDeployer is IDefifaDeployer {
             packedDistributionLimit: _distributionParams.distributionsLimit |
                 (_distributionParams.distributionLimitCurrency << 232)
         });
+
+        // initialize group splits
+        JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
+            _groupedSplits[0] = JBGroupedSplits({
+                group: _projectId,
+                splits: _splits
+        });
+
+        // set splits in split store
+        splitStore.set(splitProjectId, domain, _groupedSplits);
     }
 
 
@@ -406,16 +417,14 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @param _projectId Project ID.
     @param _currentFundingCycle current fc config.
     @param _reconfigureFundingCyclesData reconfiguration data.
-    @param _splits split info that needs to be set.
 
     @return _reconfigureFundingCyclesData Re-Configuration config
     */
     function _queuePhase2(
         uint256 _projectId,
         JBFundingCycle memory _currentFundingCycle,
-        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData,
-        JBSplit[] calldata _splits
-    ) internal returns (JBReconfigureFundingCyclesData memory) {
+        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
+    ) internal view returns (JBReconfigureFundingCyclesData memory) {
         // avoid stack too deep
         {
             // construct reconfiguration config for phase 2
@@ -445,15 +454,14 @@ contract DefifaProjectDeployer is IDefifaDeployer {
                 overflowAllowanceCurrency: 0
             });
 
-            // initialize group splits
+            // fetch splits
+            JBSplit[] memory _splits = splitStore.splitsOf(splitProjectId, domain, _projectId);
+
             JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
             _groupedSplits[0] = JBGroupedSplits({
                 group: _projectId,
                 splits: _splits
             });
-
-            // set splits in split store
-            splitStore.set(splitProjectId, domain, _groupedSplits);
 
             _reconfigureFundingCyclesData = JBReconfigureFundingCyclesData({
                 data: data,

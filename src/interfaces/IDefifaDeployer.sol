@@ -14,12 +14,12 @@ interface IDefifaDeployer {
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBLaunchProjectData memory _launchProjectData,
         FCParams calldata _fcParams,
-        DistributionParams calldata _distributionParams
+        DistributionParams calldata _distributionParams,
+        JBSplit[] calldata _splits
     ) external returns (uint256 projectId);
 
     function queueNextFundingCycleOf(
-        uint256 _projectId,
-        JBSplit[] calldata _splits
+        uint256 _projectId
     ) external returns (uint256 configuration);
 }
 
