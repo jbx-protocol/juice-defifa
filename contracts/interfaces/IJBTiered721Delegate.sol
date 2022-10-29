@@ -1,10 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.16;
+pragma solidity ^0.8.0;
 
 // I did this a lil hacky so I didn't get stuck in dependency hell
 
 interface IJBTiered721Delegate {
-
   // function store() external view returns (IJBTiered721DelegateStore);
 
   function contributionToken() external view returns (address);
@@ -39,7 +38,6 @@ interface IJBTiered721Delegate {
 
   function setDefaultReservedTokenBeneficiary(address _beneficiary) external;
 }
-
 
 /**
   @member contributionFloor The minimum contribution to qualify for this tier.
