@@ -11,7 +11,7 @@ import "@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstrain
 
 interface IDefifaDeployer {
     function launchProjectFor(
-        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
+        DelegateERC721Data calldata _delegateERC721Data,
         JBLaunchProjectData memory _launchProjectData,
         FCParams calldata _fcParams,
         DistributionParams calldata _distributionParams,
@@ -41,4 +41,12 @@ struct DistributionParams {
      uint256 distributionLimitCurrency;
      IJBPaymentTerminal terminal;
      address token;
+}
+
+struct DelegateERC721Data {
+     string name;
+     string symbol;
+     string baseUri;
+     string contractUri;
+     JB721TierParams[] tiers;
 }

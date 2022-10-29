@@ -35,6 +35,33 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
     /**
     @notice
+    The directory address to be used while deploying the delegate 
+    */
+    IJBDirectory public immutable directory;
+
+
+    /**
+    @notice
+    The fundingCycleStore address to be used while deploying the delegate 
+    */
+    IJBFundingCycleStore public immutable fundingCycleStore;
+
+
+    /**
+    @notice
+    The tokenUriResolver address to be used while deploying the delegate 
+    */
+    IJBTokenUriResolver public immutable tokenUriResolver;
+
+
+    /**
+    @notice
+    The store address to be used while deploying the delegate 
+    */
+    IJBTiered721DelegateStore public immutable store;
+
+    /**
+    @notice
     The controller with which new projects should be deployed. 
     */
     IJBController public immutable controller;
@@ -73,8 +100,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @notice
     Fund Access Constraint info to be used in 2nd fc. 
     */
-    mapping(uint256 => FundAccessConstraintsConfig)
-        public fundAccessConstraintOf;
+    mapping(uint256 => FundAccessConstraintsConfig) public fundAccessConstraintOf;
 
     //*********************************************************************//
     // -------------------------- constructor ---------------------------- //
@@ -87,11 +113,19 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     constructor(
         IJBController _controller,
         IJBTiered721DelegateDeployer _delegateDeployer,
-        IJBSplitsStore _splitStore
+        IJBSplitsStore _splitStore,
+        IJBDirectory _directory,
+        IJBFundingCycleStore _fundingCycleStore,
+        IJBTokenUriResolver _tokenUriResolver,
+        IJBTiered721DelegateStore _store
     ) {
         controller = _controller;
         delegateDeployer = _delegateDeployer;
         splitStore = _splitStore;
+        directory = _directory;
+        fundingCycleStore = _fundingCycleStore;
+        tokenUriResolver = _tokenUriResolver;
+        store = _store;
     }
 
     //*********************************************************************//
@@ -102,7 +136,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @notice 
     Launches a new project with a tiered NFT rewards data source attached.
 
-    @param _deployTiered721DelegateData Data necessary to fulfill the transaction to deploy a delegate.
+    @param _delegateERC721Data Data necessary to fulfill the transaction to deploy a delegate.
     @param _launchProjectData Data necessary to fulfill the transaction to launch a project.
     @param _fcParams FC Timestamp params.
     @param _distributionParams distribution params.
@@ -111,7 +145,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @return projectId The ID of the newly configured project.
   */
     function launchProjectFor(
-        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
+        DelegateERC721Data calldata _delegateERC721Data,
         JBLaunchProjectData memory _launchProjectData,
         FCParams calldata _fcParams,
         DistributionParams calldata _distributionParams,
@@ -137,6 +171,9 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         
         // set reconfiguration config to be used later
         _setReconfigurationConfig(projectId, _fcParams, _distributionParams, _splits);
+        
+        // getting JBDeployTiered721DelegateData params
+        JBDeployTiered721DelegateData memory _deployTiered721DelegateData = _getTiered721DelegateData(_delegateERC721Data);
 
         // Deploy the delegate contract.
         IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
@@ -147,11 +184,8 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         // set 1st fc config
         _launchProjectData = _queuePhase1(_launchProjectData, _fcParams._mintPhaseDuration);
 
-        // Set the delegate address as the data source of the provided metadata.
-        _launchProjectData.metadata.dataSource = address(_delegate);
-
         // Launch the project.
-        _launchProjectFor(address(this), _launchProjectData);
+        _launchProjectFor(address(this), _launchProjectData, _delegate);
     }
 
     /**
@@ -218,14 +252,12 @@ contract DefifaProjectDeployer is IDefifaDeployer {
             );
         }
 
-        // set the existing data source for reconfiguration
-        reconfigureFundingCyclesData.metadata.dataSource = address(_delegate);
-
         // Reconfigure the funding cycles.
         return
             _reconfigureFundingCyclesOf(
                 _projectId,
-                reconfigureFundingCyclesData
+                reconfigureFundingCyclesData,
+                IJBTiered721Delegate(_delegate)
             );
     }
 
@@ -233,80 +265,101 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     // ------------------------ internal functions ----------------------- //
     //*********************************************************************//
 
-    /** 
+  /** 
     @notice
     Launches a project.
 
     @param _owner The address to set as the owner of the project. 
     @param _launchProjectData Data necessary to fulfill the transaction to launch the project.
+    @param _dataSource The data source to set.
   */
-    function _launchProjectFor(
-        address _owner,
-        JBLaunchProjectData memory _launchProjectData
-    ) internal {
-        controller.launchProjectFor(
-            _owner,
-            _launchProjectData.projectMetadata,
-            _launchProjectData.data,
-            _launchProjectData.metadata,
-            _launchProjectData.mustStartAtOrAfter,
-            _launchProjectData.groupedSplits,
-            _launchProjectData.fundAccessConstraints,
-            _launchProjectData.terminals,
-            _launchProjectData.memo
-        );
-    }
+  function _launchProjectFor(
+    address _owner,
+    JBLaunchProjectData memory _launchProjectData,
+    IJBTiered721Delegate _dataSource
+  ) internal {
+    controller.launchProjectFor(
+      _owner,
+      _launchProjectData.projectMetadata,
+      _launchProjectData.data,
+      JBFundingCycleMetadata({
+        global: _launchProjectData.metadata.global,
+        reservedRate: _launchProjectData.metadata.reservedRate,
+        redemptionRate: _launchProjectData.metadata.redemptionRate,
+        ballotRedemptionRate: _launchProjectData.metadata.ballotRedemptionRate,
+        pausePay: _launchProjectData.metadata.pausePay,
+        pauseDistributions: _launchProjectData.metadata.pauseDistributions,
+        pauseRedeem: _launchProjectData.metadata.pauseRedeem,
+        pauseBurn: _launchProjectData.metadata.pauseBurn,
+        allowMinting: _launchProjectData.metadata.allowMinting,
+        allowTerminalMigration: _launchProjectData.metadata.allowTerminalMigration,
+        allowControllerMigration: _launchProjectData.metadata.allowControllerMigration,
+        holdFees: _launchProjectData.metadata.holdFees,
+        preferClaimedTokenOverride: _launchProjectData.metadata.preferClaimedTokenOverride,
+        useTotalOverflowForRedemptions: _launchProjectData.metadata.useTotalOverflowForRedemptions,
+        // Set the project to use the data source for its pay function.
+        useDataSourceForPay: true,
+        useDataSourceForRedeem: _launchProjectData.metadata.useDataSourceForRedeem,
+        // Set the delegate address as the data source of the provided metadata.
+        dataSource: address(_dataSource),
+        metadata: _launchProjectData.metadata.metadata
+      }),
+      _launchProjectData.mustStartAtOrAfter,
+      _launchProjectData.groupedSplits,
+      _launchProjectData.fundAccessConstraints,
+      _launchProjectData.terminals,
+      _launchProjectData.memo
+    );
+  }
 
-    /**
-    @notice
-    Launches funding cycles for a project.
-
-    @param _projectId The ID of the project having funding cycles launched.
-    @param _launchFundingCyclesData Data necessary to fulfill the transaction to launch funding cycles for the project.
-
-    @return configuration The configuration of the funding cycle that was successfully created.
-  */
-    function _launchFundingCyclesFor(
-        uint256 _projectId,
-        JBLaunchFundingCyclesData memory _launchFundingCyclesData
-    ) internal returns (uint256) {
-        return
-            controller.launchFundingCyclesFor(
-                _projectId,
-                _launchFundingCyclesData.data,
-                _launchFundingCyclesData.metadata,
-                _launchFundingCyclesData.mustStartAtOrAfter,
-                _launchFundingCyclesData.groupedSplits,
-                _launchFundingCyclesData.fundAccessConstraints,
-                _launchFundingCyclesData.terminals,
-                _launchFundingCyclesData.memo
-            );
-    }
-
-    /**
+  /**
     @notice
     Reconfigure funding cycles for a project.
 
     @param _projectId The ID of the project having funding cycles launched.
     @param _reconfigureFundingCyclesData Data necessary to fulfill the transaction to launch funding cycles for the project.
+    @param _dataSource The data source to set.
 
     @return The configuration of the funding cycle that was successfully reconfigured.
   */
-    function _reconfigureFundingCyclesOf(
-        uint256 _projectId,
-        JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData
-    ) internal returns (uint256) {
-        return
-            controller.reconfigureFundingCyclesOf(
-                _projectId,
-                _reconfigureFundingCyclesData.data,
-                _reconfigureFundingCyclesData.metadata,
-                _reconfigureFundingCyclesData.mustStartAtOrAfter,
-                _reconfigureFundingCyclesData.groupedSplits,
-                _reconfigureFundingCyclesData.fundAccessConstraints,
-                _reconfigureFundingCyclesData.memo
-            );
+  function _reconfigureFundingCyclesOf(
+    uint256 _projectId,
+    JBReconfigureFundingCyclesData memory _reconfigureFundingCyclesData,
+    IJBTiered721Delegate _dataSource
+  ) internal returns (uint256) {
+    return
+      controller.reconfigureFundingCyclesOf(
+        _projectId,
+        _reconfigureFundingCyclesData.data,
+        JBFundingCycleMetadata({
+          global: _reconfigureFundingCyclesData.metadata.global,
+          reservedRate: _reconfigureFundingCyclesData.metadata.reservedRate,
+          redemptionRate: _reconfigureFundingCyclesData.metadata.redemptionRate,
+          ballotRedemptionRate: _reconfigureFundingCyclesData.metadata.ballotRedemptionRate,
+          pausePay: _reconfigureFundingCyclesData.metadata.pausePay,
+          pauseDistributions: _reconfigureFundingCyclesData.metadata.pauseDistributions,
+          pauseRedeem: _reconfigureFundingCyclesData.metadata.pauseRedeem,
+          pauseBurn: _reconfigureFundingCyclesData.metadata.pauseBurn,
+          allowMinting: _reconfigureFundingCyclesData.metadata.allowMinting,
+          allowTerminalMigration: _reconfigureFundingCyclesData.metadata.allowTerminalMigration,
+          allowControllerMigration: _reconfigureFundingCyclesData.metadata.allowControllerMigration,
+          holdFees: _reconfigureFundingCyclesData.metadata.holdFees,
+          preferClaimedTokenOverride: _reconfigureFundingCyclesData.metadata.preferClaimedTokenOverride,
+          useTotalOverflowForRedemptions: _reconfigureFundingCyclesData.metadata.useTotalOverflowForRedemptions,
+          // Set the project to use the data source for its pay function.
+          useDataSourceForPay: true,
+          useDataSourceForRedeem: _reconfigureFundingCyclesData.metadata.useDataSourceForRedeem,
+          // Set the delegate address as the data source of the provided metadata.
+          dataSource: address(_dataSource),
+          metadata: _reconfigureFundingCyclesData.metadata.metadata
+        }),
+        _reconfigureFundingCyclesData.mustStartAtOrAfter,
+        _reconfigureFundingCyclesData.groupedSplits,
+        _reconfigureFundingCyclesData.fundAccessConstraints,
+        _reconfigureFundingCyclesData.memo
+      );
     }
+
 
     /** 
     @notice 
@@ -395,9 +448,6 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         JBLaunchProjectData memory _launchProjectData,
         uint256 _duration
     ) internal pure returns (JBLaunchProjectData memory) {
-        // Set the project to use the data source for its pay function.
-        _launchProjectData.metadata.useDataSourceForPay = true;
-
         // Set the project to use the data source for its redeem function.
         _launchProjectData.metadata.useDataSourceForRedeem = true;
 
@@ -432,7 +482,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
             JBFundingCycleData memory data = getDefaultJBFundingCycleData();
 
             // set funding cycle metadata config
-            JBFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
+            JBPayDataSourceFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
             metadata.pausePay = true;
 
             // fetching constraint params
@@ -502,7 +552,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         JBFundingCycleData memory data = getDefaultJBFundingCycleData();
 
         // set funding cycle metadata config
-        JBFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
+        JBPayDataSourceFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
         metadata.pausePay = true;
         metadata.metadata = 1;
 
@@ -547,7 +597,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         JBFundingCycleData memory data = getDefaultJBFundingCycleData();
 
         // set funding cycle metadata config
-        JBFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
+        JBPayDataSourceFundingCycleMetadata memory metadata = getDefaultJBFundingCycleMetadata();
         metadata.pausePay = true;
         metadata.redemptionRate = JBConstants.MAX_REDEMPTION_RATE;
 
@@ -585,8 +635,8 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     @notice 
     Returns default funding cycle metadata.
     */
-    function getDefaultJBFundingCycleMetadata() internal pure returns (JBFundingCycleMetadata memory) {
-        return JBFundingCycleMetadata({
+    function getDefaultJBFundingCycleMetadata() internal pure returns (JBPayDataSourceFundingCycleMetadata memory) {
+        return JBPayDataSourceFundingCycleMetadata({
             global: JBGlobalFundingCycleMetadata({
                 allowSetTerminals: false,
                 allowSetController: false,
@@ -605,10 +655,43 @@ contract DefifaProjectDeployer is IDefifaDeployer {
             holdFees: false,
             preferClaimedTokenOverride: false,
             useTotalOverflowForRedemptions: false,
-            useDataSourceForPay: false,
             useDataSourceForRedeem: false,
-            dataSource: address(0),
             metadata: 0
+        });
+    }
+
+    /** 
+    @notice 
+    Returns tier delegate data.
+    */
+    function _getTiered721DelegateData(DelegateERC721Data calldata _delegateERC721Data) internal view returns (JBDeployTiered721DelegateData memory) {
+        JB721PricingParams memory _pricing = JB721PricingParams({
+            tiers: _delegateERC721Data.tiers,
+            currency: 1,
+            decimals: 18,
+            prices: IJBPrices(address(0))
+        });
+
+        JBTiered721Flags memory _tierFlags = JBTiered721Flags({
+            lockReservedTokenChanges: false,
+            lockVotingUnitChanges: false,
+            lockManualMintingChanges: false
+        });
+
+        return JBDeployTiered721DelegateData({
+            directory: directory,
+            name: _delegateERC721Data.name,
+            symbol: _delegateERC721Data.symbol,
+            fundingCycleStore: fundingCycleStore,
+            baseUri: _delegateERC721Data.baseUri,
+            tokenUriResolver: tokenUriResolver,
+            contractUri: _delegateERC721Data.contractUri,
+            owner: address(this),
+            pricing: _pricing,
+            reservedTokenBeneficiary: address(0), 
+            store: store,
+            flags: _tierFlags,
+            governanceType: JB721GovernanceType.TIERED
         });
     }
 }
