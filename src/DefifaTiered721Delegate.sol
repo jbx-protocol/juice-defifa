@@ -51,20 +51,20 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
         JB721TierParams[] memory _tiers,
         IJBTiered721DelegateStore _store,
         JBTiered721Flags memory _flags
-    )
-        JBTiered721Delegate(
-            _projectId,
-            _directory,
-            _name,
-            _symbol,
-            _fundingCycleStore,
-            _baseUri,
-            _tokenUriResolver,
-            _contractUri,
-            _tiers,
-            _store,
-            _flags
-        )
+    )   // TODO: call initialize in accordance to latest nft rewards version
+        // JBTiered721Delegate(
+        //     _projectId,
+        //     _directory,
+        //     _name,
+        //     _symbol,
+        //     _fundingCycleStore,
+        //     _baseUri,
+        //     _tokenUriResolver,
+        //     _contractUri,
+        //     _tiers,
+        //     _store,
+        //     _flags
+        // )
     {}
 
     //*********************************************************************//
