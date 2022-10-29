@@ -132,7 +132,8 @@ contract DefifaProjectDeployer is IDefifaDeployer {
 
         // Get the project ID, optimistically knowing it will be one greater than the current count.
         projectId = controller.projects().count() + 1;
-
+        
+        // set reconfiguration config to be used later
         _setReconfigurationConfig(projectId, _fcParams, _distributionParams);
 
         // Deploy the delegate contract.
@@ -141,21 +142,11 @@ contract DefifaProjectDeployer is IDefifaDeployer {
             _deployTiered721DelegateData
         );
 
+        // set 1st fc config
+        _launchProjectData = _queuePhase1(_launchProjectData, _fcParams._mintPhaseDuration);
+
         // Set the delegate address as the data source of the provided metadata.
         _launchProjectData.metadata.dataSource = address(_delegate);
-
-        // Set the project to use the data source for its pay function.
-        _launchProjectData.metadata.useDataSourceForPay = true;
-
-        // Set the project to use the data source for its redeem function.
-        _launchProjectData.metadata.useDataSourceForRedeem = true;
-
-        // 100 % redemption rate
-        _launchProjectData.metadata.redemptionRate = JBConstants
-            .MAX_REDEMPTION_RATE;
-
-        // set duration of 1st FC aka Mint Phase Duration
-        _launchProjectData.data.duration = _fcParams._mintPhaseDuration;
 
         // Launch the project.
         _launchProjectFor(address(this), _launchProjectData);
@@ -179,10 +170,9 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBSplit[] calldata _splits
     ) external override returns (uint256 configuration) {
+
         // reference of current FC
-        JBFundingCycle memory currentFundingCycle = _deployTiered721DelegateData
-            .fundingCycleStore
-            .currentOf(_projectId);
+        (JBFundingCycle memory currentFundingCycle, JBFundingCycleMetadata memory metadata) = controller.currentFundingCycleOf(_projectId);
 
         // reference of queued FC
         JBFundingCycle memory queuedFundingCycle = _deployTiered721DelegateData
@@ -199,8 +189,6 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         ) revert FC_ALREADY_RECONFIGURED();
 
         // validating the data source
-        (, JBFundingCycleMetadata memory metadata) = controller.getFundingCycleOf(_projectId, currentFundingCycle.configuration);
-
         address _delegate = metadata.dataSource;
 
         // checking validity of delegate
@@ -384,6 +372,35 @@ contract DefifaProjectDeployer is IDefifaDeployer {
             packedDistributionLimit: _distributionParams.distributionsLimit |
                 (_distributionParams.distributionLimitCurrency << 232)
         });
+    }
+
+
+    /** 
+    @notice 
+    Sets launch params for fc 1.
+
+    @param _launchProjectData launch fc data.
+    @param _duration fc duration.
+
+    @return _launchProjectData Launch config
+    */
+    function _queuePhase1(
+        JBLaunchProjectData memory _launchProjectData,
+        uint256 _duration
+    ) internal pure returns (JBLaunchProjectData memory) {
+        // Set the project to use the data source for its pay function.
+        _launchProjectData.metadata.useDataSourceForPay = true;
+
+        // Set the project to use the data source for its redeem function.
+        _launchProjectData.metadata.useDataSourceForRedeem = true;
+
+        // 100 % redemption rate
+        _launchProjectData.metadata.redemptionRate = JBConstants.MAX_REDEMPTION_RATE;
+
+        // set duration of 1st FC aka Mint Phase Duration
+        _launchProjectData.data.duration = _duration;
+
+        return _launchProjectData;
     }
 
     /** 
