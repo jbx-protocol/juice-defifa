@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.16;
 
 import "prb-math/PRBMath.sol";
 
 import "@jbx-protocol/juice-nft-rewards/contracts/JBTiered721Delegate.sol";
+import "@jbx-protocol/juice-nft-rewards/contracts/JB721TieredGovernance.sol";
 
 import "@openzeppelin/contracts/governance/Governor.sol";
 import "@openzeppelin/contracts/governance/extensions/GovernorSettings.sol";
@@ -21,14 +22,18 @@ contract DefifaGovernor is
    // The max voting power 1 tier has if everyone votes
     uint256 public constant MAX_VOTING_POWER_TIER = 1_000_000_000;
 
-   // The datasource for votingpower
+   // datasource
     IJBTiered721Delegate jbTieredRewards;
+
+    // The datasource for votingpower
+    IJB721TieredGovernance jbTieredGovernance;
 
     // proposal creation threshold time
     uint256 public immutable proposalCreationThreshold;
 
     constructor(
         IJBTiered721Delegate _jbTieredRewards,
+        IJB721TieredGovernance _jbTieredGovernance,
         uint256 _proposalCreationThreshold
     )
         Governor("DefifaGovernor")
@@ -39,6 +44,7 @@ contract DefifaGovernor is
         )
     {
         jbTieredRewards = _jbTieredRewards;
+        jbTieredGovernance = _jbTieredGovernance;
         proposalCreationThreshold = _proposalCreationThreshold;
     }
 
@@ -56,7 +62,7 @@ contract DefifaGovernor is
 
         // Loop over all tiers gathering the voting share of the user
         for (uint256 _i; _i < _tiers_length; ) {
-            uint256 _tierVotingPower = jbTieredRewards.getPastTierVotes(
+            uint256 _tierVotingPower = jbTieredGovernance.getPastTierVotes(
                 account,
                 _tiers[_i],
                 blockNumber
@@ -67,7 +73,7 @@ contract DefifaGovernor is
                     votingPower += PRBMath.mulDiv(
                         _tierVotingPower,
                         MAX_VOTING_POWER_TIER,
-                        jbTieredRewards.getPastTierTotalVotes(
+                        jbTieredGovernance.getPastTierTotalVotes(
                             _tiers[_i],
                             blockNumber
                         )
@@ -102,7 +108,7 @@ contract DefifaGovernor is
         returns (bytes memory)
     {
        // TODO: should we do this on every time or should we just store this, what is cheaper...
-       uint256 _count = jbTieredRewards.store().maxTierId(address(jbTieredRewards));
+       uint256 _count = jbTieredRewards.store().maxTierIdOf(address(jbTieredRewards));
        uint256[] memory _ids = new uint256[](_count);
 
       // Add all tiers to the array
