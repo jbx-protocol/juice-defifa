@@ -90,6 +90,64 @@ contract DefifaTiered721Delegate is JBTiered721Delegate {
             revert INVALID_REDEMPTION_WEIGHTS();
     }
 
+     /**
+        @notice 
+        Part of IJBFundingCycleDataSource, this function gets called when a project's token holders redeem.
+
+        @param _data The Juicebox standard project redemption data.
+
+        @return reclaimAmount The amount that should be reclaimed from the treasury.
+        @return memo The memo that should be forwarded to the event.
+        @return delegateAllocations The amount to send to delegates instead of adding to the beneficiary.
+    */
+    function redeemParams(JBRedeemParamsData calldata _data)
+        external
+        view
+        override
+        returns (
+            uint256 reclaimAmount,
+            string memory memo,
+            JBRedemptionDelegateAllocation[] memory delegateAllocations
+        )
+    {
+        // Set the only delegate allocation to be a callback to this contract.
+        delegateAllocations = new JBRedemptionDelegateAllocation[](1);
+        delegateAllocations[0] = JBRedemptionDelegateAllocation(this, 0);
+
+        // Make sure fungible project tokens aren't being redeemed too.
+        if (_data.tokenCount > 0) revert UNEXPECTED();
+
+        // If redemption rate is 0, nothing can be reclaimed from the treasury
+        if (_data.redemptionRate == 0) return (0, _data.memo, delegateAllocations);
+
+        // Decode the metadata
+        uint256[] memory _ids = abi.decode(_data.metadata, (uint256[]));
+
+        // If redemption is max the reclaim Amount is the same as it cost to mint
+        if (_data.redemptionRate == JBConstants.MAX_REDEMPTION_RATE){
+            for(uint256 _i; _i < _ids.length; ){
+                unchecked{
+                    reclaimAmount += store.tierOfTokenId(address(this), _ids[_i]).contributionFloor;
+
+                    _i++;
+                }
+            }
+
+            return (reclaimAmount, _data.memo, delegateAllocations);
+        }
+
+        // Return the weighted overflow, and this contract as the delegate so that tokens can be deleted.
+        return (
+            PRBMath.mulDiv(
+                _data.overflow,
+                _redemptionWeightOf(_ids),
+                _totalRedemptionWeight()
+            ),
+            _data.memo,
+            delegateAllocations
+        );
+    }
+
     //*********************************************************************//
     // ------------------------ internal functions ----------------------- //
     //*********************************************************************//
