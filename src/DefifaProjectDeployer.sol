@@ -160,14 +160,12 @@ contract DefifaProjectDeployer is IDefifaDeployer {
     Only a project's owner or a designated operator can configure its funding cycles.
 
     @param _projectId The ID of the project having funding cycles reconfigured.
-    @param _deployTiered721DelegateData Data necessary to fulfill the transaction to deploy a delegate.
     @param _splits split info that needs to be set.
 
     @return configuration The configuration of the funding cycle that was successfully reconfigured.
   */
     function queueNextFundingCycleOf(
         uint256 _projectId,
-        JBDeployTiered721DelegateData calldata _deployTiered721DelegateData,
         JBSplit[] calldata _splits
     ) external override returns (uint256 configuration) {
 
@@ -175,9 +173,7 @@ contract DefifaProjectDeployer is IDefifaDeployer {
         (JBFundingCycle memory currentFundingCycle, JBFundingCycleMetadata memory metadata) = controller.currentFundingCycleOf(_projectId);
 
         // reference of queued FC
-        JBFundingCycle memory queuedFundingCycle = _deployTiered721DelegateData
-            .fundingCycleStore
-            .queuedOf(_projectId);
+        (JBFundingCycle memory queuedFundingCycle, ) = controller.queuedFundingCycleOf(_projectId);
 
         // ensuring no reconfigurations after fc 4
         if (currentFundingCycle.number > 3) revert RECONFIGURATION_OVER();
