@@ -210,7 +210,7 @@ contract DefifaDeployer is IDefifaDeployer {
     );
 
     // Queue the first phase of the game.
-    _queuePhase1For(_launchProjectData, address(_delegate));
+    _queuePhase1(_launchProjectData, address(_delegate));
   }
 
   /**
@@ -257,7 +257,7 @@ contract DefifaDeployer is IDefifaDeployer {
     @param _launchProjectData Project data used for launching a 
     @param _dataSource The address of the Defifa data source.
   */
-  function _queuePhase1For(DefifaLaunchProjectData memory _launchProjectData, address _dataSource)
+  function _queuePhase1(DefifaLaunchProjectData memory _launchProjectData, address _dataSource)
     internal
   {
     // Initialize the terminal array .
