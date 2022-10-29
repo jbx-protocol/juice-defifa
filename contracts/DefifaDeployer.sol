@@ -174,9 +174,10 @@ contract DefifaDeployer is IDefifaDeployer {
       holdFees: _launchProjectData.holdFees
     });
 
-    // Store the splits.
+    // Store the splits. They'll be used when queueing phase 2.
     JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
     _groupedSplits[0] = JBGroupedSplits({group: gameId, splits: _launchProjectData.splits});
+    // This contract must have SET_SPLITS operator permissions.
     controller.splitsStore().set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
 
     // Deploy the delegate contract.
