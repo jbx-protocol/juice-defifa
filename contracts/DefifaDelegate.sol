@@ -3,9 +3,9 @@ pragma solidity ^0.8.16;
 
 import '@jbx-protocol/juice-721-delegate/contracts/JBTiered721Delegate.sol';
 
-import './interfaces/IDefifaTiered721Delegate.sol';
+import './interfaces/IDefifaDelegate.sol';
 
-contract DefifaTiered721Delegate is IDefifaTiered721Delegate, JBTiered721Delegate {
+contract DefifaDelegate is IDefifaDelegate, JBTiered721Delegate {
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//

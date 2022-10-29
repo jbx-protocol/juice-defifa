@@ -15,7 +15,7 @@ import './structs/DefifaStoredOpsData.sol';
   Adheres to -
   IDefifaDeployer: General interface for the generic controller methods in this contract that interacts with funding cycles and tokens according to the protocol's rules.
 */
-contract DefifaProjectDeployer is IDefifaDeployer {
+contract DefifaDeployer is IDefifaDeployer {
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
