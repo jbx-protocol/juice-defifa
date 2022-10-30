@@ -37,6 +37,9 @@ contract DefifaDeployer is IDefifaDeployer {
   /** 
     @notice
     Operations variables for a game.
+
+    @dev
+    Includes the payment terminal being used, the distribution limit, and wether or not fees should be held.
   */
   mapping(uint256 => DefifaStoredOpsData) internal _opsFor;
 
@@ -88,6 +91,10 @@ contract DefifaDeployer is IDefifaDeployer {
   // ------------------------- external views -------------------------- //
   //*********************************************************************//
 
+  function timesFor(uint256 _gameId) external view override returns (DefifaTimeData memory) {
+    return _timesFor[_gameId];
+  }
+
   function startOf(uint256 _gameId) external view override returns (uint256) {
     return _timesFor[_gameId].start;
   }
@@ -119,6 +126,7 @@ contract DefifaDeployer is IDefifaDeployer {
   /**
     @param _controller The controller with which new projects should be deployed. 
     @param _delegateDeployer The deployer of delegates.
+    @param _token The token that games deployed through this contract accept.
   */
   constructor(
     IJBController _controller,
@@ -385,7 +393,7 @@ contract DefifaDeployer is IDefifaDeployer {
           dataSource: _dataSource,
           metadata: 0
         }),
-        0,
+        0, // mustStartAtOrAfter should be ASAP
          _groupedSplits,
         fundAccessConstraints,
         'Defifa game phase 2.'
@@ -446,7 +454,7 @@ contract DefifaDeployer is IDefifaDeployer {
           // Set a metadata of 1 to impose token non-transferability. 
           metadata: 1
         }),
-        0,
+        0, // mustStartAtOrAfter should be ASAP
         new JBGroupedSplits[](0),
         new JBFundAccessConstraints[](0),
         'Defifa game phase 3.'
@@ -505,7 +513,7 @@ contract DefifaDeployer is IDefifaDeployer {
           // Transferability unlocked.
           metadata: 0
         }),
-        0,
+        0, // mustStartAtOrAfter should be ASAP
         new JBGroupedSplits[](0),
         new JBFundAccessConstraints[](0),
         'Defifa game phase 4.'
