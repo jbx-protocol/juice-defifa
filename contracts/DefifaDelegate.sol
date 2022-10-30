@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
-import '@jbx-protocol/juice-721-delegate/contracts/JBTiered721Delegate.sol';
+import '@jbx-protocol/juice-721-delegate/contracts/JB721TieredGovernance.sol';
 
 import './interfaces/IDefifaDelegate.sol';
 
-contract DefifaDelegate is IDefifaDelegate, JBTiered721Delegate {
+contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
@@ -40,7 +40,7 @@ contract DefifaDelegate is IDefifaDelegate, JBTiered721Delegate {
     @param _baseUri A URI to use as a base for full token URIs.
     @param _tokenUriResolver A contract responsible for resolving the token URI for each token ID.
     @param _contractUri A URI where contract metadata can be found. 
-    @param _tiers The tiers according to which token distribution will be made. Must be passed in order of contribution floor, with implied increasing value.
+    @param _pricing The pricing config of the tiers according to which token distribution will be made. Must be passed in order of contribution floor, with implied increasing value.
     @param _store A contract that stores the NFT's data.
     @param _flags A set of flags that help define how this contract works.
   */
@@ -53,10 +53,27 @@ contract DefifaDelegate is IDefifaDelegate, JBTiered721Delegate {
     string memory _baseUri,
     IJBTokenUriResolver _tokenUriResolver,
     string memory _contractUri,
-    JB721TierParams[] memory _tiers,
+    JB721PricingParams memory _pricing,
     IJBTiered721DelegateStore _store,
-    JBTiered721Flags memory _flags // TODO: call initialize in accordance to latest nft rewards version // JBTiered721Delegate( //     _projectId, //     _directory, //     _name, //     _symbol, //     _fundingCycleStore, //     _baseUri, //     _tokenUriResolver, //     _contractUri, //     _tiers, //     _store, //     _flags // )
-  ) {}
+    JBTiered721Flags memory _flags
+  ) {
+    // Disable the safety check to not allow initializing the original contract
+    codeOrigin = address(0);
+
+    super.initialize(
+      _projectId,
+      _directory,
+      _name,
+      _symbol,
+      _fundingCycleStore,
+      _baseUri,
+      _tokenUriResolver,
+      _contractUri,
+      _pricing,
+      _store,
+      _flags
+    );
+  }
 
   //*********************************************************************//
   // ---------------------- external transactions ---------------------- //
