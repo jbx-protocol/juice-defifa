@@ -9,6 +9,9 @@ import './structs/DefifaStoredOpsData.sol';
 import './DefifaDelegate.sol';
 
 /**
+  @title
+  DefifaDeployer
+
   @notice
   Deploys a Defifa game.
 

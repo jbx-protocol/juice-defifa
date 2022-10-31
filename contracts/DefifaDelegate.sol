@@ -5,6 +5,21 @@ import '@jbx-protocol/juice-721-delegate/contracts/JB721TieredGovernance.sol';
 
 import './interfaces/IDefifaDelegate.sol';
 
+/** 
+  @title
+  DefifaDelegate
+
+  @notice
+  Defifa specific 721 tiered delegate.
+
+  @dev
+  Adheres to -
+  IDefifaDelegate: General interface for the methods in this contract that interact with the blockchain's state according to the protocol's rules.
+
+  @dev
+  Inherits from -
+  JB721TieredGovernance: A generic tiered 721 delegate.
+*/
 contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
