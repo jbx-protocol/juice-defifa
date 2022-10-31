@@ -85,6 +85,12 @@ contract DefifaDeployer is IDefifaDeployer {
   */
   IJBController public override immutable controller;
 
+  /** 
+    @notice
+    The contract responsibile for deploying the delegate. 
+  */
+  IJBTiered721DelegateDeployer public immutable delegateDeployer;
+
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
   //*********************************************************************//
