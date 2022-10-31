@@ -25,6 +25,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
 
+  error GAME_ISNT_OVER_YET();
   error INVALID_REDEMPTION_WEIGHTS();
   error NOTHING_TO_CLAIM();
   error UNEXPECTED();
@@ -142,6 +143,12 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     override
     onlyOwner
   {
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
+
+    // Make sure the game has ended.
+    if (_currentFundingCycle.number < END_GAME_PHASE) revert GAME_ISNT_OVER_YET();
+
     // Delete the currently set redemption weights.
     delete _tierRedemptionWeights;
 
