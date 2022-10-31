@@ -261,11 +261,10 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     The cumulative weight the given token IDs have in redemptions compared to the `_totalRedemptionWeight`. 
 
     @param _tokenIds The IDs of the tokens to get the cumulative redemption weight of.
-    @param _data The Juicebox standard project redemption data.
 
     @return cumulativeWeight The weight.
   */
-  function _redemptionWeightOf(uint256[] memory _tokenIds, JBRedeemParamsData calldata _data)
+  function _redemptionWeightOf(uint256[] memory _tokenIds, JBRedeemParamsData calldata)
     internal
     view
     virtual
@@ -302,11 +301,9 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     @notice
     The cumulative weight that all token IDs have in redemptions. 
 
-    @param _data The Juicebox standard project redemption data.
-
     @return The total weight.
   */
-  function _totalRedemptionWeight(JBRedeemParamsData calldata _data)
+  function _totalRedemptionWeight(JBRedeemParamsData calldata)
     internal
     view
     virtual
