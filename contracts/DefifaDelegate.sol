@@ -11,6 +11,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   //*********************************************************************//
 
   error INVALID_REDEMPTION_WEIGHTS();
+  error NOTHING_TO_CLAIM();
   error UNEXPECTED();
 
   //*********************************************************************//
@@ -174,32 +175,34 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Get a reference to the current funding cycle.
     JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
 
-    // If the game is over, set the weight based on the scorecard results.
-    if (_currentFundingCycle.number == 4) {
-      // Keep a reference to the number of tokens being redeemed.
-      uint256 _tokenCount = _tokenIds.length;
-
-      for (uint256 _i; _i < _tokenCount; ) {
-        // Keep a reference to the token's tier ID.
-        uint256 _tierId = store.tierIdOfToken(_tokenIds[_i]);
-
-        // Keep a reference to the tier.
-        JB721Tier memory _tier = store.tier(address(this), _tierId);
-
-        // Calculate what percentage of the tier redemption amount a single token counts for.
-        cumulativeWeight +=
-          // Tier's are 1 indexed and are stored 0 indexed.
-          _tierRedemptionWeights[_tierId - 1] /
-          (_tier.initialQuantity - _tier.remainingQuantity);
-
-        unchecked {
-          ++_i;
-        }
-      }
-    } else {
+    if (_currentFundingCycle.number < END_GAME_PHASE)
       // Otherwise return the superclass's method.
       return super._redemptionWeightOf(_tokenIds, _data);
+
+    // If the game is over, set the weight based on the scorecard results.
+    // Keep a reference to the number of tokens being redeemed.
+    uint256 _tokenCount = _tokenIds.length;
+
+    for (uint256 _i; _i < _tokenCount; ) {
+      // Keep a reference to the token's tier ID.
+      uint256 _tierId = store.tierIdOfToken(_tokenIds[_i]);
+
+      // Keep a reference to the tier.
+      JB721Tier memory _tier = store.tier(address(this), _tierId);
+
+      // Calculate what percentage of the tier redemption amount a single token counts for.
+      cumulativeWeight +=
+        // Tier's are 1 indexed and are stored 0 indexed.
+        _tierRedemptionWeights[_tierId - 1] /
+        (_tier.initialQuantity - _tier.remainingQuantity);
+
+      unchecked {
+        ++_i;
+      }
     }
+
+    // If there's nothing to claim, revert to prevent burning for nothing.
+    if (cumulativeWeight == 0) revert NOTHING_TO_CLAIM();
   }
 
   /** 
@@ -220,10 +223,10 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Get a reference to the current funding cycle.
     JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
 
-    // If the game is over, set the total weight as the total scorecard weight.
-    if (_currentFundingCycle.number == 4) return TOTAL_REDEMPTION_WEIGHT;
+    // If the game is not over, use the superclass's method.
+    if (_currentFundingCycle.number < END_GAME_PHASE) return super._totalRedemptionWeight(_data);
 
-    // Otherwise use the superclass's method.
-    return super._totalRedemptionWeight(_data);
+    // Otherwise, set the total weight as the total scorecard weight.
+    return TOTAL_REDEMPTION_WEIGHT;
   }
 }
