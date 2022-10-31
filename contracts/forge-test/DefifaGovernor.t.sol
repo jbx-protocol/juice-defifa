@@ -21,6 +21,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
   }
 
   function testReceiveVotingPower(uint8 nTiers, uint8 tier) public {
+    vm.assume(nTiers < 100);
     vm.assume(nTiers >= tier);
     vm.assume(tier != 0);
 
@@ -32,7 +33,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       DefifaGovernor _governor
     ) = createDefifaProject(uint256(nTiers));
 
-    // User should have no voting power
+   // User should have no voting power (yet)
     assertEq(_governor.getVotes(_user, block.number - 1), 0);
 
     // fund user
@@ -42,6 +43,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     uint16[] memory rawMetadata = new uint16[](1);
     rawMetadata[0] = uint16(tier); // reward tier
     bytes memory metadata = abi.encode(
+      bytes32(0),
       bytes32(0),
       type(IJB721Delegate).interfaceId,
       false,
@@ -63,17 +65,28 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       metadata
     );
 
-    // Set the delegate as the user themselves
-    vm.prank(_user);
     JBTiered721SetTierDelegatesData[] memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
     tiered721SetDelegatesData[0] = JBTiered721SetTierDelegatesData({
         delegatee: _user,
         tierId: uint256(tier)
     });
-    _governor.jbTieredGovernance().setTierDelegates(tiered721SetDelegatesData);
 
-    // // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
+    // Set the delegate as the user themselves
+    vm.prank(_user);
+    _nft.setTierDelegates(tiered721SetDelegatesData);
+
+    // The user should now have a balance
+    assertEq(
+      _nft.balanceOf(_user),
+      1
+    );
+
+    // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
     vm.roll(block.number + 1);
+    assertEq(
+      _nft.store().tier(address(_nft), tier).votingUnits,
+      100
+    );
     assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_user, block.number - 1));
   }
 
@@ -99,6 +112,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
       bytes memory metadata = abi.encode(
         bytes32(0),
+        bytes32(0),
         type(IJB721Delegate).interfaceId,
         false,
         false,
@@ -120,13 +134,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       );
 
       // Set the delegate as the user themselves
-      vm.prank(_users[i]);
       JBTiered721SetTierDelegatesData[] memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
       tiered721SetDelegatesData[0] = JBTiered721SetTierDelegatesData({
         delegatee: _users[i],
         tierId: uint256(i + 1)
       });
-      _governor.jbTieredGovernance().setTierDelegates(tiered721SetDelegatesData);
+      vm.prank(_users[i]);
+      _nft.setTierDelegates(tiered721SetDelegatesData);
 
       // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
       vm.roll(block.number + 1);
@@ -251,7 +265,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       launchProjectData.memo
     );
 
-    JB721TieredGovernance tieredGovernance = new JB721TieredGovernance();
+    //JB721TieredGovernance tieredGovernance = new JB721TieredGovernance();
 
     governor = new DefifaGovernor(nft, block.timestamp + 1 weeks);
 
