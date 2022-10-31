@@ -17,13 +17,46 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   // --------------------------- properties ---------------------------- //
   //*********************************************************************//
 
-  // The total weight that can be divided among tiers
+  /** 
+    @notice 
+    The redemption weight for each tier.
+
+    @dev
+    Tiers are limited to ID 100
+  */
+  uint256[100] private _tierRedemptionWeights;
+
+  //*********************************************************************//
+  // -------------------- private constant properties ------------------ //
+  //*********************************************************************//
+
+  /** 
+    @notice
+    The funding cycle number of the end game. 
+  */
+  uint256 public constant END_GAME_PHASE = 4;
+
+  //*********************************************************************//
+  // --------------------- public constant properties ------------------ //
+  //*********************************************************************//
+
+  /** 
+    @notice 
+    The total weight that can be divided among tiers.
+  */
   uint256 public constant TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
 
-  // Tiers are limited to ID 100
-  uint256[100] public _tierRedemptionWeights;
+  //*********************************************************************//
+  // ------------------------- external views -------------------------- //
+  //*********************************************************************//
 
-  function tierRedemptionWeights() external override returns (uint256[100] memory) {
+  /** 
+    @notice
+    The redemption weight for each tier.
+
+    @return The array of weights, indexed by tier.
+  */
+  function tierRedemptionWeights() external view override returns (uint256[100] memory) {
     return _tierRedemptionWeights;
   }
 
@@ -79,16 +112,34 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   // ---------------------- external transactions ---------------------- //
   //*********************************************************************//
 
+  /** 
+    @notice
+    Stores the redemption weights that should be used in the end game phase.
+
+    @dev
+    Only the contract's owner can set tier redemption weights.
+
+    @param _tierWeights The tier weights to set.
+  */
   function setTierRedemptionWeights(DefifaTierRedemptionWeight[] memory _tierWeights)
     external
     override
     onlyOwner
   {
+    // Delete the currently set redemption weights.
     delete _tierRedemptionWeights;
 
+    // Keep a reference to the cumulative amounts.
     uint256 _cumulativeRedemptionWeight;
-    for (uint256 _i; _i < _tierWeights.length; ) {
-      _tierRedemptionWeights[_tierWeights[_i].id] = _tierWeights[_i].redemptionWeight;
+
+    // Keep a reference to the number of tier weights.
+    uint256 _numberOfTierWeights = _tierWeights.length;
+
+    for (uint256 _i; _i < _numberOfTierWeights; ) {
+      // Save the tier weight. Tier's are 1 indexed and should be stored 0 indexed.
+      _tierRedemptionWeights[_tierWeights[_i].id - 1] = _tierWeights[_i].redemptionWeight;
+
+      // Increment the cumulative amount.
       _cumulativeRedemptionWeight += _tierWeights[_i].redemptionWeight;
 
       unchecked {
@@ -96,61 +147,8 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       }
     }
 
+    // Make sure the cumulative amount is contained within the total redemption weight.
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
-  }
-
-  /**
-        @notice 
-        Part of IJBFundingCycleDataSource, this function gets called when a project's token holders redeem.
-
-        @param _data The Juicebox standard project redemption data.
-
-        @return reclaimAmount The amount that should be reclaimed from the treasury.
-        @return memo The memo that should be forwarded to the event.
-        @return delegateAllocations The amount to send to delegates instead of adding to the beneficiary.
-    */
-  function redeemParams(JBRedeemParamsData calldata _data)
-    external
-    view
-    override
-    returns (
-      uint256 reclaimAmount,
-      string memory memo,
-      JBRedemptionDelegateAllocation[] memory delegateAllocations
-    )
-  {
-    // Set the only delegate allocation to be a callback to this contract.
-    delegateAllocations = new JBRedemptionDelegateAllocation[](1);
-    delegateAllocations[0] = JBRedemptionDelegateAllocation(this, 0);
-
-    // Make sure fungible project tokens aren't being redeemed too.
-    if (_data.tokenCount > 0) revert UNEXPECTED();
-
-    // If redemption rate is 0, nothing can be reclaimed from the treasury
-    if (_data.redemptionRate == 0) return (0, _data.memo, delegateAllocations);
-
-    // Decode the metadata
-    uint256[] memory _ids = abi.decode(_data.metadata, (uint256[]));
-
-    // If redemption is max the reclaim Amount is the same as it cost to mint
-    if (_data.redemptionRate == JBConstants.MAX_REDEMPTION_RATE) {
-      for (uint256 _i; _i < _ids.length; ) {
-        unchecked {
-          reclaimAmount += store.tierOfTokenId(address(this), _ids[_i]).contributionFloor;
-
-          _i++;
-        }
-      }
-
-      return (reclaimAmount, _data.memo, delegateAllocations);
-    }
-
-    // Return the weighted overflow, and this contract as the delegate so that tokens can be deleted.
-    return (
-      PRBMath.mulDiv(_data.overflow, _redemptionWeightOf(_ids), _totalRedemptionWeight()),
-      _data.memo,
-      delegateAllocations
-    );
   }
 
   //*********************************************************************//
@@ -162,30 +160,45 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     The cumulative weight the given token IDs have in redemptions compared to the `_totalRedemptionWeight`. 
 
     @param _tokenIds The IDs of the tokens to get the cumulative redemption weight of.
+    @param _data The Juicebox standard project redemption data.
 
     @return cumulativeWeight The weight.
   */
-  function _redemptionWeightOf(uint256[] memory _tokenIds)
+  function _redemptionWeightOf(uint256[] memory _tokenIds, JBRedeemParamsData calldata _data)
     internal
     view
     virtual
     override
     returns (uint256 cumulativeWeight)
   {
-    uint256 _tokenCount = _tokenIds.length;
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
 
-    for (uint256 _i; _i < _tokenCount; ) {
-      uint256 _tierId = store.tierIdOfToken(_tokenIds[_i]);
-      JB721Tier memory _tier = store.tier(address(this), _tierId);
+    // If the game is over, set the weight based on the scorecard results.
+    if (_currentFundingCycle.number == 4) {
+      // Keep a reference to the number of tokens being redeemed.
+      uint256 _tokenCount = _tokenIds.length;
 
-      // Calculate what percentage of the tier redemption amount a single token counts
-      cumulativeWeight +=
-        _tierRedemptionWeights[_tierId] /
-        (_tier.initialQuantity - _tier.remainingQuantity);
+      for (uint256 _i; _i < _tokenCount; ) {
+        // Keep a reference to the token's tier ID.
+        uint256 _tierId = store.tierIdOfToken(_tokenIds[_i]);
 
-      unchecked {
-        ++_i;
+        // Keep a reference to the tier.
+        JB721Tier memory _tier = store.tier(address(this), _tierId);
+
+        // Calculate what percentage of the tier redemption amount a single token counts for.
+        cumulativeWeight +=
+          // Tier's are 1 indexed and are stored 0 indexed.
+          _tierRedemptionWeights[_tierId - 1] /
+          (_tier.initialQuantity - _tier.remainingQuantity);
+
+        unchecked {
+          ++_i;
+        }
       }
+    } else {
+      // Otherwise return the superclass's method.
+      return super._redemptionWeightOf(_tokenIds, _data);
     }
   }
 
@@ -193,9 +206,24 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     @notice
     The cumulative weight that all token IDs have in redemptions. 
 
+    @param _data The Juicebox standard project redemption data.
+
     @return The total weight.
   */
-  function _totalRedemptionWeight() internal view virtual override returns (uint256) {
-    return TOTAL_REDEMPTION_WEIGHT;
+  function _totalRedemptionWeight(JBRedeemParamsData calldata _data)
+    internal
+    view
+    virtual
+    override
+    returns (uint256)
+  {
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
+
+    // If the game is over, set the total weight as the total scorecard weight.
+    if (_currentFundingCycle.number == 4) return TOTAL_REDEMPTION_WEIGHT;
+
+    // Otherwise use the superclass's method.
+    return super._totalRedemptionWeight(_data);
   }
 }
