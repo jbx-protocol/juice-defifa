@@ -6,6 +6,7 @@ import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBSplitsGroups.sol'
 import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol';
 import './interfaces/IDefifaDeployer.sol';
 import './structs/DefifaStoredOpsData.sol';
+import './DefifaDelegate.sol';
 
 /**
   @notice
@@ -81,12 +82,6 @@ contract DefifaDeployer is IDefifaDeployer {
   */
   IJBController public override immutable controller;
 
-  /** 
-    @notice
-    The contract responsibile for deploying the delegate. 
-  */
-  IJBTiered721DelegateDeployer public override immutable delegateDeployer;
-
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
   //*********************************************************************//
@@ -125,16 +120,13 @@ contract DefifaDeployer is IDefifaDeployer {
 
   /**
     @param _controller The controller with which new projects should be deployed. 
-    @param _delegateDeployer The deployer of delegates.
     @param _token The token that games deployed through this contract accept.
   */
   constructor(
     IJBController _controller,
-    IJBTiered721DelegateDeployer _delegateDeployer,
     address _token
   ) {
     controller = _controller;
-    delegateDeployer = _delegateDeployer;
     token = _token;
   }
 
@@ -189,31 +181,26 @@ contract DefifaDeployer is IDefifaDeployer {
     controller.splitsStore().set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
 
     // Deploy the delegate contract.
-    IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
+    DefifaDelegate _delegate = new DefifaDelegate(
       gameId,
-      JBDeployTiered721DelegateData({
-        directory: controller.directory(),
-        name: _delegateData.name,
-        symbol: _delegateData.symbol,
-        fundingCycleStore: controller.fundingCycleStore(),
-        baseUri: _delegateData.baseUri,
-        tokenUriResolver: IJBTokenUriResolver(address(0)),
-        contractUri: _delegateData.contractUri,
-        owner: address(this),
-        pricing: JB721PricingParams({
-          tiers: _delegateData.tiers,
-          currency: _launchProjectData.terminal.currencyForToken(token),
-          decimals: _launchProjectData.terminal.decimalsForToken(token),
-          prices: IJBPrices(address(0))
-        }),
-        reservedTokenBeneficiary: address(0),
-        store: _delegateData.store,
-        flags: JBTiered721Flags({
-          lockReservedTokenChanges: false,
-          lockVotingUnitChanges: false,
-          lockManualMintingChanges: false
-        }),
-        governanceType: JB721GovernanceType.TIERED
+      controller.directory(),
+      _delegateData.name,
+      _delegateData.symbol,
+      controller.fundingCycleStore(),
+      _delegateData.baseUri,
+      IJBTokenUriResolver(address(0)),
+      _delegateData.contractUri,
+      JB721PricingParams({
+        tiers: _delegateData.tiers,
+        currency: _launchProjectData.terminal.currencyForToken(token),
+        decimals: _launchProjectData.terminal.decimalsForToken(token),
+        prices: IJBPrices(address(0))
+      }),
+      _delegateData.store,
+      JBTiered721Flags({
+        lockReservedTokenChanges: false,
+        lockVotingUnitChanges: false,
+        lockManualMintingChanges: false
       })
     );
 
