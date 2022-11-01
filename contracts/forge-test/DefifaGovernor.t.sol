@@ -11,8 +11,6 @@ import '@jbx-protocol/juice-721-delegate/contracts/structs/JBLaunchProjectData.s
 import '@jbx-protocol/juice-721-delegate/contracts/JBTiered721DelegateStore.sol';
 
 contract DefifaGovernorTest is TestBaseWorkflow {
-  // DefifaGovernor public governor;
-  // DefifaDelegate public nfts;
 
   address projectOwner = address(bytes20(keccak256('projectOwner')));
 
@@ -179,7 +177,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Forward time so voting becomes active
     vm.roll(block.number + _governor.votingDelay() + 1);
     // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
-    vm.warp(block.timestamp + _governor.INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT() + 1);
+    vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
 
     // The initial voting delay should now have passed and it should be using the regular one
     assertEq(_governor.votingDelay(), _governor.VOTING_DELAY() / 12);
@@ -278,9 +276,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       launchProjectData.memo
     );
 
-    //JB721TieredGovernance tieredGovernance = new JB721TieredGovernance();
-
-    governor = new DefifaGovernor(nft, block.timestamp + 1 weeks);
+    // fast forwarding time so the governer can be deployed 
+    vm.roll((launchProjectData.data.duration * 4) + 1);
+    governor = new DefifaGovernor(nft, block.timestamp + 5 weeks, NFTRewardDeployerData.fundingCycleStore, projectId);
 
     // Transfer the ownership so governance can control the settings of the RewardsNFT
     nft.transferOwnership(address(governor));

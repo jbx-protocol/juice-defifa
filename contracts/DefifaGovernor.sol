@@ -12,6 +12,7 @@ import '@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFractio
 
 contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   error INCORRECT_TIER_ORDER(uint256, uint256[]);
+  error INVALID_PROPOSAL_CREATION_THRESHOLD_TIME();
   error PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
 
   // The max voting power 1 tier has if everyone votes
@@ -19,11 +20,7 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   // How many seconds does 1 block take
   uint256 internal constant BLOCKTIME_SECONDS = 12;
   // The votingDelay that is set after the contract gets deployed
-  uint256 public constant INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT = 1 weeks;
-  // After the `INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT` has expired, how long should the delay be then
   uint256 public constant VOTING_DELAY = 1 days;
-
-  uint256 internal immutable DEPLOYED_AT;
 
   // The datasource for votingpower
   DefifaDelegate public immutable jbTieredGovernance;
@@ -31,9 +28,17 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   // proposal creation threshold time
   uint256 public immutable proposalCreationThreshold;
 
+  /** 
+    @notice
+    The funding cycle number of the end game phase. 
+  */
+  uint256 public constant END_GAME_PHASE = 4;
+
   constructor(
     DefifaDelegate _jbTieredGovernance,
-    uint256 _proposalCreationThreshold
+    uint256 _proposalCreationThreshold,
+    IJBFundingCycleStore _fundingCycleStore,
+    uint256 _projectId
   )
     Governor('DefifaGovernor')
     GovernorSettings(
@@ -43,8 +48,9 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
     )
   {
     jbTieredGovernance = _jbTieredGovernance;
-
-    DEPLOYED_AT = block.timestamp;
+    JBFundingCycle memory _queuedCycle = _fundingCycleStore.queuedOf(_projectId);
+    // proposals can only  be created last phase onards
+    if (_queuedCycle.number < END_GAME_PHASE && _proposalCreationThreshold < _queuedCycle.start) revert INVALID_PROPOSAL_CREATION_THRESHOLD_TIME();
     proposalCreationThreshold = _proposalCreationThreshold;
   }
 
@@ -183,9 +189,9 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
 
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
     // After the contract initially deploys there is a long delay, once this long delay has passed we use `VOTING_DELAY`
-    if (DEPLOYED_AT + INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT - VOTING_DELAY > block.timestamp) {
+    if (proposalCreationThreshold - VOTING_DELAY > block.timestamp) {
       return
-        ((DEPLOYED_AT + INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT) - block.timestamp) /
+        (proposalCreationThreshold - block.timestamp) /
         BLOCKTIME_SECONDS;
     }
 
