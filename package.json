@@ -10,7 +10,9 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "@jbx-protocol/juice-721-delegate": "^2.0.2"
+    "@jbx-protocol/juice-721-delegate": "^2.0.2",
+    "@openzeppelin/contracts": "^4.7.3",
+    "@prb/math": "^2.5.0"
   },
   "devDependencies": {
     "prettier": "^2.4.0",

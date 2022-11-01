@@ -11,8 +11,6 @@ import '@jbx-protocol/juice-721-delegate/contracts/structs/JBLaunchProjectData.s
 import '@jbx-protocol/juice-721-delegate/contracts/JBTiered721DelegateStore.sol';
 
 contract DefifaGovernorTest is TestBaseWorkflow {
-  // DefifaGovernor public governor;
-  // DefifaDelegate public nfts;
 
   address projectOwner = address(bytes20(keccak256('projectOwner')));
 
@@ -90,7 +88,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_user, block.number - 1));
   }
 
-  function testSetRedemptionRates() public {
+  function testSetRedemptionRates(bool _useHelper) public {
     uint8 nTiers = 10;
     address[] memory _users = new address[](nTiers);
 
@@ -159,19 +157,27 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
     }
 
-    targets[0] = address(_nft);
-    calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
-
     // Forward time so proposals can be created
     vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
 
-    // Create the proposal
-    uint256 _proposalId = _governor.propose(targets, values, calldatas, 'Governance!');
+    uint256 _proposalId;
+    if(_useHelper){
+      _proposalId = _governor.submitScorecards(
+        scorecards
+      );
+
+    }else{
+      targets[0] = address(_nft);
+      calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
+
+      // Create the proposal
+      _proposalId = _governor.propose(targets, values, calldatas, 'Governance!');
+    }
 
     // Forward time so voting becomes active
     vm.roll(block.number + _governor.votingDelay() + 1);
     // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
-    vm.warp(block.timestamp + _governor.INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT() + 1);
+    vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
 
     // The initial voting delay should now have passed and it should be using the regular one
     assertEq(_governor.votingDelay(), _governor.VOTING_DELAY() / 12);
@@ -189,7 +195,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     vm.roll(_governor.proposalDeadline(_proposalId) + 1);
 
     // Execute the proposal
-    _governor.execute(targets, values, calldatas, keccak256('Governance!'));
+    if(_useHelper){
+      _governor.ratifyScorecard(
+        scorecards
+      );
+    }else{
+      _governor.execute(targets, values, calldatas, keccak256('Governance!'));
+    }
 
     uint256[100] memory redemptionWeights = _nft.tierRedemptionWeights();
 
@@ -264,9 +276,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       launchProjectData.memo
     );
 
-    //JB721TieredGovernance tieredGovernance = new JB721TieredGovernance();
-
-    governor = new DefifaGovernor(nft, block.timestamp + 1 weeks);
+    // fast forwarding time so the governer can be deployed 
+    vm.roll((launchProjectData.data.duration * 4) + 1);
+    governor = new DefifaGovernor(nft, block.timestamp + 5 weeks, NFTRewardDeployerData.fundingCycleStore, projectId);
 
     // Transfer the ownership so governance can control the settings of the RewardsNFT
     nft.transferOwnership(address(governor));
