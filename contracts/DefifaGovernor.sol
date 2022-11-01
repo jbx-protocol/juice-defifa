@@ -57,7 +57,7 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   /**
    * Helper method for 'propose' that simplifies interaction with governance for defifa
    */
-  function submitScorecards(DefifaTierRedemptionWeight[] calldata _tierWeights, string calldata _description) external returns (uint256) {
+  function submitScorecards(DefifaTierRedemptionWeight[] calldata _tierWeights) external returns (uint256) {
     // Build the calldata to the delegate
     (
       address[] memory _targets,
@@ -70,14 +70,14 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
       _targets,
       _values,
       _calldatas,
-      _description
+      ""
     );
   }
 
   /**
    * Helper method for 'execute' that simplifies interaction with governance for defifa
    */
-  function ratifyScorecard(DefifaTierRedemptionWeight[] calldata _tierWeights, bytes32 _descriptionHash) external returns (uint256) {
+  function ratifyScorecard(DefifaTierRedemptionWeight[] calldata _tierWeights) external returns (uint256) {
     // Build the calldata to the delegate
     (
       address[] memory _targets,
@@ -90,7 +90,7 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
       _targets,
       _values,
       _calldatas,
-      _descriptionHash
+      keccak256("")
     );
   }
 
