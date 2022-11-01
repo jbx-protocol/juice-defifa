@@ -1,45 +1,29 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
-import './DefifaDelegate.sol';
-
 import '@paulrberg/contracts/math/PRBMath.sol';
-import '@jbx-protocol/juice-721-delegate/contracts/JB721TieredGovernance.sol';
 import '@openzeppelin/contracts/governance/Governor.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorSettings.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol';
+import './interfaces/IDefifaGovernor.sol';
+import './DefifaDelegate.sol';
 
-contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
+contract DefifaGovernor is Governor, GovernorSettings, IDefifaGovernor {
   error INCORRECT_TIER_ORDER(uint256, uint256[]);
   error INVALID_PROPOSAL_CREATION_THRESHOLD_TIME();
   error PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
 
   // The max voting power 1 tier has if everyone votes
   uint256 public constant MAX_VOTING_POWER_TIER = 1_000_000_000;
-  // How many seconds does 1 block take
-  uint256 internal constant BLOCKTIME_SECONDS = 12;
-  // The votingDelay that is set after the contract gets deployed
-  uint256 public constant VOTING_DELAY = 1 days;
 
   // The datasource for votingpower
-  DefifaDelegate public immutable jbTieredGovernance;
+  DefifaDelegate public immutable defifaDelegate;
 
   // proposal creation threshold time
   uint256 public immutable proposalCreationThreshold;
 
-  /** 
-    @notice
-    The funding cycle number of the end game phase. 
-  */
-  uint256 public constant END_GAME_PHASE = 4;
-
-  constructor(
-    DefifaDelegate _jbTieredGovernance,
-    uint256 _proposalCreationThreshold,
-    IJBFundingCycleStore _fundingCycleStore,
-    uint256 _projectId
-  )
+  constructor(DefifaDelegate _defifaDelegate, uint256 _proposalCreationThreshold)
     Governor('DefifaGovernor')
     GovernorSettings(
       1, /* 1 block */
@@ -47,17 +31,17 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
       0
     )
   {
-    jbTieredGovernance = _jbTieredGovernance;
-    JBFundingCycle memory _queuedCycle = _fundingCycleStore.queuedOf(_projectId);
-    // proposals can only  be created last phase onards
-    if (_queuedCycle.number < END_GAME_PHASE && _proposalCreationThreshold < _queuedCycle.start) revert INVALID_PROPOSAL_CREATION_THRESHOLD_TIME();
+    defifaDelegate = _defifaDelegate;
     proposalCreationThreshold = _proposalCreationThreshold;
   }
 
   /**
    * Helper method for 'propose' that simplifies interaction with governance for defifa
    */
-  function submitScorecards(DefifaTierRedemptionWeight[] calldata _tierWeights) external returns (uint256) {
+  function submitScorecards(DefifaTierRedemptionWeight[] calldata _tierWeights)
+    external
+    returns (uint256)
+  {
     // Build the calldata to the delegate
     (
       address[] memory _targets,
@@ -65,19 +49,17 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
       bytes[] memory _calldatas
     ) = _buildScorecardCalldata(_tierWeights);
 
-    // Propose it
-    return propose(
-      _targets,
-      _values,
-      _calldatas,
-      ""
-    );
+    // Propose it.
+    return propose(_targets, _values, _calldatas, '');
   }
 
   /**
    * Helper method for 'execute' that simplifies interaction with governance for defifa
    */
-  function ratifyScorecard(DefifaTierRedemptionWeight[] calldata _tierWeights) external returns (uint256) {
+  function ratifyScorecard(DefifaTierRedemptionWeight[] calldata _tierWeights)
+    external
+    returns (uint256)
+  {
     // Build the calldata to the delegate
     (
       address[] memory _targets,
@@ -86,32 +68,27 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
     ) = _buildScorecardCalldata(_tierWeights);
 
     // Attempt to execute it
-    return execute(
-      _targets,
-      _values,
-      _calldatas,
-      keccak256("")
-    );
+    return execute(_targets, _values, _calldatas, keccak256(''));
   }
 
-  function _buildScorecardCalldata(
-    DefifaTierRedemptionWeight[] calldata _tierWeights
-  ) internal view returns (
-    address[] memory,
-    uint256[] memory,
-    bytes[] memory
-  ){
+  function _buildScorecardCalldata(DefifaTierRedemptionWeight[] calldata _tierWeights)
+    internal
+    view
+    returns (
+      address[] memory,
+      uint256[] memory,
+      bytes[] memory
+    )
+  {
     // Build the calldata for the call to the delegate
     bytes memory _calldata = abi.encodeWithSelector(
       DefifaDelegate.setTierRedemptionWeights.selector,
-      (
-        _tierWeights
-      )
+      (_tierWeights)
     );
 
     // Set the target to the delegate
     address[] memory _targets = new address[](1);
-    _targets[0] = address(jbTieredGovernance);
+    _targets[0] = address(defifaDelegate);
 
     // This call requires no value
     uint256[] memory _values = new uint256[](1);
@@ -123,7 +100,6 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
     return (_targets, _values, _calldatas);
   }
 
-
   /**
    * Get the voting weights for specific tiers
    */
@@ -134,28 +110,24 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   ) internal view virtual override(Governor) returns (uint256 votingPower) {
     // Decode the bytes into the tier_ids
     uint256[] memory _tiers = abi.decode(params, (uint256[]));
-    uint256 _tiers_length = _tiers.length;
+    uint256 _numbeOfTiers = _tiers.length;
 
     // Loop over all tiers gathering the voting share of the user
     uint256 _prevTier;
-    for (uint256 _i; _i < _tiers_length; ) {
+    for (uint256 _i; _i < _numbeOfTiers; ) {
       // Enforce the tiers to be in ascending order, reverts if
       // there are any duplicates or the tiers are incorrecly sorted
       if (_tiers[_i] <= _prevTier) revert INCORRECT_TIER_ORDER(_i, _tiers);
       _prevTier = _tiers[_i];
 
-      uint256 _tierVotingPower = jbTieredGovernance.getPastTierVotes(
-        account,
-        _tiers[_i],
-        blockNumber
-      );
+      uint256 _tierVotingPower = defifaDelegate.getPastTierVotes(account, _tiers[_i], blockNumber);
 
       unchecked {
         if (_tierVotingPower != 0) {
           votingPower += PRBMath.mulDiv(
             _tierVotingPower,
             MAX_VOTING_POWER_TIER,
-            jbTieredGovernance.getPastTierTotalVotes(_tiers[_i], blockNumber)
+            defifaDelegate.getPastTierTotalVotes(_tiers[_i], blockNumber)
           );
         }
 
@@ -169,7 +141,7 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
    */
   function _defaultParams() internal view virtual override returns (bytes memory) {
     // TODO: should we do this on every time or should we just store this, what is cheaper...
-    uint256 _count = jbTieredGovernance.store().maxTierIdOf(address(jbTieredGovernance));
+    uint256 _count = defifaDelegate.store().maxTierIdOf(address(defifaDelegate));
     uint256[] memory _ids = new uint256[](_count);
 
     // Add all tiers to the array
@@ -188,14 +160,7 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   // Overrides we have to do
 
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
-    // After the contract initially deploys there is a long delay, once this long delay has passed we use `VOTING_DELAY`
-    if (proposalCreationThreshold - VOTING_DELAY > block.timestamp) {
-      return
-        (proposalCreationThreshold - block.timestamp) /
-        BLOCKTIME_SECONDS;
-    }
-
-    return VOTING_DELAY / BLOCKTIME_SECONDS;
+    return 0;
   }
 
   function votingPeriod() public view override(IGovernor, GovernorSettings) returns (uint256) {
