@@ -165,8 +165,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     uint256 _proposalId;
     if(_useHelper){
       _proposalId = _governor.submitScorecards(
-        scorecards,
-        'Governance!'
+        scorecards
       );
 
     }else{
@@ -200,8 +199,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Execute the proposal
     if(_useHelper){
       _governor.ratifyScorecard(
-        scorecards,
-        keccak256('Governance!')
+        scorecards
       );
     }else{
       _governor.execute(targets, values, calldatas, keccak256('Governance!'));
