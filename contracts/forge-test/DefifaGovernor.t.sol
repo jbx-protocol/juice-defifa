@@ -168,9 +168,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Create the proposal
     uint256 _proposalId = _governor.propose(targets, values, calldatas, 'Governance!');
 
-    // The voting delay has to be the intial one
-    assertEq(_governor.votingDelay(), _governor.INITIAL_VOTING_DELAY_AFTER_DEPLOYMENT() / 12);
-
     // Forward time so voting becomes active
     vm.roll(block.number + _governor.votingDelay() + 1);
     // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
@@ -194,12 +191,14 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Execute the proposal
     _governor.execute(targets, values, calldatas, keccak256('Governance!'));
 
+    uint256[100] memory redemptionWeights = _nft.tierRedemptionWeights();
+
     // Verify that the redemptionWeights actually changed
-    // for (uint256 i = 0; i < scorecards.length; i++) {
-    //   assertEq(_nft.tierRedemptionWeights(scorecards[i].id), scorecards[i].redemptionWeight);
-    //   scorecards[i].id = i + 1;
-    //   scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
-    // }
+    for (uint256 i = 0; i < scorecards.length - 1; i++) {
+      assertEq(redemptionWeights[scorecards[i].id], scorecards[i].redemptionWeight);
+      scorecards[i].id = i + 1;
+      scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
+    }
   }
 
   // ----- internal helpers ------
