@@ -87,18 +87,6 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   }
 
   /**
-   * @dev See {IGovernor-getVotesWithParams}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function getVotesWithParams(
-    address account,
-    uint256 blockNumber,
-    bytes memory params
-  ) public pure override returns (uint256) {
-    revert('use getVotes');
-  }
-
-  /**
    * @dev Default additional encoded parameters used by castVote methods that don't include them
    */
   function _defaultParams() internal view virtual override returns (bytes memory) {
@@ -137,67 +125,13 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   }
 
   function quorum(uint256 blockNumber) public pure override(IGovernor) returns (uint256) {
+    blockNumber;
     // TODO: I just picked some random value for now, decide what a appropriate quarum should be
     return 2 * MAX_VOTING_POWER_TIER;
   }
 
   function state(uint256 proposalId) public view override(Governor) returns (ProposalState) {
     return super.state(proposalId);
-  }
-
-  /**
-   * @dev See {IGovernor-castVoteWithReason}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function castVoteWithReason(
-    uint256 proposalId,
-    uint8 support,
-    string calldata reason
-  ) public pure override returns (uint256) {
-    revert('use castVote');
-  }
-
-  /**
-   * @dev See {IGovernor-castVoteWithReasonAndParams}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function castVoteWithReasonAndParams(
-    uint256 proposalId,
-    uint8 support,
-    string calldata reason,
-    bytes memory params
-  ) public pure override returns (uint256) {
-    revert('use castVote');
-  }
-
-  /**
-   * @dev See {IGovernor-castVoteBySig}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function castVoteBySig(
-    uint256 proposalId,
-    uint8 support,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) public pure override returns (uint256) {
-    revert('use castVote');
-  }
-
-  /**
-   * @dev See {IGovernor-castVoteWithReasonAndParamsBySig}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function castVoteWithReasonAndParamsBySig(
-    uint256 proposalId,
-    uint8 support,
-    string calldata reason,
-    bytes memory params,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) public pure override returns (uint256) {
-    revert('use castVote');
   }
 
   function propose(
