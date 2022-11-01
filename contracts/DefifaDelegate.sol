@@ -25,6 +25,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
 
+  error GAME_ISNT_OVER_YET();
   error INVALID_REDEMPTION_WEIGHTS();
   error NOTHING_TO_CLAIM();
   error UNEXPECTED();
@@ -48,7 +49,13 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
   /** 
     @notice
-    The funding cycle number of the end game. 
+    The funding cycle number of the mint phase. 
+  */
+  uint256 public constant MINT_GAME_PHASE = 1;
+
+  /** 
+    @notice
+    The funding cycle number of the end game phase. 
   */
   uint256 public constant END_GAME_PHASE = 4;
 
@@ -142,6 +149,12 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     override
     onlyOwner
   {
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
+
+    // Make sure the game has ended.
+    if (_currentFundingCycle.number < END_GAME_PHASE) revert GAME_ISNT_OVER_YET();
+
     // Delete the currently set redemption weights.
     delete _tierRedemptionWeights;
 
@@ -167,6 +180,76 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
   }
 
+  /**
+    @notice 
+    Part of IJBFundingCycleDataSource, this function gets called when a project's token holders redeem.
+    @param _data The Juicebox standard project redemption data.
+    @return reclaimAmount The amount that should be reclaimed from the treasury.
+    @return memo The memo that should be forwarded to the event.
+    @return delegateAllocations The amount to send to delegates instead of adding to the beneficiary.
+  */
+  function redeemParams(JBRedeemParamsData calldata _data)
+    public
+    view
+    override
+    returns (
+      uint256 reclaimAmount,
+      string memory memo,
+      JBRedemptionDelegateAllocation[] memory delegateAllocations
+    )
+  {
+    // Make sure fungible project tokens aren't being redeemed too.
+    if (_data.tokenCount > 0) revert UNEXPECTED_TOKEN_REDEEMED();
+
+    // Check the 4 bytes interfaceId and handle the case where the metadata was not intended for this contract
+    // Skip 32 bytes reserved for generic extension parameters.
+    if (
+      _data.metadata.length < 36 ||
+      bytes4(_data.metadata[32:36]) != type(IJB721Delegate).interfaceId
+    ) {
+      revert INVALID_REDEMPTION_METADATA();
+    }
+
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
+
+    // Set the only delegate allocation to be a callback to this contract.
+    delegateAllocations = new JBRedemptionDelegateAllocation[](1);
+    delegateAllocations[0] = JBRedemptionDelegateAllocation(this, 0);
+
+    // Decode the metadata
+    (, , uint256[] memory _decodedTokenIds) = abi.decode(
+      _data.metadata,
+      (bytes32, bytes4, uint256[])
+    );
+
+    // If the game is in its minting phase, reclaim Amount is the same as it cost to mint.
+    if (_currentFundingCycle.number == MINT_GAME_PHASE) {
+      for (uint256 _i; _i < _decodedTokenIds.length; ) {
+        unchecked {
+          reclaimAmount += store
+            .tierOfTokenId(address(this), _decodedTokenIds[_i])
+            .contributionFloor;
+
+          _i++;
+        }
+      }
+
+      return (reclaimAmount, _data.memo, delegateAllocations);
+    }
+
+    // Return the weighted overflow, and this contract as the delegate so that tokens can be deleted.
+    return (
+      PRBMath.mulDiv(
+        _data.overflow,
+        _redemptionWeightOf(_decodedTokenIds, _data),
+        _totalRedemptionWeight(_data)
+      ),
+      _data.memo,
+      delegateAllocations
+    );
+  }
+
   //*********************************************************************//
   // ------------------------ internal functions ----------------------- //
   //*********************************************************************//
@@ -176,24 +259,16 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     The cumulative weight the given token IDs have in redemptions compared to the `_totalRedemptionWeight`. 
 
     @param _tokenIds The IDs of the tokens to get the cumulative redemption weight of.
-    @param _data The Juicebox standard project redemption data.
 
     @return cumulativeWeight The weight.
   */
-  function _redemptionWeightOf(uint256[] memory _tokenIds, JBRedeemParamsData calldata _data)
+  function _redemptionWeightOf(uint256[] memory _tokenIds, JBRedeemParamsData calldata)
     internal
     view
     virtual
     override
     returns (uint256 cumulativeWeight)
   {
-    // Get a reference to the current funding cycle.
-    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
-
-    if (_currentFundingCycle.number < END_GAME_PHASE)
-      // Otherwise return the superclass's method.
-      return super._redemptionWeightOf(_tokenIds, _data);
-
     // If the game is over, set the weight based on the scorecard results.
     // Keep a reference to the number of tokens being redeemed.
     uint256 _tokenCount = _tokenIds.length;
@@ -224,24 +299,16 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     @notice
     The cumulative weight that all token IDs have in redemptions. 
 
-    @param _data The Juicebox standard project redemption data.
-
     @return The total weight.
   */
-  function _totalRedemptionWeight(JBRedeemParamsData calldata _data)
+  function _totalRedemptionWeight(JBRedeemParamsData calldata)
     internal
     view
     virtual
     override
     returns (uint256)
   {
-    // Get a reference to the current funding cycle.
-    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
-
-    // If the game is not over, use the superclass's method.
-    if (_currentFundingCycle.number < END_GAME_PHASE) return super._totalRedemptionWeight(_data);
-
-    // Otherwise, set the total weight as the total scorecard weight.
+    // Set the total weight as the total scorecard weight.
     return TOTAL_REDEMPTION_WEIGHT;
   }
 }
