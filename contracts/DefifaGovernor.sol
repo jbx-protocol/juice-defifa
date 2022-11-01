@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
+import './DefifaDelegate.sol';
+
 import '@paulrberg/contracts/math/PRBMath.sol';
-import '@jbx-protocol/juice-721-delegate/contracts/JBTiered721Delegate.sol';
 import '@jbx-protocol/juice-721-delegate/contracts/JB721TieredGovernance.sol';
 import '@openzeppelin/contracts/governance/Governor.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorSettings.sol';
@@ -25,13 +26,13 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   uint256 internal immutable DEPLOYED_AT;
 
   // The datasource for votingpower
-  IJB721TieredGovernance public immutable jbTieredGovernance;
+  DefifaDelegate public immutable jbTieredGovernance;
 
   // proposal creation threshold time
   uint256 public immutable proposalCreationThreshold;
 
   constructor(
-    IJB721TieredGovernance _jbTieredGovernance,
+    DefifaDelegate _jbTieredGovernance,
     uint256 _proposalCreationThreshold
   )
     Governor('DefifaGovernor')
@@ -41,10 +42,81 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
       0
     )
   {
-    DEPLOYED_AT = block.timestamp;
     jbTieredGovernance = _jbTieredGovernance;
+
+    DEPLOYED_AT = block.timestamp;
     proposalCreationThreshold = _proposalCreationThreshold;
   }
+
+  /**
+   * Helper method for 'propose' that simplifies interaction with governance for defifa
+   */
+  function submitScorecards(DefifaTierRedemptionWeight[] calldata _tierWeights, string calldata _description) external returns (uint256) {
+    // Build the calldata to the delegate
+    (
+      address[] memory _targets,
+      uint256[] memory _values,
+      bytes[] memory _calldatas
+    ) = _buildScorecardCalldata(_tierWeights);
+
+    // Propose it
+    return propose(
+      _targets,
+      _values,
+      _calldatas,
+      _description
+    );
+  }
+
+  /**
+   * Helper method for 'execute' that simplifies interaction with governance for defifa
+   */
+  function ratifyScorecard(DefifaTierRedemptionWeight[] calldata _tierWeights, bytes32 _descriptionHash) external returns (uint256) {
+    // Build the calldata to the delegate
+    (
+      address[] memory _targets,
+      uint256[] memory _values,
+      bytes[] memory _calldatas
+    ) = _buildScorecardCalldata(_tierWeights);
+
+    // Attempt to execute it
+    return execute(
+      _targets,
+      _values,
+      _calldatas,
+      _descriptionHash
+    );
+  }
+
+  function _buildScorecardCalldata(
+    DefifaTierRedemptionWeight[] calldata _tierWeights
+  ) internal view returns (
+    address[] memory,
+    uint256[] memory,
+    bytes[] memory
+  ){
+    // Build the calldata for the call to the delegate
+    bytes memory _calldata = abi.encodeWithSelector(
+      DefifaDelegate.setTierRedemptionWeights.selector,
+      (
+        _tierWeights
+      )
+    );
+
+    // Set the target to the delegate
+    address[] memory _targets = new address[](1);
+    _targets[0] = address(jbTieredGovernance);
+
+    // This call requires no value
+    uint256[] memory _values = new uint256[](1);
+
+    // Add the delegate call
+    bytes[] memory _calldatas = new bytes[](1);
+    _calldatas[0] = _calldata;
+
+    return (_targets, _values, _calldatas);
+  }
+
 
   /**
    * Get the voting weights for specific tiers
@@ -126,7 +198,7 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
 
   function quorum(uint256 blockNumber) public pure override(IGovernor) returns (uint256) {
     blockNumber;
-    // TODO: I just picked some random value for now, decide what a appropriate quarum should be
+    // TODO: I just picked some random value for now, decide what a appropriate quorum should be
     return 2 * MAX_VOTING_POWER_TIER;
   }
 
@@ -140,9 +212,6 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
     bytes[] memory calldatas,
     string memory description
   ) public override(Governor) returns (uint256) {
-    if (block.timestamp <= proposalCreationThreshold) {
-      revert PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
-    }
     return super.propose(targets, values, calldatas, description);
   }
 
