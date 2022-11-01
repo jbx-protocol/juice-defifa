@@ -1,0 +1,2 @@
+DefifaGovernorTest:testReceiveVotingPower(uint8,uint8) (runs: 256, μ: 13609553, ~: 12959755)
+DefifaGovernorTest:testSetRedemptionRates(bool) (runs: 256, μ: 16433285, ~: 16434669)
