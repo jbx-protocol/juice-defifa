@@ -278,7 +278,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     // fast forwarding time so the governer can be deployed 
     vm.roll((launchProjectData.data.duration * 4) + 1);
-    governor = new DefifaGovernor(nft, block.timestamp + 5 weeks, NFTRewardDeployerData.fundingCycleStore, projectId);
+    governor = new DefifaGovernor(nft, block.timestamp + 5 weeks);
 
     // Transfer the ownership so governance can control the settings of the RewardsNFT
     nft.transferOwnership(address(governor));

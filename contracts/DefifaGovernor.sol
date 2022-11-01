@@ -5,17 +5,19 @@ import '@paulrberg/contracts/math/PRBMath.sol';
 import '@openzeppelin/contracts/governance/Governor.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorSettings.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol';
-import '@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol';
 import './interfaces/IDefifaGovernor.sol';
 import './DefifaDelegate.sol';
 
-contract DefifaGovernor is Governor, GovernorSettings, IDefifaGovernor {
+contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, IDefifaGovernor {
   error INCORRECT_TIER_ORDER(uint256, uint256[]);
   error INVALID_PROPOSAL_CREATION_THRESHOLD_TIME();
-  error PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
 
+  // How many seconds does 1 block take
+  uint256 internal constant BLOCKTIME_SECONDS = 12;
   // The max voting power 1 tier has if everyone votes
-  uint256 public constant MAX_VOTING_POWER_TIER = 1_000_000_000;
+  uint256 public constant override MAX_VOTING_POWER_TIER = 1_000_000_000;
+  // The votingDelay that is set after the contract gets deployed
+  uint256 public constant VOTING_DELAY = 1 days;
 
   // The datasource for votingpower
   DefifaDelegate public immutable defifaDelegate;
@@ -40,6 +42,7 @@ contract DefifaGovernor is Governor, GovernorSettings, IDefifaGovernor {
    */
   function submitScorecards(DefifaTierRedemptionWeight[] calldata _tierWeights)
     external
+    override
     returns (uint256)
   {
     // Build the calldata to the delegate
@@ -58,6 +61,7 @@ contract DefifaGovernor is Governor, GovernorSettings, IDefifaGovernor {
    */
   function ratifyScorecard(DefifaTierRedemptionWeight[] calldata _tierWeights)
     external
+    override
     returns (uint256)
   {
     // Build the calldata to the delegate
@@ -160,7 +164,12 @@ contract DefifaGovernor is Governor, GovernorSettings, IDefifaGovernor {
   // Overrides we have to do
 
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
-    return 0;
+    // After the contract initially deploys there is a long delay, once this long delay has passed we use `VOTING_DELAY`
+    if (proposalCreationThreshold - VOTING_DELAY > block.timestamp) {
+      return (proposalCreationThreshold - block.timestamp) / BLOCKTIME_SECONDS;
+    }
+
+    return VOTING_DELAY / BLOCKTIME_SECONDS;
   }
 
   function votingPeriod() public view override(IGovernor, GovernorSettings) returns (uint256) {
