@@ -6,8 +6,12 @@ import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBSplitsGroups.sol'
 import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol';
 import './interfaces/IDefifaDeployer.sol';
 import './structs/DefifaStoredOpsData.sol';
+import './DefifaDelegate.sol';
 
 /**
+  @title
+  DefifaDeployer
+
   @notice
   Deploys a Defifa game.
 
@@ -81,12 +85,6 @@ contract DefifaDeployer is IDefifaDeployer {
   */
   IJBController public override immutable controller;
 
-  /** 
-    @notice
-    The contract responsibile for deploying the delegate. 
-  */
-  IJBTiered721DelegateDeployer public override immutable delegateDeployer;
-
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
   //*********************************************************************//
@@ -125,16 +123,13 @@ contract DefifaDeployer is IDefifaDeployer {
 
   /**
     @param _controller The controller with which new projects should be deployed. 
-    @param _delegateDeployer The deployer of delegates.
     @param _token The token that games deployed through this contract accept.
   */
   constructor(
     IJBController _controller,
-    IJBTiered721DelegateDeployer _delegateDeployer,
     address _token
   ) {
     controller = _controller;
-    delegateDeployer = _delegateDeployer;
     token = _token;
   }
 
@@ -152,8 +147,8 @@ contract DefifaDeployer is IDefifaDeployer {
     @return gameId The ID of the newly configured game.
   */
   function launchGameWith(
-    DefifaDelegateData calldata _delegateData,
-    DefifaLaunchProjectData calldata _launchProjectData
+    DefifaDelegateData memory _delegateData,
+    DefifaLaunchProjectData memory _launchProjectData
   ) external override returns (uint256 gameId) {
     // Make sure the provided gameplay timestamps are sequential.
     if (
@@ -168,53 +163,54 @@ contract DefifaDeployer is IDefifaDeployer {
     // Make sure the provided terminal accepts the same currency as this game is being played in.
     if (!_launchProjectData.terminal.acceptsToken(token, gameId)) revert UNEXPECTED_TERMINAL_CURRENCY();
 
-    // Store the timestamps that'll define the game phases.
-    _timesFor[gameId] = DefifaTimeData({
-      start: _launchProjectData.start,
-      tradeDeadline: _launchProjectData.tradeDeadline,
-      end: _launchProjectData.end
-    });
+    {
+      // Store the timestamps that'll define the game phases.
+      _timesFor[gameId] = DefifaTimeData({
+        start: _launchProjectData.start,
+        tradeDeadline: _launchProjectData.tradeDeadline,
+        end: _launchProjectData.end
+      });
 
-    // Store the terminal, distribution limit, and hold fees flag.
-    _opsFor[gameId] = DefifaStoredOpsData({
-      terminal:_launchProjectData.terminal,
-      distributionLimit: _launchProjectData.distributionLimit,
-      holdFees: _launchProjectData.holdFees
-    });
+      // Store the terminal, distribution limit, and hold fees flag.
+      _opsFor[gameId] = DefifaStoredOpsData({
+        terminal:_launchProjectData.terminal,
+        distributionLimit: _launchProjectData.distributionLimit,
+        holdFees: _launchProjectData.holdFees
+      });
+      
+      // Store the splits. They'll be used when queueing phase 2.
+      JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
+      _groupedSplits[0] = JBGroupedSplits({group: gameId, splits: _launchProjectData.splits});
+      // This contract must have SET_SPLITS operator permissions.
+      controller.splitsStore().set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
+    }
 
-    // Store the splits. They'll be used when queueing phase 2.
-    JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
-    _groupedSplits[0] = JBGroupedSplits({group: gameId, splits: _launchProjectData.splits});
-    // This contract must have SET_SPLITS operator permissions.
-    controller.splitsStore().set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
+    JB721PricingParams memory _pricingParams = JB721PricingParams({
+        tiers: _delegateData.tiers,
+        currency: _launchProjectData.terminal.currencyForToken(token),
+        decimals: _launchProjectData.terminal.decimalsForToken(token),
+        prices: IJBPrices(address(0))
+      });
+
+    JBTiered721Flags memory _flags = JBTiered721Flags({
+        lockReservedTokenChanges: false,
+        lockVotingUnitChanges: false,
+        lockManualMintingChanges: false
+    });
 
     // Deploy the delegate contract.
-    IJBTiered721Delegate _delegate = delegateDeployer.deployDelegateFor(
+    DefifaDelegate _delegate = new DefifaDelegate(
       gameId,
-      JBDeployTiered721DelegateData({
-        directory: controller.directory(),
-        name: _delegateData.name,
-        symbol: _delegateData.symbol,
-        fundingCycleStore: controller.fundingCycleStore(),
-        baseUri: _delegateData.baseUri,
-        tokenUriResolver: IJBTokenUriResolver(address(0)),
-        contractUri: _delegateData.contractUri,
-        owner: address(this),
-        pricing: JB721PricingParams({
-          tiers: _delegateData.tiers,
-          currency: _launchProjectData.terminal.currencyForToken(token),
-          decimals: _launchProjectData.terminal.decimalsForToken(token),
-          prices: IJBPrices(address(0))
-        }),
-        reservedTokenBeneficiary: address(0),
-        store: _delegateData.store,
-        flags: JBTiered721Flags({
-          lockReservedTokenChanges: false,
-          lockVotingUnitChanges: false,
-          lockManualMintingChanges: false
-        }),
-        governanceType: JB721GovernanceType.TIERED
-      })
+      controller.directory(),
+      _delegateData.name,
+      _delegateData.symbol,
+      controller.fundingCycleStore(),
+      _delegateData.baseUri,
+      IJBTokenUriResolver(address(0)),
+      _delegateData.contractUri,
+      _pricingParams,
+      _delegateData.store,
+      _flags
     );
 
     // Queue the first phase of the game.

@@ -16,8 +16,6 @@ interface IDefifaDeployer {
 
   function controller() external view returns (IJBController);
 
-  function delegateDeployer() external view returns (IJBTiered721DelegateDeployer);
-
   function timesFor(uint256 _gameId) external view returns (DefifaTimeData memory);
 
   function startOf(uint256 _gameId) external view returns (uint256);

@@ -9,11 +9,9 @@ import '@openzeppelin/contracts/governance/extensions/GovernorSettings.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol';
 
-// errors
-error PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
-
 contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   error INCORRECT_TIER_ORDER(uint256, uint256[]);
+  error PROPOSAL_CREATION_THRESHOLD_NOT_REACHED_YET();
 
   // The max voting power 1 tier has if everyone votes
   uint256 public constant MAX_VOTING_POWER_TIER = 1_000_000_000;
@@ -26,17 +24,13 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
 
   uint256 internal immutable DEPLOYED_AT;
 
-  // datasource
-  IJBTiered721Delegate jbTieredRewards;
-
   // The datasource for votingpower
-  IJB721TieredGovernance jbTieredGovernance;
+  IJB721TieredGovernance public immutable jbTieredGovernance;
 
   // proposal creation threshold time
   uint256 public immutable proposalCreationThreshold;
 
   constructor(
-    IJBTiered721Delegate _jbTieredRewards,
     IJB721TieredGovernance _jbTieredGovernance,
     uint256 _proposalCreationThreshold
   )
@@ -48,7 +42,6 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
     )
   {
     DEPLOYED_AT = block.timestamp;
-    jbTieredRewards = _jbTieredRewards;
     jbTieredGovernance = _jbTieredGovernance;
     proposalCreationThreshold = _proposalCreationThreshold;
   }
@@ -94,23 +87,11 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
   }
 
   /**
-   * @dev See {IGovernor-getVotesWithParams}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function getVotesWithParams(
-    address account,
-    uint256 blockNumber,
-    bytes memory params
-  ) public pure override returns (uint256) {
-    revert('use getVotes');
-  }
-
-  /**
    * @dev Default additional encoded parameters used by castVote methods that don't include them
    */
   function _defaultParams() internal view virtual override returns (bytes memory) {
     // TODO: should we do this on every time or should we just store this, what is cheaper...
-    uint256 _count = jbTieredRewards.store().maxTierIdOf(address(jbTieredRewards));
+    uint256 _count = jbTieredGovernance.store().maxTierIdOf(address(jbTieredGovernance));
     uint256[] memory _ids = new uint256[](_count);
 
     // Add all tiers to the array
@@ -143,68 +124,14 @@ contract DefifaGovernor is Governor, GovernorSettings, GovernorCountingSimple {
     return super.votingPeriod();
   }
 
-  function quorum(uint256 blockNumber) public view override(IGovernor) returns (uint256) {
+  function quorum(uint256 blockNumber) public pure override(IGovernor) returns (uint256) {
+    blockNumber;
     // TODO: I just picked some random value for now, decide what a appropriate quarum should be
     return 2 * MAX_VOTING_POWER_TIER;
   }
 
   function state(uint256 proposalId) public view override(Governor) returns (ProposalState) {
     return super.state(proposalId);
-  }
-
-  /**
-   * @dev See {IGovernor-castVoteWithReason}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function castVoteWithReason(
-    uint256 proposalId,
-    uint8 support,
-    string calldata reason
-  ) public pure override returns (uint256) {
-    revert('use castVote');
-  }
-
-  /**
-   * @dev See {IGovernor-castVoteWithReasonAndParams}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function castVoteWithReasonAndParams(
-    uint256 proposalId,
-    uint8 support,
-    string calldata reason,
-    bytes memory params
-  ) public pure override returns (uint256) {
-    revert('use castVote');
-  }
-
-  /**
-   * @dev See {IGovernor-castVoteBySig}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function castVoteBySig(
-    uint256 proposalId,
-    uint8 support,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) public pure override returns (uint256) {
-    revert('use castVote');
-  }
-
-  /**
-   * @dev See {IGovernor-castVoteWithReasonAndParamsBySig}.
-   * reverting to avoid passsing of duplicate tier id's in params
-   */
-  function castVoteWithReasonAndParamsBySig(
-    uint256 proposalId,
-    uint8 support,
-    string calldata reason,
-    bytes memory params,
-    uint8 v,
-    bytes32 r,
-    bytes32 s
-  ) public pure override returns (uint256) {
-    revert('use castVote');
   }
 
   function propose(
