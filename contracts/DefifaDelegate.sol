@@ -171,7 +171,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     @param _pricing The pricing config of the tiers according to which token distribution will be made. Must be passed in order of contribution floor, with implied increasing value.
     @param _store A contract that stores the NFT's data.
     @param _flags A set of flags that help define how this contract works.
-    @param _owner The address that should own the contract.
   */
   constructor(
     uint256 _projectId,
@@ -184,8 +183,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     string memory _contractUri,
     JB721PricingParams memory _pricing,
     IJBTiered721DelegateStore _store,
-    JBTiered721Flags memory _flags,
-    address _owner
+    JBTiered721Flags memory _flags
   ) {
     // Disable the safety check to not allow initializing the original contract
     codeOrigin = address(0);
@@ -203,9 +201,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       _store,
       _flags
     );
-
-    // Transfer ownership to the specified owner.
-    transferOwnership(_owner);
   }
 
   //*********************************************************************//
