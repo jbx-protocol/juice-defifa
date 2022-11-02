@@ -33,6 +33,8 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   // ----------------------- internal proprties ------------------------ //
   //*********************************************************************//
 
+  uint256 constant DEPLOY_BYTECODE_LENGTH = 13;
+
   /** 
     @notice
     Start time of the 2nd fc when re-configuring the fc. 
@@ -73,6 +75,11 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   //*********************************************************************//
   // --------------- public immutable stored properties ---------------- //
   //*********************************************************************//
+
+  /**
+   * @notice
+   */
+  address public immutable defifaCodeOrigin;
 
   /** 
     @notice
@@ -127,9 +134,11 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     @param _token The token that games deployed through this contract accept.
   */
   constructor(
+    address _defifaCodeOrigin,
     IJBController _controller,
     address _token
   ) {
+    defifaCodeOrigin = _defifaCodeOrigin;
     controller = _controller;
     token = _token;
   }
@@ -195,14 +204,9 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         prices: IJBPrices(address(0))
       });
 
-    JBTiered721Flags memory _flags = JBTiered721Flags({
-        lockReservedTokenChanges: false,
-        lockVotingUnitChanges: false,
-        lockManualMintingChanges: false
-    });
-
-    // Deploy the delegate contract.
-    DefifaDelegate _delegate = new DefifaDelegate(
+    // Clone and initialize the new delegate
+    DefifaDelegate _delegate = DefifaDelegate(_clone(defifaCodeOrigin));
+    _delegate.initialize(
       gameId,
       controller.directory(),
       _delegateData.name,
@@ -213,7 +217,11 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       _delegateData.contractUri,
       _pricingParams,
       _delegateData.store,
-      _flags
+      JBTiered721Flags({
+          lockReservedTokenChanges: false,
+          lockVotingUnitChanges: false,
+          lockManualMintingChanges: false
+      })
     );
 
     // Transfer ownership to the specified owner.
@@ -535,5 +543,39 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         new JBFundAccessConstraints[](0),
         'Defifa game phase 4.'
       );
+  }
+
+   /**
+    @notice Clone and redeploy the bytecode of a given address
+
+    @dev Runtime bytecode needs a constructor -> we append this one
+         to the bytecode, which is a minimalistic one only returning the runtime bytecode
+
+         See https://github.com/drgorillamd/clone-deployed-contract/blob/master/readme.MD for details
+   */
+  function _clone(address _targetAddress) internal returns (address _out) {
+    assembly {
+      // Get deployed/runtime code size
+      let _codeSize := extcodesize(_targetAddress)
+
+      // Get a bit of freemem to land the bytecode, not updated as we'll leave this scope right after create(..)
+      let _freeMem := mload(0x40)
+
+      // Shift the length to the length placeholder, in the constructor (by adding zero's/mul)
+      let _mask := mul(_codeSize, 0x100000000000000000000000000000000000000000000000000000000)
+
+      // Insert the length in the correct spot (after the PUSH3 / 0x62)
+      let _initCode := or(_mask, 0x62000000600081600d8239f3fe00000000000000000000000000000000000000)
+      // --------------------------- here ^ (see the "1" from the mul step aligning)
+
+      // Store the deployment bytecode in free memory
+      mstore(_freeMem, _initCode)
+
+      // Copy the bytecode, after the deployer bytecode in free memory
+      extcodecopy(_targetAddress, add(_freeMem, DEPLOY_BYTECODE_LENGTH), 0, _codeSize)
+
+      // Deploy the copied bytecode (constructor + original) and return the address in 'out'
+      _out := create(0, _freeMem, add(_codeSize, DEPLOY_BYTECODE_LENGTH))
+    }
   }
 }

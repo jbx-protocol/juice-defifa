@@ -137,8 +137,11 @@ contract DeployGoerli is Script {
         terminal: terminal
       });
 
+    // Deploy the codeOrigin for the delegate
+    DefifaDelegate _defifaDelegateCodeOrigin = new DefifaDelegate();
+
     // Deploy the deployer.
-    defifaDeployer = new DefifaDeployer(controller, JBTokens.ETH);
+    defifaDeployer = new DefifaDeployer(address(_defifaDelegateCodeOrigin), controller, JBTokens.ETH);
 
     // Set the owner as the governor (done here to easily count future nonces)
     _delegateData.owner = computeCreateAddress(address(this), vm.getNonce(address(this)) + 1);

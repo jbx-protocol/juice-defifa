@@ -229,7 +229,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     projectId = _jbController.projects().count() + 1;
 
-    nft = new DefifaDelegate(
+    nft = new DefifaDelegate();
+    nft.initialize(
       projectId,
       NFTRewardDeployerData.directory,
       NFTRewardDeployerData.name,
