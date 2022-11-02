@@ -136,7 +136,8 @@ contract DeployGoerli is Test {
 
     console.log(address(defifaDeployer));
     console.log(address(store));
+
+    assertLt(address(defifaDeployer).code.length, 24576);
+    assertLt(address(defifaGovernor).code.length, 24576);
   }
-
-
 }
