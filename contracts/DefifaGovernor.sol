@@ -13,19 +13,19 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   error INVALID_PROPOSAL_CREATION_THRESHOLD_TIME();
 
   // How many seconds does 1 block take
-  uint256 internal constant BLOCKTIME_SECONDS = 12;
+  uint256 internal constant _BLOCKTIME_SECONDS = 12;
   // The max voting power 1 tier has if everyone votes
   uint256 public constant override MAX_VOTING_POWER_TIER = 1_000_000_000;
   // The votingDelay that is set after the contract gets deployed
-  uint256 public constant VOTING_DELAY = 1 days;
+  uint256 public constant override VOTING_DELAY = 1 days;
 
   // The datasource for votingpower
-  DefifaDelegate public immutable defifaDelegate;
+  IDefifaDelegate public immutable override defifaDelegate;
 
   // proposal creation threshold time
-  uint256 public immutable proposalCreationThreshold;
+  uint256 public immutable override proposalCreationThreshold;
 
-  constructor(DefifaDelegate _defifaDelegate, uint256 _proposalCreationThreshold)
+  constructor(IDefifaDelegate _defifaDelegate, uint256 _proposalCreationThreshold)
     Governor('DefifaGovernor')
     GovernorSettings(
       1, /* 1 block */
@@ -166,10 +166,10 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
     // After the contract initially deploys there is a long delay, once this long delay has passed we use `VOTING_DELAY`
     if (proposalCreationThreshold - VOTING_DELAY > block.timestamp) {
-      return (proposalCreationThreshold - block.timestamp) / BLOCKTIME_SECONDS;
+      return (proposalCreationThreshold - block.timestamp) / _BLOCKTIME_SECONDS;
     }
 
-    return VOTING_DELAY / BLOCKTIME_SECONDS;
+    return VOTING_DELAY / _BLOCKTIME_SECONDS;
   }
 
   function votingPeriod() public view override(IGovernor, GovernorSettings) returns (uint256) {
