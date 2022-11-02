@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: UNLICENSED
+pragma solidity ^0.8.16;
 
 import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBTokens.sol';
 import '@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateStore.sol';
