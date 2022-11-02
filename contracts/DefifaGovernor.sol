@@ -6,6 +6,7 @@ import '@openzeppelin/contracts/governance/Governor.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorSettings.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol';
 import './interfaces/IDefifaGovernor.sol';
+import './interfaces/IDefifaDeployer.sol';
 import './DefifaDelegate.sol';
 
 /**
@@ -23,9 +24,8 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
-
   error INCORRECT_TIER_ORDER();
-  error INVALID_PROPOSAL_CREATION_THRESHOLD_TIME();
+
 
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
@@ -59,9 +59,11 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   */
   IDefifaDelegate public immutable override defifaDelegate;
 
-  /**
-   */
-  uint256 public immutable override proposalCreationThreshold;
+  /** 
+    @notice
+    Voting delay time after which voting can begin.
+  */
+  uint256 public immutable votingDelayTime;
 
   //*********************************************************************//
   // -------------------------- constructor ---------------------------- //
@@ -69,9 +71,9 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
 
   /**     
     @param _defifaDelegate The Defifa delegate contract that this contract is Governing.
-    @param _proposalCreationThreshold .
+    @param _defifaDeployer .
   */
-  constructor(IDefifaDelegate _defifaDelegate, uint256 _proposalCreationThreshold)
+  constructor(IDefifaDelegate _defifaDelegate, IDefifaDeployer _defifaDeployer, uint256 _gameId)
     Governor('DefifaGovernor')
     GovernorSettings(
       1, /* 1 block */
@@ -80,7 +82,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     )
   {
     defifaDelegate = _defifaDelegate;
-    proposalCreationThreshold = _proposalCreationThreshold;
+    votingDelayTime = _defifaDeployer.endOf(_gameId) - 1 weeks;
   }
 
   //*********************************************************************//
@@ -265,11 +267,10 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
 
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
     // After the contract initially deploys there is a long delay, once this long delay has passed we use `VOTING_DELAY`
-    if (proposalCreationThreshold - VOTING_DELAY > block.timestamp) {
-      return (proposalCreationThreshold - block.timestamp) / _BLOCKTIME_SECONDS;
+    if (votingDelayTime - VOTING_DELAY > block.timestamp) {
+      return (votingDelayTime - block.timestamp) / _BLOCKTIME_SECONDS;
     }
-
-    return VOTING_DELAY / _BLOCKTIME_SECONDS;
+    // no voting delay once voting is active
   }
 
   // Required override.
