@@ -109,8 +109,11 @@ contract DeployGoerli is Test {
         terminal: terminal
       });
 
+    // Deploy the codeOrigin for the delegate
+    DefifaDelegate _defifaDelegateCodeOrigin = new DefifaDelegate();
+
     // Deploy the deployer.
-    defifaDeployer = new DefifaDeployer(controller, JBTokens.ETH);
+    defifaDeployer = new DefifaDeployer(address(_defifaDelegateCodeOrigin), controller, JBTokens.ETH);
 
     uint256[] memory _permissionIndexes = new uint256[](1);
     _permissionIndexes[0] = JBOperations.SET_SPLITS;
