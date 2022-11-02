@@ -110,13 +110,15 @@ contract DeployGoerli is Script {
     _delegateData.owner = computeCreateAddress(address(this), vm.getNonce(address(this)) + 1);
     console.log(_delegateData.owner);
 
-    // Launch the game.
+    // Launch the game - initialNonce
     uint256 _projectId = defifaDeployer.launchGameWith(_delegateData, _launchProjectData);
+    // initialNonce + 1
 
     // Get a reference to the latest configured funding cycle's data source, which should be the delegate that was deployed and attached to the project.
     (, JBFundingCycleMetadata memory _metadata,) = controller.latestConfiguredFundingCycleOf(_projectId);
+    // initialNonce + 1 (view function)
 
-    // TODO: second param?
+    // Deploy the governor
     defifaGovernor = new DefifaGovernor(DefifaDelegate(_metadata.dataSource), 0);
 
     console.log(address(defifaDeployer));
