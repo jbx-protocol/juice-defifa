@@ -106,6 +106,10 @@ contract DeployGoerli is Script {
     // Deploy the deployer.
     defifaDeployer = new DefifaDeployer(controller, JBTokens.ETH);
 
+    // Set the owner as the governor (done here to easily count future nonces)
+    _delegateData.owner = computeCreateAddress(address(this), vm.getNonce(address(this)) + 1);
+    console.log(_delegateData.owner);
+
     // Launch the game.
     uint256 _projectId = defifaDeployer.launchGameWith(_delegateData, _launchProjectData);
 
@@ -118,4 +122,6 @@ contract DeployGoerli is Script {
     console.log(address(defifaDeployer));
     console.log(address(store));
   }
+
+
 }
