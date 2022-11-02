@@ -518,4 +518,8 @@ contract DefifaDeployer is IDefifaDeployer {
         'Defifa game phase 4.'
       );
   }
+
+  function onERC721Received(address, address, uint256, bytes memory) pure external returns (bytes4 retval) {
+      return IERC721Receiver.onERC721Received.selector;
+  }
 }
