@@ -177,12 +177,14 @@ contract DefifaDeployer is IDefifaDeployer {
         distributionLimit: _launchProjectData.distributionLimit,
         holdFees: _launchProjectData.holdFees
       });
-      
-      // Store the splits. They'll be used when queueing phase 2.
-      JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
-      _groupedSplits[0] = JBGroupedSplits({group: gameId, splits: _launchProjectData.splits});
-      // This contract must have SET_SPLITS operator permissions.
-      controller.splitsStore().set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
+
+      if (_launchProjectData.splits.length != 0) {
+        // Store the splits. They'll be used when queueing phase 2.
+        JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
+        _groupedSplits[0] = JBGroupedSplits({group: gameId, splits: _launchProjectData.splits});
+        // This contract must have SET_SPLITS operator permissions.
+        controller.splitsStore().set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
+      } 
     }
 
     JB721PricingParams memory _pricingParams = JB721PricingParams({
@@ -350,8 +352,15 @@ contract DefifaDeployer is IDefifaDeployer {
     JBSplit[] memory _splits =  controller.splitsStore().splitsOf(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _gameId);
 
     // Make a group split for ETH payouts.
-    JBGroupedSplits[] memory _groupedSplits = new JBGroupedSplits[](1);
-    _groupedSplits[0] = JBGroupedSplits({group: JBSplitsGroups.ETH_PAYOUT, splits: _splits});
+    JBGroupedSplits[] memory _groupedSplits;
+
+    if (_splits.length != 0) {
+      _groupedSplits = new JBGroupedSplits[](1);
+      _groupedSplits[0] = JBGroupedSplits({group: JBSplitsGroups.ETH_PAYOUT, splits: _splits});
+    } 
+    else {
+      _groupedSplits = new JBGroupedSplits[](0);
+    }
 
     // Get a reference to the time data.
     DefifaTimeData memory _times = _timesFor[_gameId];
