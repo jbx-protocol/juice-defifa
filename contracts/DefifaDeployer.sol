@@ -213,6 +213,9 @@ contract DefifaDeployer is IDefifaDeployer {
       _flags
     );
 
+    // Transfer ownership to the specified owner.
+    _delegate.transferOwnership(_delegateData.owner);
+
     // Queue the first phase of the game.
     _queuePhase1(_launchProjectData, address(_delegate));
   }
