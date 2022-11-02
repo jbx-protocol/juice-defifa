@@ -2,10 +2,15 @@
 pragma solidity ^0.8.16;
 
 import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBTokens.sol';
+import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBOperations.sol';
+import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBOperatorData.sol';
+import '@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBOperatable.sol';
+
 import '@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateStore.sol';
+
 import '../DefifaDeployer.sol';
 import '../DefifaGovernor.sol';
-import 'forge-std/Script.sol';
+import 'forge-std/Test.sol';
 
 // contract DeployMainnet is Script {
 //     IJBController jbController = IJBController(0xFFdD70C318915879d5192e8a0dcbFcB0285b3C98);
@@ -33,7 +38,7 @@ import 'forge-std/Script.sol';
 //       console.log(address(store));
 //     }
 //   }
-contract DeployGoerli is Script {
+contract DeployGoerli is Test {
   // V3 goerli controller.
   IJBController controller = IJBController(0x7Cb86D43B665196BC719b6974D320bf674AFb395);
   // goerli 721 store.
@@ -56,8 +61,8 @@ contract DeployGoerli is Script {
   uint48 _tradeDeadline = 0;
   uint48 _end = 0;
 
-  function run() external {
-    vm.startBroadcast();
+  function test_deployGoerli() external {
+    //vm.startBroadcast();
 
     JB721TierParams[] memory _tiers = new JB721TierParams[](1);
     _tiers[0] = JB721TierParams({
@@ -106,6 +111,13 @@ contract DeployGoerli is Script {
 
     // Deploy the deployer.
     defifaDeployer = new DefifaDeployer(controller, JBTokens.ETH);
+
+    uint256[] memory _permissionIndexes = new uint256[](1);
+    _permissionIndexes[0] = JBOperations.SET_SPLITS;
+
+    vm.startPrank(0x46D623731E179FAF971CdA04fF8c499C95461b3c);
+    IJBOperatable(address(terminal)).operatorStore().setOperator(JBOperatorData({operator: address(defifaDeployer), domain: 1, permissionIndexes: _permissionIndexes}));
+    vm.stopPrank();
 
     // Set the owner as the governor (done here to easily count future nonces)
     _delegateData.owner = computeCreateAddress(address(this), vm.getNonce(address(this)) + 1);
