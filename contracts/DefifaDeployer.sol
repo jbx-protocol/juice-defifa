@@ -210,7 +210,8 @@ contract DefifaDeployer is IDefifaDeployer {
       _delegateData.contractUri,
       _pricingParams,
       _delegateData.store,
-      _flags
+      _flags,
+      _delegateData.owner
     );
 
     // Queue the first phase of the game.
