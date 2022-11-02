@@ -213,14 +213,14 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
       if (_tierId <= _prevTierId) revert INCORRECT_TIER_ORDER();
 
       // Set the previous tier ID.
-      _prevTierId = _tierIds[_i];
+      _prevTierId = _tierId;
 
       // If there is tier voting power, increment the result by the proportion of votes the account has to the total, multiplied by the tier's maximum vote power.
       unchecked {
         votingPower += PRBMath.mulDiv(
           MAX_VOTING_POWER_TIER,
-          defifaDelegate.getPastTierVotes(_account, _tierIds[_i], _blockNumber),
-          defifaDelegate.getPastTierTotalVotes(_tierIds[_i], _blockNumber)
+          defifaDelegate.getPastTierVotes(_account, _tierId, _blockNumber),
+          defifaDelegate.getPastTierTotalVotes(_tierId, _blockNumber)
         );
       }
 
