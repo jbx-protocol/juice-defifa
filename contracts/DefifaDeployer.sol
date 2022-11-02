@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.16;
 
+import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBConstants.sol';
 import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBSplitsGroups.sol';
 import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol';
@@ -19,7 +20,7 @@ import './DefifaDelegate.sol';
   Adheres to -
   IDefifaDeployer: General interface for the generic controller methods in this contract that interacts with funding cycles and tokens according to the protocol's rules.
 */
-contract DefifaDeployer is IDefifaDeployer {
+contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
@@ -253,6 +254,14 @@ contract DefifaDeployer is IDefifaDeployer {
     if (currentFundingCycle.number == 1) return _queuePhase2(_gameId, metadata.dataSource);
     else if (currentFundingCycle.number == 2) return _queuePhase3(_gameId, metadata.dataSource);
     else return _queuePhase4(_gameId, metadata.dataSource);
+  }
+
+  /**
+    @notice
+    Allows this contract to receive 721s.
+  */
+  function onERC721Received(address, address, uint256, bytes calldata) external pure override returns (bytes4) {
+     return IERC721Receiver.onERC721Received.selector;
   }
 
   //*********************************************************************//

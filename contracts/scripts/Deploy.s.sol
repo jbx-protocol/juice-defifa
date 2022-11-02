@@ -80,7 +80,7 @@ contract DeployGoerli is Script {
 
   // Tier standard params.
   uint80 _contributionFloor = 0.022 ether;
-  uint40 _maxInitialQuantity = 1_000_000_000;
+  uint40 _maxInitialQuantity = 1_000_000_000 - 1;
   uint16 _votingUnits = 1;
 
   // Game params.
