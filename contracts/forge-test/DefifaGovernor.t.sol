@@ -310,8 +310,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     (, JBFundingCycleMetadata memory _metadata,) = _jbController.latestConfiguredFundingCycleOf(projectId);
 
     // Deploy the governor
-    governor = new DefifaGovernor(DefifaDelegate(_metadata.dataSource), defifaDeployer);
-
+    governor = new DefifaGovernor(DefifaDelegate(_metadata.dataSource), block.timestamp + 3 weeks);
+    
+    // making sure the addresses match
     assertEq(address(governor),  _delegateData.owner);
 
     nft = DefifaDelegate(_metadata.dataSource);

@@ -65,9 +65,9 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
 
   /**     
     @param _defifaDelegate The Defifa delegate contract that this contract is Governing.
-    @param _defifaDeployer .
+    @param _votingStartTime Voting start time .
   */
-  constructor(IDefifaDelegate _defifaDelegate, IDefifaDeployer _defifaDeployer)
+  constructor(IDefifaDelegate _defifaDelegate, uint256 _votingStartTime)
     Governor('DefifaGovernor')
     GovernorSettings(
       1, /* 1 block */
@@ -76,8 +76,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     )
   {
     defifaDelegate = _defifaDelegate;
-    // voting can start 7 days before the end phase fc starts
-    votingStartTime = _defifaDeployer.endOf(_defifaDelegate.projectId()) - 1 weeks;
+    votingStartTime = _votingStartTime;
   }
 
   //*********************************************************************//
