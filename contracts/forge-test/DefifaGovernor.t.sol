@@ -198,8 +198,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       _governor.castVote(_proposalId, 1);
     }
 
-    uint256 _proposalDeadline = _governor.proposalDeadline(_proposalId);
-    
     vm.roll(deployer.endOf(_projectId));
 
     // Phase 4
@@ -224,7 +222,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
   }
 
 
-  function getBasicDefifaLaunchData() internal returns (DefifaLaunchProjectData memory) {
+  function getBasicDefifaLaunchData() internal view returns (DefifaLaunchProjectData memory) {
     return DefifaLaunchProjectData({
         projectMetadata: JBProjectMetadata({
           content: "",
@@ -253,7 +251,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
   {
     (
       JBDeployTiered721DelegateData memory NFTRewardDeployerData,
-      JBLaunchProjectData memory launchProjectData
     ) = createData(nTiers);
 
     projectId = deployer.launchGameWith(
