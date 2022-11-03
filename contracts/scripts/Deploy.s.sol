@@ -139,7 +139,7 @@ contract DeployGoerli is Script {
       DefifaDelegateData({
         name: 'Defifa: FIFA World Cup 2022',
         symbol: 'DEFIFA',
-        baseUri: 'https://jbx.mypinata.cloud/ipfs/',
+        baseUri: 'ipfs://',
         contractUri: 'QmWhNUiJo4Q6iycxK7a2GGXxFRcVXnUrHv1dYm4ScvuitR',
         tiers: _tiers,
         store: store,
