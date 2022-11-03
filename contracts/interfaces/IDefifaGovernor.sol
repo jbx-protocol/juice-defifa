@@ -7,8 +7,6 @@ import './IDefifaDelegate.sol';
 interface IDefifaGovernor {
   function MAX_VOTING_POWER_TIER() external view returns (uint256);
 
-  function VOTING_DELAY() external view returns (uint256);
-
   function defifaDelegate() external view returns (IDefifaDelegate);
 
   function submitScorecards(DefifaTierRedemptionWeight[] calldata _tierWeights)

@@ -49,21 +49,15 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
 
   /** 
     @notice
-    The window of time before the game's end timestamp during which votes should be accepted.
-  */
-  uint256 public constant override VOTING_DELAY = 1 days;
-
-  /** 
-    @notice
     The Defifa delegate contract that this contract is Governing.
   */
   IDefifaDelegate public immutable override defifaDelegate;
 
   /** 
     @notice
-    Voting delay time after which voting can begin.
+    Voting start timestamp after which voting can begin.
   */
-  uint256 public immutable votingDelayTime;
+  uint256 public immutable votingStartTime;
 
   //*********************************************************************//
   // -------------------------- constructor ---------------------------- //
@@ -82,7 +76,8 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     )
   {
     defifaDelegate = _defifaDelegate;
-    votingDelayTime = _defifaDeployer.endOf(_defifaDelegate.projectId()) - 1 weeks;
+    // voting can start 7 days before the end phase fc starts
+    votingStartTime = _defifaDeployer.endOf(_defifaDelegate.projectId()) - 1 weeks;
   }
 
   //*********************************************************************//
@@ -266,12 +261,12 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   }
 
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
-    // voting only becomes active 7 days before the end phase begins so configuring the voting delay accordingly here
-    if (votingDelayTime - VOTING_DELAY > block.timestamp) {
-      return (votingDelayTime - block.timestamp) / _BLOCKTIME_SECONDS;
+    // calculating the voting delay based on the votingStartTime configured in the constructor
+    if (votingStartTime > block.timestamp) {
+      return (votingStartTime - block.timestamp) / _BLOCKTIME_SECONDS;
     }
     // no voting delay once voting is active
-    return super.votingDelay();
+    return 0;
   }
 
   // Required override.
