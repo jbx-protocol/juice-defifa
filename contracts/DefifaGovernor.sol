@@ -73,7 +73,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     @param _defifaDelegate The Defifa delegate contract that this contract is Governing.
     @param _defifaDeployer .
   */
-  constructor(IDefifaDelegate _defifaDelegate, IDefifaDeployer _defifaDeployer, uint256 _gameId)
+  constructor(IDefifaDelegate _defifaDelegate, IDefifaDeployer _defifaDeployer)
     Governor('DefifaGovernor')
     GovernorSettings(
       1, /* 1 block */
@@ -82,7 +82,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     )
   {
     defifaDelegate = _defifaDelegate;
-    votingDelayTime = _defifaDeployer.endOf(_gameId) - 1 weeks;
+    votingDelayTime = _defifaDeployer.endOf(_defifaDelegate.projectId()) - 1 weeks;
   }
 
   //*********************************************************************//
@@ -266,11 +266,12 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   }
 
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
-    // After the contract initially deploys there is a long delay, once this long delay has passed we use `VOTING_DELAY`
+    // voting only becomes active 7 days before the end phase begins so configuring the voting delay accordingly here
     if (votingDelayTime - VOTING_DELAY > block.timestamp) {
       return (votingDelayTime - block.timestamp) / _BLOCKTIME_SECONDS;
     }
     // no voting delay once voting is active
+    return super.votingDelay();
   }
 
   // Required override.
