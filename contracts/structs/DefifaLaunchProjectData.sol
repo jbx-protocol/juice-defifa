@@ -8,7 +8,6 @@ import './DefifaTimeData.sol';
 
 /**
   @member projectMetadata Metadata to associate with the project within a particular domain. This can be updated any time by the owner of the project.
-  @member mustStartAtOrAfter The time before which the game cannot start.
   @member mintDuration The duration of the game's first phase.
   @member start The timestamp at which the game should start.
   @member tradeDeadline The timestamp at which the game's trade deadline should begin.
@@ -20,7 +19,6 @@ import './DefifaTimeData.sol';
 */
 struct DefifaLaunchProjectData {
   JBProjectMetadata projectMetadata;
-  uint256 mustStartAtOrAfter;
   uint256 mintDuration;
   uint48 start;
   uint48 tradeDeadline;
