@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import 'forge-std/Test.sol';
 import '../DefifaGovernor.sol';
 import '../DefifaDelegate.sol';
+import '../DefifaDeployer.sol';
 
 import '@jbx-protocol/juice-721-delegate/contracts/forge-test/utils/TestBaseWorkflow.sol';
 import '@jbx-protocol/juice-721-delegate/contracts/structs/JBDeployTiered721DelegateData.sol';
@@ -11,11 +12,17 @@ import '@jbx-protocol/juice-721-delegate/contracts/structs/JBLaunchProjectData.s
 import '@jbx-protocol/juice-721-delegate/contracts/JBTiered721DelegateStore.sol';
 
 contract DefifaGovernorTest is TestBaseWorkflow {
+  using JBFundingCycleMetadataResolver for JBFundingCycle;
+
+  DefifaDeployer deployer;
 
   address projectOwner = address(bytes20(keccak256('projectOwner')));
 
   function setUp() public virtual override {
     super.setUp();
+
+    DefifaDelegate _delegate = new DefifaDelegate();
+    deployer = new DefifaDeployer(address(_delegate), _jbController, JBTokens.ETH);
   }
 
   function testReceiveVotingPower(uint8 nTiers, uint8 tier) public {
@@ -25,13 +32,12 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     address _user = address(bytes20(keccak256('user')));
 
-    (
-      uint256 _projectId,
-      DefifaDelegate _nft,
-      DefifaGovernor _governor
-    ) = createDefifaProject(uint256(nTiers));
+    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+      uint256(nTiers),
+      getBasicDefifaLaunchData()
+    );
 
-   // User should have no voting power (yet)
+    // User should have no voting power (yet)
     assertEq(_governor.getVotes(_user, block.number - 1), 0);
 
     // fund user
@@ -63,10 +69,11 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       metadata
     );
 
-    JBTiered721SetTierDelegatesData[] memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
+    JBTiered721SetTierDelegatesData[]
+      memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
     tiered721SetDelegatesData[0] = JBTiered721SetTierDelegatesData({
-        delegatee: _user,
-        tierId: uint256(tier)
+      delegatee: _user,
+      tierId: uint256(tier)
     });
 
     // Set the delegate as the user themselves
@@ -74,17 +81,11 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     _nft.setTierDelegates(tiered721SetDelegatesData);
 
     // The user should now have a balance
-    assertEq(
-      _nft.balanceOf(_user),
-      1
-    );
+    assertEq(_nft.balanceOf(_user), 1);
 
     // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
     vm.roll(block.number + 1);
-    assertEq(
-      _nft.store().tier(address(_nft), tier).votingUnits,
-      100
-    );
+    assertEq(_nft.store().tier(address(_nft), tier).votingUnits, 100);
     assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_user, block.number - 1));
   }
 
@@ -92,11 +93,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     uint8 nTiers = 10;
     address[] memory _users = new address[](nTiers);
 
-    (
-      uint256 _projectId,
-      DefifaDelegate _nft,
-      DefifaGovernor _governor
-    ) = createDefifaProject(uint256(nTiers));
+    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+      uint256(nTiers),
+      getBasicDefifaLaunchData()
+    );
 
     for (uint256 i = 0; i < nTiers; i++) {
       // Generate a new address for each tier
@@ -132,7 +132,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       );
 
       // Set the delegate as the user themselves
-      JBTiered721SetTierDelegatesData[] memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
+      JBTiered721SetTierDelegatesData[]
+        memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
       tiered721SetDelegatesData[0] = JBTiered721SetTierDelegatesData({
         delegatee: _users[i],
         tierId: uint256(i + 1)
@@ -144,6 +145,14 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       vm.roll(block.number + 1);
       assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_users[i], block.number - 1));
     }
+
+    // Phase 2
+    deployer.queueNextPhaseOf(_projectId);
+    vm.roll(block.number + 1);
+
+    // Phase 3
+    deployer.queueNextPhaseOf(_projectId);
+    vm.roll(block.number + 1);
 
     address[] memory targets = new address[](1);
     uint256[] memory values = new uint256[](1);
@@ -161,12 +170,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
 
     uint256 _proposalId;
-    if(_useHelper){
-      _proposalId = _governor.submitScorecards(
-        scorecards
-      );
-
-    }else{
+    if (_useHelper) {
+      _proposalId = _governor.submitScorecards(scorecards);
+    } else {
       targets[0] = address(_nft);
       calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
 
@@ -191,15 +197,18 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       _governor.castVote(_proposalId, 1);
     }
 
-    // Forward time to the block after voting closes
-    vm.roll(_governor.proposalDeadline(_proposalId) + 1);
+    uint256 _proposalDeadline = _governor.proposalDeadline(_proposalId);
+    
+    vm.roll(deployer.endOf(_projectId));
+
+    // Phase 4
+    deployer.queueNextPhaseOf(_projectId);
+
 
     // Execute the proposal
-    if(_useHelper){
-      _governor.ratifyScorecard(
-        scorecards
-      );
-    }else{
+    if (_useHelper) {
+      _governor.ratifyScorecard(scorecards);
+    } else {
       _governor.execute(targets, values, calldatas, keccak256('Governance!'));
     }
 
@@ -213,8 +222,27 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
   }
 
+
+  function getBasicDefifaLaunchData() internal returns (DefifaLaunchProjectData memory) {
+    return DefifaLaunchProjectData({
+        projectMetadata: JBProjectMetadata({
+          content: "",
+          domain: 0
+        }),
+        mustStartAtOrAfter: 0,
+        mintDuration: 1 days,
+        start: uint48(block.timestamp),
+        tradeDeadline: uint48(block.timestamp + 1 days),
+        end: uint48(block.timestamp + 1 weeks),
+        holdFees: false,
+        splits: new JBSplit[](0),
+        distributionLimit: 0,
+        terminal: _jbETHPaymentTerminal
+      });
+  }
+
   // ----- internal helpers ------
-  function createDefifaProject(uint256 nTiers)
+  function createDefifaProject(uint256 nTiers, DefifaLaunchProjectData memory defifaLaunchData)
     internal
     returns (
       uint256 projectId,
@@ -227,61 +255,31 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       JBLaunchProjectData memory launchProjectData
     ) = createData(nTiers);
 
-    projectId = _jbController.projects().count() + 1;
-
-    nft = new DefifaDelegate();
-    nft.initialize(
-      projectId,
-      NFTRewardDeployerData.directory,
-      NFTRewardDeployerData.name,
-      NFTRewardDeployerData.symbol,
-      NFTRewardDeployerData.fundingCycleStore,
-      NFTRewardDeployerData.baseUri,
-      NFTRewardDeployerData.tokenUriResolver,
-      NFTRewardDeployerData.contractUri,
-      NFTRewardDeployerData.pricing,
-      NFTRewardDeployerData.store,
-      NFTRewardDeployerData.flags
-    );
-
-    _jbController.launchProjectFor(
-      projectOwner, // owner
-      launchProjectData.projectMetadata,
-      launchProjectData.data,
-       JBFundingCycleMetadata({
-        global: launchProjectData.metadata.global,
-        reservedRate: launchProjectData.metadata.reservedRate,
-        redemptionRate: launchProjectData.metadata.redemptionRate,
-        ballotRedemptionRate: launchProjectData.metadata.ballotRedemptionRate,
-        pausePay: launchProjectData.metadata.pausePay,
-        pauseDistributions: launchProjectData.metadata.pauseDistributions,
-        pauseRedeem: launchProjectData.metadata.pauseRedeem,
-        pauseBurn: launchProjectData.metadata.pauseBurn,
-        allowMinting: launchProjectData.metadata.allowMinting,
-        allowTerminalMigration: launchProjectData.metadata.allowTerminalMigration,
-        allowControllerMigration: launchProjectData.metadata.allowControllerMigration,
-        holdFees: launchProjectData.metadata.holdFees,
-        preferClaimedTokenOverride: launchProjectData.metadata.preferClaimedTokenOverride,
-        useTotalOverflowForRedemptions: launchProjectData.metadata.useTotalOverflowForRedemptions,
-        // Set the project to use the data source for its pay function.
-        useDataSourceForPay: true,
-        useDataSourceForRedeem: true,
-        // Set the delegate address as the data source of the provided metadata.
-        dataSource: address(nft),
-        metadata: launchProjectData.metadata.metadata
+    projectId = deployer.launchGameWith(
+      DefifaDelegateData({
+        name: NFTRewardDeployerData.name,
+        symbol: NFTRewardDeployerData.symbol,
+        baseUri: NFTRewardDeployerData.baseUri,
+        contractUri: NFTRewardDeployerData.contractUri,
+        tiers: NFTRewardDeployerData.pricing.tiers,
+        store: NFTRewardDeployerData.store,
+        owner: address(this)
       }),
-      launchProjectData.mustStartAtOrAfter,
-      launchProjectData.groupedSplits,
-      launchProjectData.fundAccessConstraints,
-      launchProjectData.terminals,
-      launchProjectData.memo
+      defifaLaunchData
     );
 
-    // fast forwarding time so the governer can be deployed 
-    vm.roll((launchProjectData.data.duration * 4) + 1);
-    governor = new DefifaGovernor(nft, block.timestamp + 5 weeks);
 
-    // Transfer the ownership so governance can control the settings of the RewardsNFT
+    JBFundingCycle memory _fc = _jbFundingCycleStore.currentOf(projectId);
+    
+    // Get the NFT (it was set as the datasource)
+    nft = DefifaDelegate(
+      _fc.dataSource()
+    );
+
+    // Deploy the new governor
+    governor = new DefifaGovernor(nft, defifaLaunchData.tradeDeadline);
+
+    // Transfer ownership of the NFT to the governor
     nft.transferOwnership(address(governor));
   }
 
@@ -338,10 +336,19 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       tokenUriResolver: IJBTokenUriResolver(address(0)),
       contractUri: contractUri,
       owner: _projectOwner,
-      pricing : JB721PricingParams({tiers: tierParams, currency: 1, decimals: 18, prices: IJBPrices(address(0))}),
+      pricing: JB721PricingParams({
+        tiers: tierParams,
+        currency: 1,
+        decimals: 18,
+        prices: IJBPrices(address(0))
+      }),
       reservedTokenBeneficiary: reserveBeneficiary,
       store: new JBTiered721DelegateStore(),
-      flags: JBTiered721Flags({lockReservedTokenChanges: false, lockVotingUnitChanges: false, lockManualMintingChanges: false}),
+      flags: JBTiered721Flags({
+        lockReservedTokenChanges: false,
+        lockVotingUnitChanges: false,
+        lockManualMintingChanges: false
+      }),
       governanceType: JB721GovernanceType.TIERED
     });
 
