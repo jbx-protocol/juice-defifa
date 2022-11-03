@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import 'forge-std/Test.sol';
 import '../DefifaGovernor.sol';
+import '../DefifaDeployer.sol';
 import '../DefifaDelegate.sol';
 import '../DefifaDeployer.sol';
 
@@ -147,7 +148,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
 
     // Phase 2
-    vm.warp(block.timestamp + 1);
+    vm.warp(block.timestamp + 1 days);
     deployer.queueNextPhaseOf(_projectId);
     
 
@@ -168,8 +169,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
 
     // Forward time so proposals can be created
-    vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
-
     uint256 _proposalId;
     if (_useHelper) {
       _proposalId = _governor.submitScorecards(scorecards);
@@ -184,10 +183,11 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Forward time so voting becomes active
     vm.roll(block.number + _governor.votingDelay() + 1);
     // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
-    vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
+    // block time is 12 secs
+    vm.warp(block.timestamp + (_governor.votingDelay() * 12));
 
-    // The initial voting delay should now have passed and it should be using the regular one
-    assertEq(_governor.votingDelay(), _governor.VOTING_DELAY() / 12);
+    // No voting delay after the initial voting delay has passed in
+    assertEq(_governor.votingDelay(), 0);
 
     // All the users vote
     // 0 = Against
@@ -198,9 +198,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       _governor.castVote(_proposalId, 1);
     }
 
-    vm.roll(deployer.endOf(_projectId));
-
     // Phase 4
+    vm.warp(block.timestamp + 1 weeks);
+    vm.roll(deployer.endOf(_projectId));
     deployer.queueNextPhaseOf(_projectId);
     vm.warp(block.timestamp + 1 weeks);
 
@@ -228,9 +228,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
           content: "",
           domain: 0
         }),
-        mustStartAtOrAfter: 0,
         mintDuration: 1 days,
-        start: uint48(block.timestamp),
+        start: uint48(block.timestamp + 1 days),
         tradeDeadline: uint48(block.timestamp + 1 days),
         end: uint48(block.timestamp + 1 weeks),
         holdFees: false,
@@ -277,7 +276,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Deploy the new governor
     governor = new DefifaGovernor(nft, defifaLaunchData.tradeDeadline);
 
-    // Transfer ownership of the NFT to the governor
+    // Transfer the ownership so governance can control the settings of the RewardsNFT
     nft.transferOwnership(address(governor));
   }
 

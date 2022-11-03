@@ -162,6 +162,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   ) external override returns (uint256 gameId) {
     // Make sure the provided gameplay timestamps are sequential.
     if (
+      _launchProjectData.start - _launchProjectData.mintDuration < block.timestamp ||
       _launchProjectData.tradeDeadline < _launchProjectData.start ||
       _launchProjectData.end < _launchProjectData.start ||
       _launchProjectData.end < _launchProjectData.tradeDeadline
@@ -327,7 +328,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         dataSource: _dataSource,
         metadata: 0
       }),
-      _launchProjectData.mustStartAtOrAfter,
+      _launchProjectData.start -  _launchProjectData.mintDuration,
       new JBGroupedSplits[](0),
       new JBFundAccessConstraints[](0),
       _terminals,
