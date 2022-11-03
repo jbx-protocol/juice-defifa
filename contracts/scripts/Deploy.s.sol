@@ -133,6 +133,10 @@ contract DeployGoerli is Script {
         shouldUseBeneficiaryAsDefault: true,
         transfersPausable: true
       });
+
+      unchecked {
+        ++_i;
+      }
     }
 
     DefifaDelegateData memory _delegateData =
