@@ -127,7 +127,7 @@ contract DeployGoerli is Script {
         initialQuantity: 1_000_000_000 - 1, // max 
         votingUnits: 1,
         reservedRate: 9,
-        reservedTokenBeneficiary: address(0),
+        reservedTokenBeneficiary: 0x11834239698c7336EF232C00a2A9926d3375DF9D, // Defifa Balboys and Ballgirls multisig,
         encodedIPFSUri: _teamEncodedIPFSUris[_i],
         allowManualMint: false,
         shouldUseBeneficiaryAsDefault: true,
