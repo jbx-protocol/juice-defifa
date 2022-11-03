@@ -147,12 +147,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
 
     // Phase 2
+    vm.warp(block.timestamp + 1);
     deployer.queueNextPhaseOf(_projectId);
-    vm.roll(block.number + 1);
+    
 
     // Phase 3
+    vm.warp(block.timestamp + 1 days);
     deployer.queueNextPhaseOf(_projectId);
-    vm.roll(block.number + 1);
 
     address[] memory targets = new address[](1);
     uint256[] memory values = new uint256[](1);
@@ -203,7 +204,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     // Phase 4
     deployer.queueNextPhaseOf(_projectId);
-
+    vm.warp(block.timestamp + 1 weeks);
 
     // Execute the proposal
     if (_useHelper) {
