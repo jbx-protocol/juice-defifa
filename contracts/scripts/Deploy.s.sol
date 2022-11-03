@@ -153,7 +153,7 @@ contract DeployGoerli is Script {
     // initialNonce + 1 (view function)
 
     // Deploy the governor
-    defifaGovernor = new DefifaGovernor(DefifaDelegate(_metadata.dataSource), 0);
+    defifaGovernor = new DefifaGovernor(DefifaDelegate(_metadata.dataSource), _end);
 
     console.log(address(defifaDeployer));
     console.log(address(store));

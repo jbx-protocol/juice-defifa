@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import 'forge-std/Test.sol';
 import '../DefifaGovernor.sol';
+import '../DefifaDeployer.sol';
 import '../DefifaDelegate.sol';
 
 import '@jbx-protocol/juice-721-delegate/contracts/forge-test/utils/TestBaseWorkflow.sol';
@@ -158,8 +159,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
 
     // Forward time so proposals can be created
-    vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
-
     uint256 _proposalId;
     if(_useHelper){
       _proposalId = _governor.submitScorecards(
@@ -177,10 +176,11 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Forward time so voting becomes active
     vm.roll(block.number + _governor.votingDelay() + 1);
     // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
-    vm.warp(block.timestamp + _governor.proposalCreationThreshold() + 1);
+    // block time is 12 secs
+    vm.warp(block.timestamp + (_governor.votingDelay() * 12));
 
-    // The initial voting delay should now have passed and it should be using the regular one
-    assertEq(_governor.votingDelay(), _governor.VOTING_DELAY() / 12);
+    // No voting delay after the initial voting delay has passed in
+    assertEq(_governor.votingDelay(), 0);
 
     // All the users vote
     // 0 = Against
@@ -193,6 +193,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     // Forward time to the block after voting closes
     vm.roll(_governor.proposalDeadline(_proposalId) + 1);
+    // going to the end of the game
+    vm.warp(block.timestamp + 3 weeks);
 
     // Execute the proposal
     if(_useHelper){
@@ -226,23 +228,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       JBDeployTiered721DelegateData memory NFTRewardDeployerData,
       JBLaunchProjectData memory launchProjectData
     ) = createData(nTiers);
-
-    projectId = _jbController.projects().count() + 1;
-
-    nft = new DefifaDelegate(
-      projectId,
-      NFTRewardDeployerData.directory,
-      NFTRewardDeployerData.name,
-      NFTRewardDeployerData.symbol,
-      NFTRewardDeployerData.fundingCycleStore,
-      NFTRewardDeployerData.baseUri,
-      NFTRewardDeployerData.tokenUriResolver,
-      NFTRewardDeployerData.contractUri,
-      NFTRewardDeployerData.pricing,
-      NFTRewardDeployerData.store,
-      NFTRewardDeployerData.flags
-    );
-
+    
+    // launching a default project so we can set splits
     _jbController.launchProjectFor(
       projectOwner, // owner
       launchProjectData.projectMetadata,
@@ -266,7 +253,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         useDataSourceForPay: true,
         useDataSourceForRedeem: true,
         // Set the delegate address as the data source of the provided metadata.
-        dataSource: address(nft),
+        dataSource: address(0),
         metadata: launchProjectData.metadata.metadata
       }),
       launchProjectData.mustStartAtOrAfter,
@@ -276,12 +263,59 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       launchProjectData.memo
     );
 
-    // fast forwarding time so the governer can be deployed 
-    vm.roll((launchProjectData.data.duration * 4) + 1);
-    governor = new DefifaGovernor(nft, block.timestamp + 5 weeks);
+    DefifaDelegateData memory _delegateData =
+      DefifaDelegateData({
+        name: NFTRewardDeployerData.name,
+        symbol: NFTRewardDeployerData.symbol,
+        baseUri: NFTRewardDeployerData.baseUri,
+        // TODO: Need a contract URI.
+        contractUri: NFTRewardDeployerData.contractUri,
+        tiers: NFTRewardDeployerData.pricing.tiers,
+        store: NFTRewardDeployerData.store,
+        // TODO: set owner as the Governor that is being deployed.
+        owner: address(0)
+    });
 
-    // Transfer the ownership so governance can control the settings of the RewardsNFT
-    nft.transferOwnership(address(governor));
+    DefifaLaunchProjectData memory _launchProjectData =
+      DefifaLaunchProjectData({
+        projectMetadata: launchProjectData.projectMetadata,
+        mustStartAtOrAfter: 0,
+        mintDuration: 1 weeks,
+        start: uint48(block.timestamp + 1 weeks),
+        tradeDeadline: uint48(block.timestamp + 2 weeks),
+        end: uint48(block.timestamp + 3 weeks),
+        holdFees: false,
+        splits: new JBSplit[](0),
+        distributionLimit: 0,
+        terminal: _terminals[0]
+      });
+
+    // Deploy the deployer.
+    DefifaDeployer defifaDeployer = new DefifaDeployer(_jbController, JBTokens.ETH);
+
+    uint256[] memory _permissionIndexes = new uint256[](1);
+    _permissionIndexes[0] = JBOperations.SET_SPLITS;
+
+    vm.startPrank(projectOwner);
+    IJBOperatable(address( _terminals[0])).operatorStore().setOperator(JBOperatorData({operator: address(defifaDeployer), domain: 1, permissionIndexes: _permissionIndexes}));
+    vm.stopPrank();
+
+    // Set the owner as the governor (done here to easily count future nonces)
+    _delegateData.owner = computeCreateAddress(address(this), vm.getNonce(address(this)));
+
+    // Launch the game - initialNonce
+    projectId = defifaDeployer.launchGameWith(_delegateData, _launchProjectData);
+
+    // Get a reference to the latest configured funding cycle's data source, which should be the delegate that was deployed and attached to the project.
+    (, JBFundingCycleMetadata memory _metadata,) = _jbController.latestConfiguredFundingCycleOf(projectId);
+
+    // Deploy the governor
+    governor = new DefifaGovernor(DefifaDelegate(_metadata.dataSource), block.timestamp + 3 weeks);
+    
+    // making sure the addresses match
+    assertEq(address(governor),  _delegateData.owner);
+
+    nft = DefifaDelegate(_metadata.dataSource);
   }
 
   // Create launchProjectFor(..) payload
