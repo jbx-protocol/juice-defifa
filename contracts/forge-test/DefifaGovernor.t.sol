@@ -268,18 +268,15 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         name: NFTRewardDeployerData.name,
         symbol: NFTRewardDeployerData.symbol,
         baseUri: NFTRewardDeployerData.baseUri,
-        // TODO: Need a contract URI.
         contractUri: NFTRewardDeployerData.contractUri,
         tiers: NFTRewardDeployerData.pricing.tiers,
         store: NFTRewardDeployerData.store,
-        // TODO: set owner as the Governor that is being deployed.
         owner: address(0)
     });
 
     DefifaLaunchProjectData memory _launchProjectData =
       DefifaLaunchProjectData({
         projectMetadata: launchProjectData.projectMetadata,
-        mustStartAtOrAfter: 0,
         mintDuration: 1 weeks,
         start: uint48(block.timestamp + 1 weeks),
         tradeDeadline: uint48(block.timestamp + 2 weeks),
