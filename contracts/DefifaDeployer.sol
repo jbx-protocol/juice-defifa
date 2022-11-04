@@ -5,6 +5,7 @@ import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBConstants.sol';
 import '@jbx-protocol/juice-contracts-v3/contracts/libraries/JBSplitsGroups.sol';
 import '@jbx-protocol/juice-contracts-v3/contracts/structs/JBFundAccessConstraints.sol';
+import '@jbx-protocol/juice-721-delegate/contracts/libraries/JBTiered721FundingCycleMetadataResolver.sol';
 import './interfaces/IDefifaDeployer.sol';
 import './structs/DefifaStoredOpsData.sol';
 import './DefifaDelegate.sol';
@@ -326,9 +327,12 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         useDataSourceForPay: true,
         useDataSourceForRedeem: true,
         dataSource: _dataSource,
-        metadata: 0
+        metadata:  JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(JBTiered721FundingCycleMetadata({
+          pauseTransfers: false,
+          pauseMintingReserves: true 
+        }))
       }),
-      _launchProjectData.start -  _launchProjectData.mintDuration,
+      _launchProjectData.start - _launchProjectData.mintDuration,
       new JBGroupedSplits[](0),
       new JBFundAccessConstraints[](0),
       _terminals,
@@ -417,7 +421,12 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
           useDataSourceForPay: true,
           useDataSourceForRedeem: true,
           dataSource: _dataSource,
-          metadata: 0
+          metadata: JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
+            JBTiered721FundingCycleMetadata({
+              pauseTransfers: false,
+              pauseMintingReserves: false
+            })
+          )
         }),
         0, // mustStartAtOrAfter should be ASAP
          _groupedSplits,
@@ -478,7 +487,12 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
           useDataSourceForRedeem: true,
           dataSource: _dataSource,
           // Set a metadata of 1 to impose token non-transferability. 
-          metadata: 1
+          metadata: JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
+            JBTiered721FundingCycleMetadata({
+              pauseTransfers: true,
+              pauseMintingReserves: false
+            })
+          )
         }),
         0, // mustStartAtOrAfter should be ASAP
         new JBGroupedSplits[](0),
@@ -537,7 +551,12 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
           useDataSourceForRedeem: true,
           dataSource: _dataSource,
           // Transferability unlocked.
-          metadata: 0
+          metadata: JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
+            JBTiered721FundingCycleMetadata({
+              pauseTransfers: false,
+              pauseMintingReserves: false
+            })
+          )
         }),
         0, // mustStartAtOrAfter should be ASAP
         new JBGroupedSplits[](0),

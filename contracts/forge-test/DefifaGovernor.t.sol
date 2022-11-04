@@ -150,7 +150,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Phase 2
     vm.warp(block.timestamp + 1 days);
     deployer.queueNextPhaseOf(_projectId);
-    
 
     // Phase 3
     vm.warp(block.timestamp + 1 days);
@@ -221,13 +220,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
   }
 
-
   function getBasicDefifaLaunchData() internal view returns (DefifaLaunchProjectData memory) {
-    return DefifaLaunchProjectData({
-        projectMetadata: JBProjectMetadata({
-          content: "",
-          domain: 0
-        }),
+    return
+      DefifaLaunchProjectData({
+        projectMetadata: JBProjectMetadata({content: '', domain: 0}),
         mintDuration: 1 days,
         start: uint48(block.timestamp + 1 days),
         tradeDeadline: uint48(block.timestamp + 1 days),
@@ -248,9 +244,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       DefifaGovernor governor
     )
   {
-    (
-      JBDeployTiered721DelegateData memory NFTRewardDeployerData,
-    ) = createData(nTiers);
+    (JBDeployTiered721DelegateData memory NFTRewardDeployerData, ) = createData(nTiers);
 
     projectId = deployer.launchGameWith(
       DefifaDelegateData({
@@ -265,13 +259,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       defifaLaunchData
     );
 
-
     JBFundingCycle memory _fc = _jbFundingCycleStore.currentOf(projectId);
-    
+
     // Get the NFT (it was set as the datasource)
-    nft = DefifaDelegate(
-      _fc.dataSource()
-    );
+    nft = DefifaDelegate(_fc.dataSource());
 
     // Deploy the new governor
     governor = new DefifaGovernor(nft, defifaLaunchData.tradeDeadline);
