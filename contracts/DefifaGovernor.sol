@@ -258,11 +258,16 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     return abi.encode(_ids);
   }
 
+  /** 
+    @notice
+    Calculating the voting delay based on the votingStartTime configured in the constructor.
+
+    @return voting delay denoted by the no of blocks.
+  */
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
-    // calculating the voting delay based on the votingStartTime configured in the constructor
-    if (votingStartTime > block.timestamp) {
+    if (votingStartTime > block.timestamp)
       return (votingStartTime - block.timestamp) / _BLOCKTIME_SECONDS;
-    }
+
     // no voting delay once voting is active
     return 0;
   }
