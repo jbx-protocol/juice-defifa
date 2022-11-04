@@ -327,7 +327,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       address(this),
       _PROTOCOL_FEE_PROJECT,
       protocolFeeProjectTokenAccount,
-      controller.tokenStore().balanceOf(address(this), _PROTOCOL_FEE_PROJECT)
+      controller.tokenStore().unclaimedBalanceOf(address(this), _PROTOCOL_FEE_PROJECT)
     );
   }
 
