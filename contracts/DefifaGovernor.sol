@@ -3,7 +3,6 @@ pragma solidity ^0.8.16;
 
 import '@paulrberg/contracts/math/PRBMath.sol';
 import '@openzeppelin/contracts/governance/Governor.sol';
-import '@openzeppelin/contracts/governance/extensions/GovernorSettings.sol';
 import '@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol';
 import './interfaces/IDefifaGovernor.sol';
 import './interfaces/IDefifaDeployer.sol';
