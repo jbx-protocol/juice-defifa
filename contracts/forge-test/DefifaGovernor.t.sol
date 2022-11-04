@@ -23,7 +23,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     super.setUp();
 
     DefifaDelegate _delegate = new DefifaDelegate();
-    deployer = new DefifaDeployer(address(_delegate), _jbController, JBTokens.ETH);
+    address _protocolFeeProjectTokenAccount = 0x1000000000000000000000000000000000000000;
+    deployer = new DefifaDeployer(
+      address(_delegate),
+      _jbController,
+      JBTokens.ETH,
+      _protocolFeeProjectTokenAccount
+    );
   }
 
   function testReceiveVotingPower(uint8 nTiers, uint8 tier) public {

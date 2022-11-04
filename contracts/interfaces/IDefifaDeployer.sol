@@ -16,7 +16,11 @@ interface IDefifaDeployer {
 
   function controller() external view returns (IJBController);
 
+  function protocolFeeProjectTokenAccount() external view returns (address);
+
   function timesFor(uint256 _gameId) external view returns (DefifaTimeData memory);
+
+  function mintDurationOf(uint256 _gameId) external view returns (uint256);
 
   function startOf(uint256 _gameId) external view returns (uint256);
 
@@ -30,10 +34,14 @@ interface IDefifaDeployer {
 
   function holdFeesDuring(uint256 _gameId) external view returns (bool);
 
+  function currentGamePhaseOf(uint256 _gameId) external view returns (uint256);
+
   function launchGameWith(
     DefifaDelegateData calldata _delegateData,
     DefifaLaunchProjectData calldata _launchProjectData
   ) external returns (uint256 projectId);
 
   function queueNextPhaseOf(uint256 _projectId) external returns (uint256 configuration);
+
+  function claimProtocolProjectToken() external;
 }

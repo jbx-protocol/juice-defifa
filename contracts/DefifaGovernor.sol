@@ -46,6 +46,10 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   */
   uint256 public constant override MAX_VOTING_POWER_TIER = 1_000_000_000;
 
+  //*********************************************************************//
+  // --------------- public immutable stored properties ---------------- //
+  //*********************************************************************//
+
   /** 
     @notice
     The Defifa delegate contract that this contract is Governing.
@@ -56,7 +60,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     @notice
     Voting start timestamp after which voting can begin.
   */
-  uint256 public immutable votingStartTime;
+  uint256 public immutable override votingStartTime;
 
   //*********************************************************************//
   // -------------------------- constructor ---------------------------- //
@@ -258,11 +262,20 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     return abi.encode(_ids);
   }
 
+  /** 
+    @notice
+    Calculating the voting delay based on the votingStartTime configured in the constructor.
+
+    @dev
+    Delay, in number of block, between when the proposal is created and the vote starts. This can be increassed to
+    leave time for users to buy voting power, or delegate it, before the voting of a proposal starts.
+
+    @return The delay in number of blocks.
+  */
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
-    // calculating the voting delay based on the votingStartTime configured in the constructor
-    if (votingStartTime > block.timestamp) {
+    if (votingStartTime > block.timestamp)
       return (votingStartTime - block.timestamp) / _BLOCKTIME_SECONDS;
-    }
+
     // no voting delay once voting is active
     return 0;
   }
