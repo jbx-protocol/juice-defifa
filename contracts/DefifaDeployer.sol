@@ -327,10 +327,12 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         useDataSourceForPay: true,
         useDataSourceForRedeem: true,
         dataSource: _dataSource,
-        metadata:  JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(JBTiered721FundingCycleMetadata({
-          pauseTransfers: false,
-          pauseMintingReserves: true 
-        }))
+        metadata:  JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
+          JBTiered721FundingCycleMetadata({
+            pauseTransfers: false,
+            pauseMintingReserves: true 
+          })
+        )
       }),
       _launchProjectData.start - _launchProjectData.mintDuration,
       new JBGroupedSplits[](0),
