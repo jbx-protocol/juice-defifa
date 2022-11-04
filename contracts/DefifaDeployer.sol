@@ -315,13 +315,13 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
 
   /** 
     @notice
-    Move accumulated JBX from paying fees into the recipient. 
+    Move accumulated protocol project tokens from paying fees into the recipient. 
 
     @dev
     This contract accumulated JBX as games distribute payouts.
   */
   function claimProtocolProjectToken() external override {
-    // Get the number of JBX this contract has allocated.
+    // Get the number of protocol project tokens this contract has allocated.
     // Send the token from the protocol project to the specified account.
     controller.tokenStore().transferFrom(
       address(this),
