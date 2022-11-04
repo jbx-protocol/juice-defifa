@@ -18,6 +18,11 @@ import './DefifaDelegate.sol';
   @dev
   Adheres to -
   IDefifaGovernor: General interface for the generic controller methods in this contract that interacts with funding cycles and tokens according to the protocol's rules.
+
+  @dev
+  Inherits from -
+  Governor: Standard OZ governor.
+  GovernorCountingSimple: Simple counting params for Governor.
 */
 contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
   //*********************************************************************//
