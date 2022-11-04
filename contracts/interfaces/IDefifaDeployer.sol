@@ -18,6 +18,8 @@ interface IDefifaDeployer {
 
   function timesFor(uint256 _gameId) external view returns (DefifaTimeData memory);
 
+  function mintDurationOf(uint256 _gameId) external view returns (uint256);
+
   function startOf(uint256 _gameId) external view returns (uint256);
 
   function tradeDeadlineOf(uint256 _gameId) external view returns (uint256);
@@ -29,6 +31,8 @@ interface IDefifaDeployer {
   function distributionLimit(uint256 _gameId) external view returns (uint256);
 
   function holdFeesDuring(uint256 _gameId) external view returns (bool);
+
+  function currentGamePhaseOf(uint256 _gameId) external view returns (uint256);
 
   function launchGameWith(
     DefifaDelegateData calldata _delegateData,

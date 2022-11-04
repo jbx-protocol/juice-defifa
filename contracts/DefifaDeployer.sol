@@ -102,6 +102,10 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     return _timesFor[_gameId];
   }
 
+  function mintDurationOf(uint256 _gameId) external view override returns (uint256) {
+    return _timesFor[_gameId].mintDuration;
+  }
+
   function startOf(uint256 _gameId) external view override returns (uint256) {
     return _timesFor[_gameId].start;
   }
@@ -124,6 +128,25 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
 
   function holdFeesDuring(uint256 _gameId) external view override returns (bool) {
     return _opsFor[_gameId].holdFees;
+  }
+  
+  /** 
+    @notice
+    Returns the number of the game phase. 
+
+    @dev
+    The game phase corresponds to the game's current funding cycle number. 
+
+    @param _gameId The ID of the game to get the phase number of.
+
+    @return The game phase number.
+  */
+  function currentGamePhaseOf(uint256 _gameId) external view override returns (uint256) {
+    // Get the project's current funding cycle along with its metadata.
+    JBFundingCycle memory _currentFundingCycle = controller.fundingCycleStore().currentOf(_gameId);
+
+    // The phase is the current funding cycle number.
+    return _currentFundingCycle.number;
   }
 
   //*********************************************************************//
@@ -178,6 +201,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     {
       // Store the timestamps that'll define the game phases.
       _timesFor[gameId] = DefifaTimeData({
+        mintDuration: _launchProjectData.mintDuration,
         start: _launchProjectData.start,
         tradeDeadline: _launchProjectData.tradeDeadline,
         end: _launchProjectData.end
@@ -247,23 +271,23 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     returns (uint256 configuration)
   {
     // Get the project's current funding cycle along with its metadata.
-    (JBFundingCycle memory currentFundingCycle, JBFundingCycleMetadata memory metadata) = controller
+    (JBFundingCycle memory _currentFundingCycle, JBFundingCycleMetadata memory _metadata) = controller
       .currentFundingCycleOf(_gameId);
 
     // There are only 4 phases.
-    if (currentFundingCycle.number >= 4) revert GAME_OVER();
+    if (_currentFundingCycle.number >= 4) revert GAME_OVER();
 
     // Get the project's queued funding cycle.
     (JBFundingCycle memory queuedFundingCycle, ) = controller.queuedFundingCycleOf(_gameId);
 
     // Make sure the next game phase isn't already queued.
-    if (currentFundingCycle.configuration != queuedFundingCycle.configuration)
+    if (_currentFundingCycle.configuration != queuedFundingCycle.configuration)
       revert PHASE_ALREADY_QUEUED();
 
     // Queue the next phase of the game.
-    if (currentFundingCycle.number == 1) return _queuePhase2(_gameId, metadata.dataSource);
-    else if (currentFundingCycle.number == 2) return _queuePhase3(_gameId, metadata.dataSource);
-    else return _queuePhase4(_gameId, metadata.dataSource);
+    if (_currentFundingCycle.number == 1) return _queuePhase2(_gameId, _metadata.dataSource);
+    else if (_currentFundingCycle.number == 2) return _queuePhase3(_gameId, _metadata.dataSource);
+    else return _queuePhase4(_gameId, _metadata.dataSource);
   }
 
   /**

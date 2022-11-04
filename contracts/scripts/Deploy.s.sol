@@ -78,7 +78,7 @@ contract DeployGoerli is Script {
 
   // Game params.
   uint48 _mintDuration = 86400; // 24 hrs
-  uint48 _start = 1667545200 + 86400; // 24 hrs after 10pm PST
+  uint48 _start = 1667545200 + 86400; // 24 hrs after 12pm PST
   uint48 _tradeDeadline = 1667545200 + 86400 + 10800; // 3 hours after start.
   uint48 _end = 1667545200 + 86400 + 10800 + 10800; // 3 hours after trade deadline.
 

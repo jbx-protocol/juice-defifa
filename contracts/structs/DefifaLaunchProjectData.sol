@@ -19,7 +19,7 @@ import './DefifaTimeData.sol';
 */
 struct DefifaLaunchProjectData {
   JBProjectMetadata projectMetadata;
-  uint256 mintDuration;
+  uint48 mintDuration;
   uint48 start;
   uint48 tradeDeadline;
   uint48 end;

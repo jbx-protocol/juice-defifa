@@ -111,9 +111,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     if (
       _data.metadata.length < 36 ||
       bytes4(_data.metadata[32:36]) != type(IJB721Delegate).interfaceId
-    ) {
-      revert INVALID_REDEMPTION_METADATA();
-    }
+    ) revert INVALID_REDEMPTION_METADATA();
 
     // Get a reference to the current funding cycle.
     JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
@@ -130,7 +128,10 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
     // If the game is in its minting phase, reclaim Amount is the same as it cost to mint.
     if (_currentFundingCycle.number == MINT_GAME_PHASE) {
-      for (uint256 _i; _i < _decodedTokenIds.length; ) {
+      // Keep a reference to the number of tokens.
+      uint256 _numberOfTokenIds = _decodedTokenIds.length;
+
+      for (uint256 _i; _i < _numberOfTokenIds; ) {
         unchecked {
           reclaimAmount += store
             .tierOfTokenId(address(this), _decodedTokenIds[_i])
