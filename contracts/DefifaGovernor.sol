@@ -266,7 +266,11 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     @notice
     Calculating the voting delay based on the votingStartTime configured in the constructor.
 
-    @return voting delay denoted by the no of blocks.
+    @dev
+    Delay, in number of block, between when the proposal is created and the vote starts. This can be increassed to
+    leave time for users to buy voting power, or delegate it, before the voting of a proposal starts.
+
+    @return The delay in number of blocks.
   */
   function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
     if (votingStartTime > block.timestamp)
