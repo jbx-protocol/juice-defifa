@@ -20,7 +20,7 @@ import './DefifaDelegate.sol';
   Adheres to -
   IDefifaGovernor: General interface for the generic controller methods in this contract that interacts with funding cycles and tokens according to the protocol's rules.
 */
-contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, IDefifaGovernor {
+contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
@@ -72,11 +72,6 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   */
   constructor(IDefifaDelegate _defifaDelegate, uint256 _votingStartTime)
     Governor('DefifaGovernor')
-    GovernorSettings(
-      1, /* 1 block */
-      45818, /* 1 week */
-      0
-    )
   {
     defifaDelegate = _defifaDelegate;
     votingStartTime = _votingStartTime;
@@ -272,7 +267,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
 
     @return The delay in number of blocks.
   */
-  function votingDelay() public view override(IGovernor, GovernorSettings) returns (uint256) {
+  function votingDelay() public view override(IGovernor) returns (uint256) {
     if (votingStartTime > block.timestamp)
       return (votingStartTime - block.timestamp) / _BLOCKTIME_SECONDS;
 
@@ -280,16 +275,21 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
     return 0;
   }
 
-  // Required override.
-  function votingPeriod() public view override(IGovernor, GovernorSettings) returns (uint256) {
-    return super.votingPeriod();
+  /** 
+    @notice
+    The amount of time that must go by for voting on a proposal to no longer be allowed.
+  */
+  function votingPeriod() public pure override(IGovernor) returns (uint256) {
+    return 45818; // one week
   }
 
-  // Required override.
-  function quorum(uint256 blockNumber) public pure override(IGovernor) returns (uint256) {
-    blockNumber;
-    // TODO: I just picked some random value for now, decide what a appropriate quorum should be
-    return 2 * MAX_VOTING_POWER_TIER;
+  /** 
+    @notice
+    The number of voting units that must have participated in a vote for it to be ratified. 
+  */
+  function quorum(uint256) public view override(IGovernor) returns (uint256) {
+    return
+      (defifaDelegate.store().maxTierIdOf(address(defifaDelegate)) / 2) * MAX_VOTING_POWER_TIER;
   }
 
   // Required override.
@@ -308,8 +308,8 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, GovernorSettings, I
   }
 
   // Required override.
-  function proposalThreshold() public view override(Governor, GovernorSettings) returns (uint256) {
-    return super.proposalThreshold();
+  function proposalThreshold() public pure override(Governor) returns (uint256) {
+    return 0; //
   }
 
   // Required override.
