@@ -82,6 +82,8 @@ contract DeployGoerli is Script {
   uint48 _tradeDeadline = 1667545200 + 86400 + 10800; // 3 hours after start.
   uint48 _end = 1667545200 + 86400 + 10800 + 10800; // 3 hours after trade deadline.
 
+  address _defifaBallcats = 0x11834239698c7336EF232C00a2A9926d3375DF9D; 
+
   function run() external {
     vm.startBroadcast();
 
@@ -128,7 +130,7 @@ contract DeployGoerli is Script {
         initialQuantity: 1_000_000_000 - 1, // max
         votingUnits: 1,
         reservedRate: 9,
-        reservedTokenBeneficiary: 0x11834239698c7336EF232C00a2A9926d3375DF9D, // Defifa Balboys and Ballgirls multisig,
+        reservedTokenBeneficiary: _defifaBallcats,
         encodedIPFSUri: _teamEncodedIPFSUris[_i],
         allowManualMint: false,
         shouldUseBeneficiaryAsDefault: true,
@@ -173,7 +175,8 @@ contract DeployGoerli is Script {
     DefifaDeployer defifaDeployer = new DefifaDeployer(
       address(_defifaDelegateCodeOrigin),
       controller,
-      JBTokens.ETH
+      JBTokens.ETH,
+      _defifaBallcats
     );
 
     // Set the owner as the governor (done here to easily count future nonces)

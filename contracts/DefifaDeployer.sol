@@ -31,18 +31,32 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   error UNEXPECTED_TERMINAL_CURRENCY();
 
   //*********************************************************************//
+  // ----------------------- private constants ------------------------- //
+  //*********************************************************************//
+
+  /**
+    @notice
+    The ID of the project that takes fees upon distribution.
+  */
+  uint256 internal constant _PROTOCOL_FEE_PROJECT = 1;
+
+  /**
+    @notice
+    Useful for the deploy flow to get memory management right.
+  */
+  uint256 internal constant _DEPLOY_BYTECODE_LENGTH = 13;
+
+  //*********************************************************************//
   // ----------------------- internal proprties ------------------------ //
   //*********************************************************************//
 
-  uint256 constant DEPLOY_BYTECODE_LENGTH = 13;
-
-  /** 
+  /**
     @notice
-    Start time of the 2nd fc when re-configuring the fc. 
+    Start time of the 2nd fc when re-configuring the fc.
   */
   mapping(uint256 => DefifaTimeData) internal _timesFor;
 
-  /** 
+  /**
     @notice
     Operations variables for a game.
 
@@ -64,7 +78,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   */
   uint256 public constant override SPLIT_PROJECT_ID = 1;
 
-  /** 
+  /**
     @notice
     The domain relative to which splits are stored.
 
@@ -82,17 +96,23 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
    */
   address public immutable defifaCodeOrigin;
 
-  /** 
+  /**
     @notice
     The token this game is played with.
   */
-  address public override immutable token;
+  address public immutable override token;
 
   /**
     @notice
-    The controller with which new projects should be deployed. 
+    The controller with which new projects should be deployed.
   */
-  IJBController public override immutable controller;
+  IJBController public immutable override controller;
+
+  /**
+    @notice
+    The address that should be forwarded JBX accumulated in this contract from game fund distributions.
+  */
+  address public override protocolFeeProjectTokenAccount;
 
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
@@ -129,13 +149,13 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   function holdFeesDuring(uint256 _gameId) external view override returns (bool) {
     return _opsFor[_gameId].holdFees;
   }
-  
-  /** 
+
+  /**
     @notice
-    Returns the number of the game phase. 
+    Returns the number of the game phase.
 
     @dev
-    The game phase corresponds to the game's current funding cycle number. 
+    The game phase corresponds to the game's current funding cycle number.
 
     @param _gameId The ID of the game to get the phase number of.
 
@@ -156,15 +176,18 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   /**
     @param _controller The controller with which new projects should be deployed. 
     @param _token The token that games deployed through this contract accept.
+    @param _protocolFeeProjectTokenAccount The address that should be forwarded JBX accumulated in this contract from game fund distributions. 
   */
   constructor(
     address _defifaCodeOrigin,
     IJBController _controller,
-    address _token
+    address _token,
+    address _protocolFeeProjectTokenAccount
   ) {
     defifaCodeOrigin = _defifaCodeOrigin;
     controller = _controller;
     token = _token;
+    protocolFeeProjectTokenAccount = _protocolFeeProjectTokenAccount;
   }
 
   //*********************************************************************//
@@ -220,7 +243,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         _groupedSplits[0] = JBGroupedSplits({group: gameId, splits: _launchProjectData.splits});
         // This contract must have SET_SPLITS operator permissions.
         controller.splitsStore().set(SPLIT_PROJECT_ID, SPLIT_DOMAIN, _groupedSplits);
-      } 
+      }
     }
 
     JB721PricingParams memory _pricingParams = JB721PricingParams({
@@ -290,6 +313,24 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     else return _queuePhase4(_gameId, _metadata.dataSource);
   }
 
+  /** 
+    @notice
+    Move accumulated JBX from paying fees into the recipient. 
+
+    @dev
+    This contract accumulated JBX as games distribute payouts.
+  */
+  function claimProtocolProjectToken() external override {
+    // Get the number of JBX this contract has allocated.
+    // Send the token from the protocol project to the specified account.
+    controller.tokenStore().transferFrom(
+      address(this),
+      _PROTOCOL_FEE_PROJECT,
+      protocolFeeProjectTokenAccount,
+      controller.tokenStore().balanceOf(address(this), _PROTOCOL_FEE_PROJECT)
+    );
+  }
+
   /**
     @notice
     Allows this contract to receive 721s.
@@ -306,7 +347,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     @notice
     Launches a Defifa project with phase 1 configured.
 
-    @param _launchProjectData Project data used for launching a 
+    @param _launchProjectData Project data used for launching a Defifa game.
     @param _dataSource The address of the Defifa data source.
   */
   function _queuePhase1(DefifaLaunchProjectData memory _launchProjectData, address _dataSource)
@@ -354,7 +395,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         metadata:  JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
           JBTiered721FundingCycleMetadata({
             pauseTransfers: false,
-            pauseMintingReserves: true 
+            pauseMintingReserves: true
           })
         )
       }),
@@ -390,7 +431,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     fundAccessConstraints[0] = JBFundAccessConstraints({
       terminal: _ops.terminal,
       token: token,
-      distributionLimit: _ops.distributionLimit, 
+      distributionLimit: _ops.distributionLimit,
       distributionLimitCurrency: _ops.terminal.currencyForToken(token),
       overflowAllowance: 0,
       overflowAllowanceCurrency: 0
@@ -405,7 +446,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     if (_splits.length != 0) {
       _groupedSplits = new JBGroupedSplits[](1);
       _groupedSplits[0] = JBGroupedSplits({group: JBSplitsGroups.ETH_PAYOUT, splits: _splits});
-    } 
+    }
     else {
       _groupedSplits = new JBGroupedSplits[](0);
     }
@@ -466,7 +507,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     Gets reconfiguration data for phase 3 of the game.
 
     @dev
-    Phase 3 imposes a trade deadline. 
+    Phase 3 imposes a trade deadline.
 
     @param _gameId The ID of the project that's being reconfigured.
     @param _dataSource The data source to use.
@@ -512,7 +553,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
           useDataSourceForPay: true,
           useDataSourceForRedeem: true,
           dataSource: _dataSource,
-          // Set a metadata of 1 to impose token non-transferability. 
+          // Set a metadata of 1 to impose token non-transferability.
           metadata: JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
             JBTiered721FundingCycleMetadata({
               pauseTransfers: true,
@@ -544,7 +585,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       controller.reconfigureFundingCyclesOf(
         _gameId,
         JBFundingCycleData ({
-          // No duration, lasts indefinately. 
+          // No duration, lasts indefinately.
           duration: 0,
           // Don't mint project tokens.
           weight: 0,
@@ -618,10 +659,10 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       mstore(_freeMem, _initCode)
 
       // Copy the bytecode, after the deployer bytecode in free memory
-      extcodecopy(_targetAddress, add(_freeMem, DEPLOY_BYTECODE_LENGTH), 0, _codeSize)
+      extcodecopy(_targetAddress, add(_freeMem, _DEPLOY_BYTECODE_LENGTH), 0, _codeSize)
 
       // Deploy the copied bytecode (constructor + original) and return the address in 'out'
-      _out := create(0, _freeMem, add(_codeSize, DEPLOY_BYTECODE_LENGTH))
+      _out := create(0, _freeMem, add(_codeSize, _DEPLOY_BYTECODE_LENGTH))
     }
   }
 }
