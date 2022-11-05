@@ -96,7 +96,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_user, block.number - 1));
   }
 
-  function testSetRedemptionRates(bool _useHelper) public {
+  function testSetRedemptionRates() public {
     uint8 nTiers = 10;
     address[] memory _users = new address[](nTiers);
 
@@ -174,16 +174,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
 
     // Forward time so proposals can be created
-    uint256 _proposalId;
-    if (_useHelper) {
-      _proposalId = _governor.submitScorecards(scorecards);
-    } else {
-      targets[0] = address(_nft);
-      calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
+    uint256 _proposalId = _governor.submitScorecards(scorecards);
 
-      // Create the proposal
-      _proposalId = _governor.propose(targets, values, calldatas, 'Governance!');
-    }
 
     // Forward time so voting becomes active
     vm.roll(block.number + _governor.votingDelay() + 1);
@@ -209,12 +201,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     deployer.queueNextPhaseOf(_projectId);
     vm.warp(block.timestamp + 1 weeks);
 
-    // Execute the proposal
-    if (_useHelper) {
-      _governor.ratifyScorecard(scorecards);
-    } else {
-      _governor.execute(targets, values, calldatas, keccak256('Governance!'));
-    }
+  // Execute the proposal
+  _governor.ratifyScorecard(scorecards);
 
     uint256[100] memory redemptionWeights = _nft.tierRedemptionWeights();
 

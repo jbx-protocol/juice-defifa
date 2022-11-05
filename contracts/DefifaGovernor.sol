@@ -106,7 +106,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     ) = _buildScorecardCalldata(_tierWeights);
 
     // Submit the proposal.
-    return propose(_targets, _values, _calldatas, '');
+    return _propose(_targets, _values, _calldatas, '');
   }
 
   /**
@@ -301,13 +301,34 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     return super.state(proposalId);
   }
 
-  // Required override.
+  /** 
+    @notice
+    Overriding and reverting to avoid propose method being called directly.
+  */
   function propose(
     address[] memory targets,
     uint256[] memory values,
     bytes[] memory calldatas,
     string memory description
   ) public override(Governor) returns (uint256) {
+    // avoid compiler warnings
+    targets;
+    values;
+    calldatas;
+    description;
+    revert("use submitScorecards");
+  }
+
+  /** 
+    @notice
+    Get's called inside `submitScorecards` and calls the parent class method to create a proposal.
+  */
+  function _propose(
+    address[] memory targets,
+    uint256[] memory values,
+    bytes[] memory calldatas,
+    string memory description
+  ) internal returns (uint256) {
     return super.propose(targets, values, calldatas, description);
   }
 
