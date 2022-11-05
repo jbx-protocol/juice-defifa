@@ -26,6 +26,8 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   //*********************************************************************//
 
   error GAME_ISNT_OVER_YET();
+  error INVALID_TIER_ID();
+  error NEUTRAL_OUTCOME();
   error INVALID_REDEMPTION_WEIGHTS();
   error NOTHING_TO_CLAIM();
   error UNEXPECTED();
@@ -183,13 +185,26 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Delete the currently set redemption weights.
     delete _tierRedemptionWeights;
 
+    // Keep a reference to the max tier ID.
+    uint256 _maxTierId = store.maxTierIdOf(address(this));
+
     // Keep a reference to the cumulative amounts.
     uint256 _cumulativeRedemptionWeight;
 
     // Keep a reference to the number of tier weights.
     uint256 _numberOfTierWeights = _tierWeights.length;
 
+    // Keep a reference to the lowest weight in the new set.
+    uint256 _lowestRedemptionWeight = _numberOfTierWeights != 0 ? _tierWeights[0].redemptionWeight : 0;
+
     for (uint256 _i; _i < _numberOfTierWeights; ) {
+      // Attempting to set the redemption weight for a tier that does not exist (yet) reverts. 
+      if (_tierWeights[_i].id > _maxTierId) revert INVALID_TIER_ID();
+
+      // If this is the lowest we have seen so far we keep track of it.
+      if (_tierWeights[_i].redemptionWeight < _lowestRedemptionWeight) 
+        _lowestRedemptionWeight = _tierWeights[_i].redemptionWeight;
+
       // Save the tier weight. Tier's are 1 indexed and should be stored 0 indexed.
       _tierRedemptionWeights[_tierWeights[_i].id - 1] = _tierWeights[_i].redemptionWeight;
 
@@ -203,11 +218,45 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
     // Make sure the cumulative amount is contained within the total redemption weight.
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
+
+    // Check if all tiers are being set and check if its an even distribution (accounting for rounding errors)
+    if (
+      _numberOfTierWeights == _maxTierId &&
+      _lowestRedemptionWeight >= TOTAL_REDEMPTION_WEIGHT / _maxTierId - 1
+    ) revert NEUTRAL_OUTCOME();
   }
 
   //*********************************************************************//
   // ------------------------ internal functions ----------------------- //
   //*********************************************************************//
+
+   /**
+   @notice
+   handles the tier voting accounting
+
+    @param _from The account to transfer voting units from.
+    @param _to The account to transfer voting units to.
+    @param _tokenId The ID of the token for which voting units are being transferred.
+    @param _tier The tier the token ID is part of.
+   */
+  function _afterTokenTransferAccounting(
+    address _from,
+    address _to,
+    uint256 _tokenId,
+    JB721Tier memory _tier
+  ) internal virtual override {
+    _tokenId; // Prevents unused var compiler and natspec complaints.
+    if (_tier.votingUnits != 0){
+      // Delegate the tier to the recipient user themselves if they are not delegating yet
+      if (_tierDelegation[_to][_tier.id] == address(0)){
+        _tierDelegation[_to][_tier.id] = _to;
+        emit DelegateChanged(_to, address(0), _to);
+      }
+
+      // Transfer the voting units.
+      _transferTierVotingUnits(_from, _to, _tier.id, _tier.votingUnits);
+    }
+  }
 
   /** 
     @notice

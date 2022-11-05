@@ -168,9 +168,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Generate the scorecards
     DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
 
+    // We can't have a neutral outcome, so we only give shares to tiers that are an even number (in our array)
     for (uint256 i = 0; i < scorecards.length; i++) {
       scorecards[i].id = i + 1;
-      scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
+      scorecards[i].redemptionWeight = i % 2 == 0 ? 1_000_000_000 / (scorecards.length / 2) : 0;
     }
 
     // Forward time so proposals can be created
@@ -220,9 +221,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     // Verify that the redemptionWeights actually changed
     for (uint256 i = 0; i < scorecards.length - 1; i++) {
-      assertEq(redemptionWeights[scorecards[i].id], scorecards[i].redemptionWeight);
-      scorecards[i].id = i + 1;
-      scorecards[i].redemptionWeight = 1_000_000_000 / scorecards.length;
+      // Tier's are 1 indexed and should be stored 0 indexed.
+      assertEq(redemptionWeights[i], scorecards[i].redemptionWeight);
     }
   }
 
