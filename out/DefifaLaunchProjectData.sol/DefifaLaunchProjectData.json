@@ -1,0 +1,403 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "contracts/structs/DefifaLaunchProjectData.sol",
+    "id": 3784,
+    "exportedSymbols": {
+      "DefifaLaunchProjectData": [
+        3783
+      ],
+      "DefifaTimeData": [
+        3813
+      ],
+      "IERC165": [
+        57235
+      ],
+      "IJBPaymentTerminal": [
+        47669
+      ],
+      "IJBSplitAllocator": [
+        48436
+      ],
+      "JB721TierParams": [
+        35811
+      ],
+      "JBProjectMetadata": [
+        49888
+      ],
+      "JBSplit": [
+        49947
+      ],
+      "JBSplitAllocationData": [
+        49964
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:1343:9",
+    "nodes": [
+      {
+        "id": 3756,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:9",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 3757,
+        "nodeType": "ImportDirective",
+        "src": "57:86:9",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3784,
+        "sourceUnit": 47670,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3758,
+        "nodeType": "ImportDirective",
+        "src": "144:82:9",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBProjectMetadata.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3784,
+        "sourceUnit": 49889,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3759,
+        "nodeType": "ImportDirective",
+        "src": "227:72:9",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplit.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/structs/JBSplit.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3784,
+        "sourceUnit": 49948,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3760,
+        "nodeType": "ImportDirective",
+        "src": "300:30:9",
+        "absolutePath": "contracts/structs/DefifaTimeData.sol",
+        "file": "./DefifaTimeData.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3784,
+        "sourceUnit": 3814,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3783,
+        "nodeType": "StructDefinition",
+        "src": "1130:244:9",
+        "canonicalName": "DefifaLaunchProjectData",
+        "members": [
+          {
+            "constant": false,
+            "id": 3763,
+            "mutability": "mutable",
+            "name": "projectMetadata",
+            "nameLocation": "1183:15:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1165:33:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_struct$_JBProjectMetadata_$49888_storage_ptr",
+              "typeString": "struct JBProjectMetadata"
+            },
+            "typeName": {
+              "id": 3762,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 3761,
+                "name": "JBProjectMetadata",
+                "nameLocations": [
+                  "1165:17:9"
+                ],
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 49888,
+                "src": "1165:17:9"
+              },
+              "referencedDeclaration": 49888,
+              "src": "1165:17:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_struct$_JBProjectMetadata_$49888_storage_ptr",
+                "typeString": "struct JBProjectMetadata"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3765,
+            "mutability": "mutable",
+            "name": "mintDuration",
+            "nameLocation": "1209:12:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1202:19:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint48",
+              "typeString": "uint48"
+            },
+            "typeName": {
+              "id": 3764,
+              "name": "uint48",
+              "nodeType": "ElementaryTypeName",
+              "src": "1202:6:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint48",
+                "typeString": "uint48"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3767,
+            "mutability": "mutable",
+            "name": "start",
+            "nameLocation": "1232:5:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1225:12:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint48",
+              "typeString": "uint48"
+            },
+            "typeName": {
+              "id": 3766,
+              "name": "uint48",
+              "nodeType": "ElementaryTypeName",
+              "src": "1225:6:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint48",
+                "typeString": "uint48"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3769,
+            "mutability": "mutable",
+            "name": "tradeDeadline",
+            "nameLocation": "1248:13:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1241:20:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint48",
+              "typeString": "uint48"
+            },
+            "typeName": {
+              "id": 3768,
+              "name": "uint48",
+              "nodeType": "ElementaryTypeName",
+              "src": "1241:6:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint48",
+                "typeString": "uint48"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3771,
+            "mutability": "mutable",
+            "name": "end",
+            "nameLocation": "1272:3:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1265:10:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint48",
+              "typeString": "uint48"
+            },
+            "typeName": {
+              "id": 3770,
+              "name": "uint48",
+              "nodeType": "ElementaryTypeName",
+              "src": "1265:6:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint48",
+                "typeString": "uint48"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3773,
+            "mutability": "mutable",
+            "name": "holdFees",
+            "nameLocation": "1284:8:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1279:13:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 3772,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "1279:4:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3777,
+            "mutability": "mutable",
+            "name": "splits",
+            "nameLocation": "1306:6:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1296:16:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_array$_t_struct$_JBSplit_$49947_storage_$dyn_storage_ptr",
+              "typeString": "struct JBSplit[]"
+            },
+            "typeName": {
+              "baseType": {
+                "id": 3775,
+                "nodeType": "UserDefinedTypeName",
+                "pathNode": {
+                  "id": 3774,
+                  "name": "JBSplit",
+                  "nameLocations": [
+                    "1296:7:9"
+                  ],
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 49947,
+                  "src": "1296:7:9"
+                },
+                "referencedDeclaration": 49947,
+                "src": "1296:7:9",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_JBSplit_$49947_storage_ptr",
+                  "typeString": "struct JBSplit"
+                }
+              },
+              "id": 3776,
+              "nodeType": "ArrayTypeName",
+              "src": "1296:9:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_array$_t_struct$_JBSplit_$49947_storage_$dyn_storage_ptr",
+                "typeString": "struct JBSplit[]"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3779,
+            "mutability": "mutable",
+            "name": "distributionLimit",
+            "nameLocation": "1323:17:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1316:24:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint88",
+              "typeString": "uint88"
+            },
+            "typeName": {
+              "id": 3778,
+              "name": "uint88",
+              "nodeType": "ElementaryTypeName",
+              "src": "1316:6:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint88",
+                "typeString": "uint88"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3782,
+            "mutability": "mutable",
+            "name": "terminal",
+            "nameLocation": "1363:8:9",
+            "nodeType": "VariableDeclaration",
+            "scope": 3783,
+            "src": "1344:27:9",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_IJBPaymentTerminal_$47669",
+              "typeString": "contract IJBPaymentTerminal"
+            },
+            "typeName": {
+              "id": 3781,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 3780,
+                "name": "IJBPaymentTerminal",
+                "nameLocations": [
+                  "1344:18:9"
+                ],
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 47669,
+                "src": "1344:18:9"
+              },
+              "referencedDeclaration": 47669,
+              "src": "1344:18:9",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_IJBPaymentTerminal_$47669",
+                "typeString": "contract IJBPaymentTerminal"
+              }
+            },
+            "visibility": "internal"
+          }
+        ],
+        "name": "DefifaLaunchProjectData",
+        "nameLocation": "1137:23:9",
+        "scope": 3784,
+        "visibility": "public"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 9
+}

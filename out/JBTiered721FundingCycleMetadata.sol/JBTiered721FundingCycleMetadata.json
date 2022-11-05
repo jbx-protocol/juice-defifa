@@ -1,0 +1,103 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/structs/JBTiered721FundingCycleMetadata.sol",
+    "id": 35232,
+    "exportedSymbols": {
+      "JBTiered721FundingCycleMetadata": [
+        35231
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:387:53",
+    "nodes": [
+      {
+        "id": 35226,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:53",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 35231,
+        "nodeType": "StructDefinition",
+        "src": "324:94:53",
+        "canonicalName": "JBTiered721FundingCycleMetadata",
+        "members": [
+          {
+            "constant": false,
+            "id": 35228,
+            "mutability": "mutable",
+            "name": "pauseTransfers",
+            "nameLocation": "372:14:53",
+            "nodeType": "VariableDeclaration",
+            "scope": 35231,
+            "src": "367:19:53",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 35227,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "367:4:53",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 35230,
+            "mutability": "mutable",
+            "name": "pauseMintingReserves",
+            "nameLocation": "395:20:53",
+            "nodeType": "VariableDeclaration",
+            "scope": 35231,
+            "src": "390:25:53",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 35229,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "390:4:53",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "visibility": "internal"
+          }
+        ],
+        "name": "JBTiered721FundingCycleMetadata",
+        "nameLocation": "331:31:53",
+        "scope": 35232,
+        "visibility": "public"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 53
+}

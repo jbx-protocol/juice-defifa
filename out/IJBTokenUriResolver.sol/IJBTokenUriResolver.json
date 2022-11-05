@@ -1,0 +1,165 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "getUri",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "tokenUri",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "getUri(uint256)": "da0544aa"
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBTokenUriResolver.sol",
+    "id": 48039,
+    "exportedSymbols": {
+      "IJBTokenUriResolver": [
+        48038
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:145:100",
+    "nodes": [
+      {
+        "id": 48030,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:100",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 48038,
+        "nodeType": "ContractDefinition",
+        "src": "57:119:100",
+        "nodes": [
+          {
+            "id": 48037,
+            "nodeType": "FunctionDefinition",
+            "src": "91:83:100",
+            "functionSelector": "da0544aa",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "getUri",
+            "nameLocation": "100:6:100",
+            "parameters": {
+              "id": 48033,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 48032,
+                  "mutability": "mutable",
+                  "name": "_projectId",
+                  "nameLocation": "115:10:100",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 48037,
+                  "src": "107:18:100",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 48031,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "107:7:100",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "106:20:100"
+            },
+            "returnParameters": {
+              "id": 48036,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 48035,
+                  "mutability": "mutable",
+                  "name": "tokenUri",
+                  "nameLocation": "164:8:100",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 48037,
+                  "src": "150:22:100",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 48034,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "150:6:100",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "149:24:100"
+            },
+            "scope": 48038,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IJBTokenUriResolver",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          48038
+        ],
+        "name": "IJBTokenUriResolver",
+        "nameLocation": "67:19:100",
+        "scope": 48039,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 100
+}

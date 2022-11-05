@@ -1,0 +1,1368 @@
+{
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tierId",
+          "type": "uint256"
+        },
+        {
+          "components": [
+            {
+              "internalType": "uint80",
+              "name": "contributionFloor",
+              "type": "uint80"
+            },
+            {
+              "internalType": "uint48",
+              "name": "lockedUntil",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint40",
+              "name": "initialQuantity",
+              "type": "uint40"
+            },
+            {
+              "internalType": "uint16",
+              "name": "votingUnits",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint16",
+              "name": "reservedRate",
+              "type": "uint16"
+            },
+            {
+              "internalType": "address",
+              "name": "reservedTokenBeneficiary",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "encodedIPFSUri",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bool",
+              "name": "allowManualMint",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "shouldUseBeneficiaryAsDefault",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "transfersPausable",
+              "type": "bool"
+            }
+          ],
+          "indexed": false,
+          "internalType": "struct JB721TierParams",
+          "name": "data",
+          "type": "tuple"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "AddTier",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "delegator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "fromDelegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "toDelegate",
+          "type": "address"
+        }
+      ],
+      "name": "DelegateChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tierId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "beneficiary",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "totalAmountContributed",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "Mint",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tierId",
+          "type": "uint256"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "beneficiary",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "MintReservedToken",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tierId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "RemoveTier",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "beneficiary",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "SetDefaultReservedTokenBeneficiary",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "delegator",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "fromDelegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "toDelegate",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "tierId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "TierDelegateChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "delegate",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tierId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "previousBalance",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newBalance",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "callre",
+          "type": "address"
+        }
+      ],
+      "name": "TierDelegateVotesChanged",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "TOTAL_REDEMPTION_WEIGHT",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint80",
+              "name": "contributionFloor",
+              "type": "uint80"
+            },
+            {
+              "internalType": "uint48",
+              "name": "lockedUntil",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint40",
+              "name": "initialQuantity",
+              "type": "uint40"
+            },
+            {
+              "internalType": "uint16",
+              "name": "votingUnits",
+              "type": "uint16"
+            },
+            {
+              "internalType": "uint16",
+              "name": "reservedRate",
+              "type": "uint16"
+            },
+            {
+              "internalType": "address",
+              "name": "reservedTokenBeneficiary",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes32",
+              "name": "encodedIPFSUri",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bool",
+              "name": "allowManualMint",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "shouldUseBeneficiaryAsDefault",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "transfersPausable",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct JB721TierParams[]",
+          "name": "_tierDataToAdd",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "uint256[]",
+          "name": "_tierIdsToRemove",
+          "type": "uint256[]"
+        }
+      ],
+      "name": "adjustTiers",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "codeOrigin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "contractURI",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_address",
+          "type": "address"
+        }
+      ],
+      "name": "creditsOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "firstOwnerOf",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "fundingCycleStore",
+      "outputs": [
+        {
+          "internalType": "contract IJBFundingCycleStore",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tier",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_blockNumber",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPastTierTotalVotes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tier",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_blockNumber",
+          "type": "uint256"
+        }
+      ],
+      "name": "getPastTierVotes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tier",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTierDelegate",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tier",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTierTotalVotes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_account",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tier",
+          "type": "uint256"
+        }
+      ],
+      "name": "getTierVotes",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "contract IJBDirectory",
+          "name": "_directory",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_name",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "_symbol",
+          "type": "string"
+        },
+        {
+          "internalType": "contract IJBFundingCycleStore",
+          "name": "_fundingCycleStore",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_baseUri",
+          "type": "string"
+        },
+        {
+          "internalType": "contract IJBTokenUriResolver",
+          "name": "_tokenUriResolver",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "_contractUri",
+          "type": "string"
+        },
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "uint80",
+                  "name": "contributionFloor",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint48",
+                  "name": "lockedUntil",
+                  "type": "uint48"
+                },
+                {
+                  "internalType": "uint40",
+                  "name": "initialQuantity",
+                  "type": "uint40"
+                },
+                {
+                  "internalType": "uint16",
+                  "name": "votingUnits",
+                  "type": "uint16"
+                },
+                {
+                  "internalType": "uint16",
+                  "name": "reservedRate",
+                  "type": "uint16"
+                },
+                {
+                  "internalType": "address",
+                  "name": "reservedTokenBeneficiary",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "encodedIPFSUri",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "allowManualMint",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "shouldUseBeneficiaryAsDefault",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "transfersPausable",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct JB721TierParams[]",
+              "name": "tiers",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "currency",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "decimals",
+              "type": "uint256"
+            },
+            {
+              "internalType": "contract IJBPrices",
+              "name": "prices",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct JB721PricingParams",
+          "name": "_pricing",
+          "type": "tuple"
+        },
+        {
+          "internalType": "contract IJBTiered721DelegateStore",
+          "name": "_store",
+          "type": "address"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bool",
+              "name": "lockReservedTokenChanges",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "lockVotingUnitChanges",
+              "type": "bool"
+            },
+            {
+              "internalType": "bool",
+              "name": "lockManualMintingChanges",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct JBTiered721Flags",
+          "name": "_flags",
+          "type": "tuple"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint16[]",
+              "name": "tierIds",
+              "type": "uint16[]"
+            },
+            {
+              "internalType": "address",
+              "name": "beneficiary",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct JBTiered721MintForTiersData[]",
+          "name": "_mintForTiersData",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "mintFor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint16[]",
+          "name": "_tierIds",
+          "type": "uint16[]"
+        },
+        {
+          "internalType": "address",
+          "name": "_beneficiary",
+          "type": "address"
+        }
+      ],
+      "name": "mintFor",
+      "outputs": [
+        {
+          "internalType": "uint256[]",
+          "name": "tokenIds",
+          "type": "uint256[]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "tierId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "count",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct JBTiered721MintReservesForTiersData[]",
+          "name": "_mintReservesForTiersData",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "mintReservesFor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_tierId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_count",
+          "type": "uint256"
+        }
+      ],
+      "name": "mintReservesFor",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "prices",
+      "outputs": [
+        {
+          "internalType": "contract IJBPrices",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pricingCurrency",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pricingDecimals",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_beneficiary",
+          "type": "address"
+        }
+      ],
+      "name": "setDefaultReservedTokenBeneficiary",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_delegatee",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_tierId",
+          "type": "uint256"
+        }
+      ],
+      "name": "setTierDelegate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "delegatee",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "tierId",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct JBTiered721SetTierDelegatesData[]",
+          "name": "_setTierDelegatesData",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "setTierDelegates",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "redemptionWeight",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct DefifaTierRedemptionWeight[]",
+          "name": "_tierWeights",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "setTierRedemptionWeights",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "store",
+      "outputs": [
+        {
+          "internalType": "contract IJBTiered721DelegateStore",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "tierRedemptionWeights",
+      "outputs": [
+        {
+          "internalType": "uint256[100]",
+          "name": "",
+          "type": "uint256[100]"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "TOTAL_REDEMPTION_WEIGHT()": "640abacd",
+    "adjustTiers((uint80,uint48,uint40,uint16,uint16,address,bytes32,bool,bool,bool)[],uint256[])": "f5a38e63",
+    "codeOrigin()": "1d153ca4",
+    "contractURI()": "e8a3d485",
+    "creditsOf(address)": "245a45b5",
+    "firstOwnerOf(uint256)": "54c6d1f5",
+    "fundingCycleStore()": "557e7155",
+    "getPastTierTotalVotes(uint256,uint256)": "d31cc52c",
+    "getPastTierVotes(address,uint256,uint256)": "d40e7146",
+    "getTierDelegate(address,uint256)": "82732b6d",
+    "getTierTotalVotes(uint256)": "94c5c5ca",
+    "getTierVotes(address,uint256)": "ca323efe",
+    "initialize(uint256,address,string,string,address,string,address,string,((uint80,uint48,uint40,uint16,uint16,address,bytes32,bool,bool,bool)[],uint256,uint256,address),address,(bool,bool,bool))": "bb52b6e4",
+    "mintFor((uint16[],address)[])": "36c1a93b",
+    "mintFor(uint16[],address)": "6ac6d941",
+    "mintReservesFor((uint256,uint256)[])": "2a596e53",
+    "mintReservesFor(uint256,uint256)": "aa4fb15b",
+    "prices()": "d3419bf3",
+    "pricingCurrency()": "64640c1e",
+    "pricingDecimals()": "4ecba625",
+    "setDefaultReservedTokenBeneficiary(address)": "df487e26",
+    "setTierDelegate(address,uint256)": "ab951e39",
+    "setTierDelegates((address,uint256)[])": "c74b13d9",
+    "setTierRedemptionWeights((uint256,uint256)[])": "2f441500",
+    "store()": "975057e7",
+    "tierRedemptionWeights()": "9df45468"
+  },
+  "ast": {
+    "absolutePath": "contracts/interfaces/IDefifaDelegate.sol",
+    "id": 2943,
+    "exportedSymbols": {
+      "DefifaTierRedemptionWeight": [
+        3160
+      ],
+      "IDefifaDelegate": [
+        2942
+      ],
+      "IERC165": [
+        56592
+      ],
+      "IERC721": [
+        54854
+      ],
+      "IJB721TieredGovernance": [
+        33992
+      ],
+      "IJBDirectory": [
+        46682
+      ],
+      "IJBFundingCycleBallot": [
+        46716
+      ],
+      "IJBFundingCycleStore": [
+        46853
+      ],
+      "IJBPaymentTerminal": [
+        47026
+      ],
+      "IJBPriceFeed": [
+        47389
+      ],
+      "IJBPrices": [
+        47433
+      ],
+      "IJBProjects": [
+        47512
+      ],
+      "IJBTiered721Delegate": [
+        34176
+      ],
+      "IJBTiered721DelegateStore": [
+        34542
+      ],
+      "IJBTokenUriResolver": [
+        48131
+      ],
+      "JB721PricingParams": [
+        35120
+      ],
+      "JB721Tier": [
+        35145
+      ],
+      "JB721TierParams": [
+        35168
+      ],
+      "JBBallotState": [
+        46110
+      ],
+      "JBFundingCycle": [
+        49119
+      ],
+      "JBFundingCycleData": [
+        49132
+      ],
+      "JBProjectMetadata": [
+        49245
+      ],
+      "JBTiered721Flags": [
+        35317
+      ],
+      "JBTiered721MintForTiersData": [
+        35332
+      ],
+      "JBTiered721MintReservesForTiersData": [
+        35339
+      ],
+      "JBTiered721SetTierDelegatesData": [
+        35346
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:466:4",
+    "nodes": [
+      {
+        "id": 2918,
+        "nodeType": "PragmaDirective",
+        "src": "32:24:4",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".16"
+        ]
+      },
+      {
+        "id": 2919,
+        "nodeType": "ImportDirective",
+        "src": "58:90:4",
+        "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJB721TieredGovernance.sol",
+        "file": "@jbx-protocol/juice-721-delegate/contracts/interfaces/IJB721TieredGovernance.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 2943,
+        "sourceUnit": 33993,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 2920,
+        "nodeType": "ImportDirective",
+        "src": "149:53:4",
+        "absolutePath": "contracts/structs/DefifaTierRedemptionWeight.sol",
+        "file": "./../structs/DefifaTierRedemptionWeight.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 2943,
+        "sourceUnit": 3161,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 2942,
+        "nodeType": "ContractDefinition",
+        "src": "204:293:4",
+        "nodes": [
+          {
+            "id": 2927,
+            "nodeType": "FunctionDefinition",
+            "src": "260:62:4",
+            "functionSelector": "640abacd",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "TOTAL_REDEMPTION_WEIGHT",
+            "nameLocation": "269:23:4",
+            "parameters": {
+              "id": 2923,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "292:2:4"
+            },
+            "returnParameters": {
+              "id": 2926,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2925,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2927,
+                  "src": "313:7:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 2924,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "313:7:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "312:9:4"
+            },
+            "scope": 2942,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 2934,
+            "nodeType": "FunctionDefinition",
+            "src": "326:72:4",
+            "functionSelector": "9df45468",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "tierRedemptionWeights",
+            "nameLocation": "335:21:4",
+            "parameters": {
+              "id": 2928,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "356:2:4"
+            },
+            "returnParameters": {
+              "id": 2933,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2932,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2934,
+                  "src": "377:19:4",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$100_memory_ptr",
+                    "typeString": "uint256[100]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2929,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "377:7:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 2931,
+                    "length": {
+                      "hexValue": "313030",
+                      "id": 2930,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": true,
+                      "kind": "number",
+                      "lValueRequested": false,
+                      "nodeType": "Literal",
+                      "src": "385:3:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_rational_100_by_1",
+                        "typeString": "int_const 100"
+                      },
+                      "value": "100"
+                    },
+                    "nodeType": "ArrayTypeName",
+                    "src": "377:12:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$100_storage_ptr",
+                      "typeString": "uint256[100]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "376:21:4"
+            },
+            "scope": 2942,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 2941,
+            "nodeType": "FunctionDefinition",
+            "src": "402:93:4",
+            "functionSelector": "2f441500",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setTierRedemptionWeights",
+            "nameLocation": "411:24:4",
+            "parameters": {
+              "id": 2939,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 2938,
+                  "mutability": "mutable",
+                  "name": "_tierWeights",
+                  "nameLocation": "472:12:4",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 2941,
+                  "src": "436:48:4",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$3160_memory_ptr_$dyn_memory_ptr",
+                    "typeString": "struct DefifaTierRedemptionWeight[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 2936,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 2935,
+                        "name": "DefifaTierRedemptionWeight",
+                        "nameLocations": [
+                          "436:26:4"
+                        ],
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 3160,
+                        "src": "436:26:4"
+                      },
+                      "referencedDeclaration": 3160,
+                      "src": "436:26:4",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_DefifaTierRedemptionWeight_$3160_storage_ptr",
+                        "typeString": "struct DefifaTierRedemptionWeight"
+                      }
+                    },
+                    "id": 2937,
+                    "nodeType": "ArrayTypeName",
+                    "src": "436:28:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$3160_storage_$dyn_storage_ptr",
+                      "typeString": "struct DefifaTierRedemptionWeight[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "435:50:4"
+            },
+            "returnParameters": {
+              "id": 2940,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "494:0:4"
+            },
+            "scope": 2942,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 2921,
+              "name": "IJB721TieredGovernance",
+              "nameLocations": [
+                "233:22:4"
+              ],
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 33992,
+              "src": "233:22:4"
+            },
+            "id": 2922,
+            "nodeType": "InheritanceSpecifier",
+            "src": "233:22:4"
+          }
+        ],
+        "canonicalName": "IDefifaDelegate",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          2942,
+          33992,
+          34176
+        ],
+        "name": "IDefifaDelegate",
+        "nameLocation": "214:15:4",
+        "scope": 2943,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 4
+}

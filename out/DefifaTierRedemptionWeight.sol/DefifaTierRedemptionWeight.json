@@ -1,0 +1,103 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "contracts/structs/DefifaTierRedemptionWeight.sol",
+    "id": 3068,
+    "exportedSymbols": {
+      "DefifaTierRedemptionWeight": [
+        3067
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:222:11",
+    "nodes": [
+      {
+        "id": 3062,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:11",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 3067,
+        "nodeType": "StructDefinition",
+        "src": "174:79:11",
+        "canonicalName": "DefifaTierRedemptionWeight",
+        "members": [
+          {
+            "constant": false,
+            "id": 3064,
+            "mutability": "mutable",
+            "name": "id",
+            "nameLocation": "220:2:11",
+            "nodeType": "VariableDeclaration",
+            "scope": 3067,
+            "src": "212:10:11",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3063,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "212:7:11",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3066,
+            "mutability": "mutable",
+            "name": "redemptionWeight",
+            "nameLocation": "234:16:11",
+            "nodeType": "VariableDeclaration",
+            "scope": 3067,
+            "src": "226:24:11",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 3065,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "226:7:11",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "internal"
+          }
+        ],
+        "name": "DefifaTierRedemptionWeight",
+        "nameLocation": "181:26:11",
+        "scope": 3068,
+        "visibility": "public"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 11
+}

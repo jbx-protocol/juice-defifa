@@ -1,0 +1,172 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "contracts/structs/DefifaTimeData.sol",
+    "id": 3814,
+    "exportedSymbols": {
+      "DefifaTimeData": [
+        3813
+      ],
+      "JB721TierParams": [
+        35811
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:514:12",
+    "nodes": [
+      {
+        "id": 3803,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:12",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 3804,
+        "nodeType": "ImportDirective",
+        "src": "57:80:12",
+        "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/structs/JB721TierParams.sol",
+        "file": "@jbx-protocol/juice-721-delegate/contracts/structs/JB721TierParams.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3814,
+        "sourceUnit": 35812,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3813,
+        "nodeType": "StructDefinition",
+        "src": "443:102:12",
+        "canonicalName": "DefifaTimeData",
+        "members": [
+          {
+            "constant": false,
+            "id": 3806,
+            "mutability": "mutable",
+            "name": "mintDuration",
+            "nameLocation": "476:12:12",
+            "nodeType": "VariableDeclaration",
+            "scope": 3813,
+            "src": "469:19:12",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint48",
+              "typeString": "uint48"
+            },
+            "typeName": {
+              "id": 3805,
+              "name": "uint48",
+              "nodeType": "ElementaryTypeName",
+              "src": "469:6:12",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint48",
+                "typeString": "uint48"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3808,
+            "mutability": "mutable",
+            "name": "start",
+            "nameLocation": "499:5:12",
+            "nodeType": "VariableDeclaration",
+            "scope": 3813,
+            "src": "492:12:12",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint48",
+              "typeString": "uint48"
+            },
+            "typeName": {
+              "id": 3807,
+              "name": "uint48",
+              "nodeType": "ElementaryTypeName",
+              "src": "492:6:12",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint48",
+                "typeString": "uint48"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3810,
+            "mutability": "mutable",
+            "name": "tradeDeadline",
+            "nameLocation": "515:13:12",
+            "nodeType": "VariableDeclaration",
+            "scope": 3813,
+            "src": "508:20:12",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint48",
+              "typeString": "uint48"
+            },
+            "typeName": {
+              "id": 3809,
+              "name": "uint48",
+              "nodeType": "ElementaryTypeName",
+              "src": "508:6:12",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint48",
+                "typeString": "uint48"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3812,
+            "mutability": "mutable",
+            "name": "end",
+            "nameLocation": "539:3:12",
+            "nodeType": "VariableDeclaration",
+            "scope": 3813,
+            "src": "532:10:12",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint48",
+              "typeString": "uint48"
+            },
+            "typeName": {
+              "id": 3811,
+              "name": "uint48",
+              "nodeType": "ElementaryTypeName",
+              "src": "532:6:12",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint48",
+                "typeString": "uint48"
+              }
+            },
+            "visibility": "internal"
+          }
+        ],
+        "name": "DefifaTimeData",
+        "nameLocation": "450:14:12",
+        "scope": 3814,
+        "visibility": "public"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 12
+}

@@ -1,0 +1,488 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "contracts/scripts/Deploy.s.sol",
+    "id": 3100,
+    "exportedSymbols": {
+      "Address": [
+        55254
+      ],
+      "Checkpoints": [
+        55488
+      ],
+      "CommonBase": [
+        4999
+      ],
+      "Context": [
+        55510
+      ],
+      "DefifaDelegate": [
+        419
+      ],
+      "DefifaDelegateData": [
+        3121
+      ],
+      "DefifaDeployer": [
+        1239
+      ],
+      "DefifaGovernor": [
+        1809
+      ],
+      "DefifaLaunchProjectData": [
+        3152
+      ],
+      "DefifaStoredOpsData": [
+        3163
+      ],
+      "DefifaTierRedemptionWeight": [
+        3170
+      ],
+      "DefifaTimeData": [
+        3180
+      ],
+      "DoubleEndedQueue": [
+        59298
+      ],
+      "ECDSA": [
+        56412
+      ],
+      "EIP712": [
+        56566
+      ],
+      "ERC165": [
+        56590
+      ],
+      "ERC721": [
+        32620
+      ],
+      "Governor": [
+        50752
+      ],
+      "GovernorCountingSimple": [
+        51275
+      ],
+      "GovernorSettings": [
+        51453
+      ],
+      "IDefifaDelegate": [
+        2951
+      ],
+      "IDefifaDeployer": [
+        3049
+      ],
+      "IDefifaGovernor": [
+        3093
+      ],
+      "IERC1155Receiver": [
+        52066
+      ],
+      "IERC165": [
+        56602
+      ],
+      "IERC721": [
+        54864
+      ],
+      "IERC721Metadata": [
+        54909
+      ],
+      "IERC721Receiver": [
+        54882
+      ],
+      "IGovernor": [
+        51049
+      ],
+      "IJB721Delegate": [
+        33904
+      ],
+      "IJB721TieredGovernance": [
+        34002
+      ],
+      "IJBController": [
+        46542
+      ],
+      "IJBDirectory": [
+        46692
+      ],
+      "IJBFundingCycleBallot": [
+        46726
+      ],
+      "IJBFundingCycleDataSource": [
+        46767
+      ],
+      "IJBFundingCycleStore": [
+        46863
+      ],
+      "IJBMigratable": [
+        46873
+      ],
+      "IJBPayDelegate": [
+        46966
+      ],
+      "IJBPaymentTerminal": [
+        47036
+      ],
+      "IJBPriceFeed": [
+        47399
+      ],
+      "IJBPrices": [
+        47443
+      ],
+      "IJBProjects": [
+        47522
+      ],
+      "IJBRedemptionDelegate": [
+        47537
+      ],
+      "IJBSplitAllocator": [
+        47803
+      ],
+      "IJBSplitsStore": [
+        47859
+      ],
+      "IJBTiered721Delegate": [
+        34186
+      ],
+      "IJBTiered721DelegateDeployer": [
+        34213
+      ],
+      "IJBTiered721DelegateStore": [
+        34552
+      ],
+      "IJBToken": [
+        47935
+      ],
+      "IJBTokenStore": [
+        48131
+      ],
+      "IJBTokenUriResolver": [
+        48141
+      ],
+      "JB721Delegate": [
+        33136
+      ],
+      "JB721GovernanceType": [
+        33142
+      ],
+      "JB721PricingParams": [
+        35130
+      ],
+      "JB721Tier": [
+        35155
+      ],
+      "JB721TierParams": [
+        35178
+      ],
+      "JB721TieredGovernance": [
+        28100
+      ],
+      "JBBallotState": [
+        46120
+      ],
+      "JBConstants": [
+        48163
+      ],
+      "JBDeployTiered721DelegateData": [
+        35228
+      ],
+      "JBDidPayData": [
+        49054
+      ],
+      "JBDidRedeemData": [
+        49078
+      ],
+      "JBFundAccessConstraints": [
+        49106
+      ],
+      "JBFundingCycle": [
+        49129
+      ],
+      "JBFundingCycleData": [
+        49142
+      ],
+      "JBFundingCycleMetadata": [
+        49183
+      ],
+      "JBFundingCycleMetadataResolver": [
+        48840
+      ],
+      "JBGlobalFundingCycleMetadata": [
+        49192
+      ],
+      "JBGlobalFundingCycleMetadataResolver": [
+        48952
+      ],
+      "JBGroupedSplits": [
+        49202
+      ],
+      "JBIpfsDecoder": [
+        35032
+      ],
+      "JBPayDelegateAllocation": [
+        49221
+      ],
+      "JBPayParamsData": [
+        49248
+      ],
+      "JBProjectMetadata": [
+        49255
+      ],
+      "JBRedeemParamsData": [
+        49286
+      ],
+      "JBRedemptionDelegateAllocation": [
+        49295
+      ],
+      "JBSplit": [
+        49314
+      ],
+      "JBSplitAllocationData": [
+        49331
+      ],
+      "JBSplitsGroups": [
+        49018
+      ],
+      "JBTiered721Delegate": [
+        29478
+      ],
+      "JBTiered721Flags": [
+        35327
+      ],
+      "JBTiered721FundingCycleMetadata": [
+        35334
+      ],
+      "JBTiered721FundingCycleMetadataResolver": [
+        35114
+      ],
+      "JBTiered721MintForTiersData": [
+        35342
+      ],
+      "JBTiered721MintReservesForTiersData": [
+        35349
+      ],
+      "JBTiered721SetTierDelegatesData": [
+        35356
+      ],
+      "JBTokenAmount": [
+        49342
+      ],
+      "JBTokens": [
+        49028
+      ],
+      "Math": [
+        57106
+      ],
+      "Ownable": [
+        49455
+      ],
+      "PRBMath": [
+        61195
+      ],
+      "PRBMathSD59x18__AbsInputTooSmall": [
+        59326
+      ],
+      "PRBMathSD59x18__CeilOverflow": [
+        59331
+      ],
+      "PRBMathSD59x18__DivInputTooSmall": [
+        59334
+      ],
+      "PRBMathSD59x18__DivOverflow": [
+        59339
+      ],
+      "PRBMathSD59x18__Exp2InputTooBig": [
+        59349
+      ],
+      "PRBMathSD59x18__ExpInputTooBig": [
+        59344
+      ],
+      "PRBMathSD59x18__FloorUnderflow": [
+        59354
+      ],
+      "PRBMathSD59x18__FromIntOverflow": [
+        59359
+      ],
+      "PRBMathSD59x18__FromIntUnderflow": [
+        59364
+      ],
+      "PRBMathSD59x18__GmNegativeProduct": [
+        59371
+      ],
+      "PRBMathSD59x18__GmOverflow": [
+        59378
+      ],
+      "PRBMathSD59x18__LogInputTooSmall": [
+        59383
+      ],
+      "PRBMathSD59x18__MulInputTooSmall": [
+        59386
+      ],
+      "PRBMathSD59x18__MulOverflow": [
+        59391
+      ],
+      "PRBMathSD59x18__PowuOverflow": [
+        59396
+      ],
+      "PRBMathSD59x18__SqrtNegativeInput": [
+        59401
+      ],
+      "PRBMathSD59x18__SqrtOverflow": [
+        59406
+      ],
+      "PRBMathUD60x18__AddOverflow": [
+        59413
+      ],
+      "PRBMathUD60x18__CeilOverflow": [
+        59418
+      ],
+      "PRBMathUD60x18__Exp2InputTooBig": [
+        59428
+      ],
+      "PRBMathUD60x18__ExpInputTooBig": [
+        59423
+      ],
+      "PRBMathUD60x18__FromUintOverflow": [
+        59433
+      ],
+      "PRBMathUD60x18__GmOverflow": [
+        59440
+      ],
+      "PRBMathUD60x18__LogInputTooSmall": [
+        59445
+      ],
+      "PRBMathUD60x18__SqrtOverflow": [
+        59450
+      ],
+      "PRBMathUD60x18__SubUnderflow": [
+        59457
+      ],
+      "PRBMath__MulDivFixedPointOverflow": [
+        59308
+      ],
+      "PRBMath__MulDivOverflow": [
+        59315
+      ],
+      "PRBMath__MulDivSignedInputTooSmall": [
+        59318
+      ],
+      "PRBMath__MulDivSignedOverflow": [
+        59323
+      ],
+      "SafeCast": [
+        58957
+      ],
+      "Script": [
+        5044
+      ],
+      "ScriptBase": [
+        5034
+      ],
+      "StdCheatsSafe": [
+        7865
+      ],
+      "StdStorage": [
+        8853
+      ],
+      "StdUtils": [
+        10682
+      ],
+      "Strings": [
+        55810
+      ],
+      "Timers": [
+        56024
+      ],
+      "VmSafe": [
+        11171
+      ],
+      "console": [
+        19560
+      ],
+      "console2": [
+        27625
+      ],
+      "stdJson": [
+        8680
+      ],
+      "stdMath": [
+        8822
+      ],
+      "stdStorageSafe": [
+        9746
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "40:4516:7",
+    "nodes": [
+      {
+        "id": 3095,
+        "nodeType": "ImportDirective",
+        "src": "40:75:7",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/libraries/JBTokens.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/libraries/JBTokens.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3100,
+        "sourceUnit": 49029,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3096,
+        "nodeType": "ImportDirective",
+        "src": "116:93:7",
+        "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateStore.sol",
+        "file": "@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateStore.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3100,
+        "sourceUnit": 34553,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3097,
+        "nodeType": "ImportDirective",
+        "src": "210:31:7",
+        "absolutePath": "contracts/DefifaDeployer.sol",
+        "file": "../DefifaDeployer.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3100,
+        "sourceUnit": 1240,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3098,
+        "nodeType": "ImportDirective",
+        "src": "242:31:7",
+        "absolutePath": "contracts/DefifaGovernor.sol",
+        "file": "../DefifaGovernor.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3100,
+        "sourceUnit": 1810,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3099,
+        "nodeType": "ImportDirective",
+        "src": "274:30:7",
+        "absolutePath": "lib/forge-std/src/Script.sol",
+        "file": "forge-std/Script.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3100,
+        "sourceUnit": 5045,
+        "symbolAliases": [],
+        "unitAlias": ""
+      }
+    ],
+    "license": "UNLICENSED"
+  },
+  "id": 7
+}

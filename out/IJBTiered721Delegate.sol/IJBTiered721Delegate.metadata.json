@@ -1,0 +1,327 @@
+{
+  "compiler": {
+    "version": "0.8.16+commit.07a7930e"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "inputs": [
+          {
+            "components": [
+              {
+                "internalType": "uint256",
+                "name": "contributionFloor",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "lockedUntil",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "initialQuantity",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "votingUnits",
+                "type": "uint256"
+              },
+              {
+                "internalType": "uint256",
+                "name": "reservedRate",
+                "type": "uint256"
+              },
+              {
+                "internalType": "address",
+                "name": "reservedTokenBeneficiary",
+                "type": "address"
+              },
+              {
+                "internalType": "bytes32",
+                "name": "encodedIPFSUri",
+                "type": "bytes32"
+              },
+              {
+                "internalType": "bool",
+                "name": "shouldUseBeneficiaryAsDefault",
+                "type": "bool"
+              }
+            ],
+            "internalType": "struct JB721TierParams[]",
+            "name": "_tierDataToAdd",
+            "type": "tuple[]"
+          },
+          {
+            "internalType": "uint256[]",
+            "name": "_tierIdsToRemove",
+            "type": "uint256[]"
+          }
+        ],
+        "name": "adjustTiers",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "contractURI",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "contributionToken",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_tokenId",
+            "type": "uint256"
+          }
+        ],
+        "name": "firstOwnerOf",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_tier",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_blockNumber",
+            "type": "uint256"
+          }
+        ],
+        "name": "getPastTierTotalVotes",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_tier",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_blockNumber",
+            "type": "uint256"
+          }
+        ],
+        "name": "getPastTierVotes",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_tier",
+            "type": "uint256"
+          }
+        ],
+        "name": "getTierDelegate",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_tier",
+            "type": "uint256"
+          }
+        ],
+        "name": "getTierTotalVotes",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_account",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_tier",
+            "type": "uint256"
+          }
+        ],
+        "name": "getTierVotes",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_tierId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_count",
+            "type": "uint256"
+          }
+        ],
+        "name": "mintReservesFor",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_beneficiary",
+            "type": "address"
+          }
+        ],
+        "name": "setDefaultReservedTokenBeneficiary",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_delegatee",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_tierId",
+            "type": "uint256"
+          }
+        ],
+        "name": "setTierDelegate",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      }
+    ],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {},
+      "version": 1
+    },
+    "userdoc": {
+      "kind": "user",
+      "methods": {},
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "contracts/interfaces/IJBTiered721Delegate.sol": "IJBTiered721Delegate"
+    },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": [
+      ":@jbx-protocol/=node_modules/@jbx-protocol/",
+      ":@openzeppelin/=node_modules/@openzeppelin/",
+      ":@paulrberg/=node_modules/@paulrberg/",
+      ":ds-test/=lib/forge-std/lib/ds-test/src/",
+      ":forge-std/=lib/forge-std/src/",
+      ":prb-math/=node_modules/prb-math/"
+    ]
+  },
+  "sources": {
+    "contracts/interfaces/IJBTiered721Delegate.sol": {
+      "keccak256": "0xe6f1e7eb4efbc6dfcefd7f62c99a4d643f4f005691c924d397fc2a1ca5577fe4",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://031cf8159ef5dcda56e1c7586f60f4b0836b88419a677ee6889f619340c3e986",
+        "dweb:/ipfs/QmZsTV7inEQkgqHAXdfKCTgoqT2xscwfvzRB5wqNavA9np"
+      ]
+    }
+  },
+  "version": 1
+}

@@ -1,0 +1,189 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "directory",
+      "outputs": [
+        {
+          "internalType": "contract IJBDirectory",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "directory()": "c41c2f24"
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBControllerUtility.sol",
+    "id": 46450,
+    "exportedSymbols": {
+      "IERC165": [
+        56744
+      ],
+      "IERC721": [
+        55006
+      ],
+      "IJBControllerUtility": [
+        46449
+      ],
+      "IJBDirectory": [
+        46589
+      ],
+      "IJBFundingCycleBallot": [
+        46623
+      ],
+      "IJBFundingCycleStore": [
+        46760
+      ],
+      "IJBPaymentTerminal": [
+        46933
+      ],
+      "IJBProjects": [
+        47419
+      ],
+      "IJBTokenUriResolver": [
+        48038
+      ],
+      "JBBallotState": [
+        46017
+      ],
+      "JBFundingCycle": [
+        49026
+      ],
+      "JBFundingCycleData": [
+        49039
+      ],
+      "JBProjectMetadata": [
+        49152
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:151:76",
+    "nodes": [
+      {
+        "id": 46441,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:76",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 46442,
+        "nodeType": "ImportDirective",
+        "src": "57:28:76",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBDirectory.sol",
+        "file": "./IJBDirectory.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 46450,
+        "sourceUnit": 46590,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 46449,
+        "nodeType": "ContractDefinition",
+        "src": "87:95:76",
+        "nodes": [
+          {
+            "id": 46448,
+            "nodeType": "FunctionDefinition",
+            "src": "122:58:76",
+            "functionSelector": "c41c2f24",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "directory",
+            "nameLocation": "131:9:76",
+            "parameters": {
+              "id": 46443,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "140:2:76"
+            },
+            "returnParameters": {
+              "id": 46447,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 46446,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 46448,
+                  "src": "166:12:76",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IJBDirectory_$46589",
+                    "typeString": "contract IJBDirectory"
+                  },
+                  "typeName": {
+                    "id": 46445,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 46444,
+                      "name": "IJBDirectory",
+                      "nameLocations": [
+                        "166:12:76"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 46589,
+                      "src": "166:12:76"
+                    },
+                    "referencedDeclaration": 46589,
+                    "src": "166:12:76",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IJBDirectory_$46589",
+                      "typeString": "contract IJBDirectory"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "165:14:76"
+            },
+            "scope": 46449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IJBControllerUtility",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          46449
+        ],
+        "name": "IJBControllerUtility",
+        "nameLocation": "97:20:76",
+        "scope": 46450,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 76
+}

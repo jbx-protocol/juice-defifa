@@ -1,0 +1,84 @@
+{
+  "compiler": {
+    "version": "0.8.16+commit.07a7930e"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_baseUri",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "_hexString",
+            "type": "bytes32"
+          }
+        ],
+        "name": "decode",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "pure",
+        "type": "function"
+      }
+    ],
+    "devdoc": {
+      "details": "This is fairly gas intensive, due to multiple nested loops, onchain  IPFS hash decoding is therefore not advised (storing them as a string, in that use-case, *might* be more efficient).",
+      "kind": "dev",
+      "methods": {},
+      "stateVariables": {
+        "_ALPHABET": {
+          "details": "Used in base58ToString"
+        }
+      },
+      "version": 1
+    },
+    "userdoc": {
+      "kind": "user",
+      "methods": {},
+      "notice": "Utilities to decode an IPFS hash.",
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "node_modules/@jbx-protocol/juice-721-delegate/contracts/libraries/JBIpfsDecoder.sol": "JBIpfsDecoder"
+    },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": [
+      ":@jbx-protocol/=node_modules/@jbx-protocol/",
+      ":@openzeppelin/=node_modules/@openzeppelin/",
+      ":@paulrberg/=node_modules/@paulrberg/",
+      ":ds-test/=lib/forge-std/lib/ds-test/src/",
+      ":forge-std/=lib/forge-std/src/",
+      ":prb-math/=node_modules/prb-math/"
+    ]
+  },
+  "sources": {
+    "node_modules/@jbx-protocol/juice-721-delegate/contracts/libraries/JBIpfsDecoder.sol": {
+      "keccak256": "0xeac3c92c65a8e6c0b6d30d9cb4a15f5b4124263124479627ce86bf6eeb957b0c",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://373d7d2723015c862afe6de5b4d88f2a7a8fc695d97781997009a2351f9fdf36",
+        "dweb:/ipfs/QmRgauJ4exa311qEqtUftHKVH6pxshDyzdQPwhu5pgLVxB"
+      ]
+    }
+  },
+  "version": 1
+}

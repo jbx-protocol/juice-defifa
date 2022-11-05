@@ -1,0 +1,314 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "holder",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "projectId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "currentFundingCycleConfiguration",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "projectTokenCount",
+              "type": "uint256"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "decimals",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "currency",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct JBTokenAmount",
+              "name": "reclaimedAmount",
+              "type": "tuple"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "token",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "value",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "decimals",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "currency",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct JBTokenAmount",
+              "name": "forwardedAmount",
+              "type": "tuple"
+            },
+            {
+              "internalType": "address payable",
+              "name": "beneficiary",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "memo",
+              "type": "string"
+            },
+            {
+              "internalType": "bytes",
+              "name": "metadata",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct JBDidRedeemData",
+          "name": "_data",
+          "type": "tuple"
+        }
+      ],
+      "name": "didRedeem",
+      "outputs": [],
+      "stateMutability": "payable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "didRedeem((address,uint256,uint256,uint256,(address,uint256,uint256,uint256),(address,uint256,uint256,uint256),address,string,bytes))": "2b13c58f",
+    "supportsInterface(bytes4)": "01ffc9a7"
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBRedemptionDelegate.sol",
+    "id": 47435,
+    "exportedSymbols": {
+      "IERC165": [
+        56744
+      ],
+      "IJBRedemptionDelegate": [
+        47434
+      ],
+      "JBDidRedeemData": [
+        48975
+      ],
+      "JBTokenAmount": [
+        49239
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:1152:92",
+    "nodes": [
+      {
+        "id": 47421,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:92",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 47422,
+        "nodeType": "ImportDirective",
+        "src": "57:65:92",
+        "absolutePath": "node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol",
+        "file": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 47435,
+        "sourceUnit": 56745,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 47423,
+        "nodeType": "ImportDirective",
+        "src": "123:42:92",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBDidRedeemData.sol",
+        "file": "./../structs/JBDidRedeemData.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 47435,
+        "sourceUnit": 48976,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 47434,
+        "nodeType": "ContractDefinition",
+        "src": "398:785:92",
+        "nodes": [
+          {
+            "id": 47433,
+            "nodeType": "FunctionDefinition",
+            "src": "1113:68:92",
+            "documentation": {
+              "id": 47427,
+              "nodeType": "StructuredDocumentation",
+              "src": "445:665:92",
+              "text": "@notice\nThis function is called by JBPaymentTerminal.redeemTokensOf(..), after the execution of its logic\n@dev\nCritical business logic should be protected by an appropriate access control\n@param _data the data passed by the terminal, as a JBDidRedeemData struct:\naddress holder;\nuint256 projectId;\nuint256 currentFundingCycleConfiguration;\nuint256 projectTokenCount;\nJBTokenAmount reclaimedAmount;\nJBTokenAmount forwardedAmount;\naddress payable beneficiary;\nstring memo;\nbytes metadata;"
+            },
+            "functionSelector": "2b13c58f",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "didRedeem",
+            "nameLocation": "1122:9:92",
+            "parameters": {
+              "id": 47431,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 47430,
+                  "mutability": "mutable",
+                  "name": "_data",
+                  "nameLocation": "1157:5:92",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 47433,
+                  "src": "1132:30:92",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_JBDidRedeemData_$48975_calldata_ptr",
+                    "typeString": "struct JBDidRedeemData"
+                  },
+                  "typeName": {
+                    "id": 47429,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 47428,
+                      "name": "JBDidRedeemData",
+                      "nameLocations": [
+                        "1132:15:92"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 48975,
+                      "src": "1132:15:92"
+                    },
+                    "referencedDeclaration": 48975,
+                    "src": "1132:15:92",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_JBDidRedeemData_$48975_storage_ptr",
+                      "typeString": "struct JBDidRedeemData"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1131:32:92"
+            },
+            "returnParameters": {
+              "id": 47432,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1180:0:92"
+            },
+            "scope": 47434,
+            "stateMutability": "payable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 47425,
+              "name": "IERC165",
+              "nameLocations": [
+                "433:7:92"
+              ],
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 56744,
+              "src": "433:7:92"
+            },
+            "id": 47426,
+            "nodeType": "InheritanceSpecifier",
+            "src": "433:7:92"
+          }
+        ],
+        "canonicalName": "IJBRedemptionDelegate",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": {
+          "id": 47424,
+          "nodeType": "StructuredDocumentation",
+          "src": "167:230:92",
+          "text": "@title\nRedemption delegate\n@notice\nDelegate called after JBTerminal.redeemTokensOf(..) logic completion (if passed by the funding cycle datasource)\n@dev\nAdheres to:\nIERC165 for adequate interface integration"
+        },
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          47434,
+          56744
+        ],
+        "name": "IJBRedemptionDelegate",
+        "nameLocation": "408:21:92",
+        "scope": 47435,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 92
+}

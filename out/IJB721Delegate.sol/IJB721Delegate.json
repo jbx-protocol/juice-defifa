@@ -1,0 +1,773 @@
+{
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "baseUri",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "SetBaseUri",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "string",
+          "name": "contractUri",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "SetContractUri",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "contract IJBTokenUriResolver",
+          "name": "newResolver",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "caller",
+          "type": "address"
+        }
+      ],
+      "name": "SetTokenUriResolver",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "directory",
+      "outputs": [
+        {
+          "internalType": "contract IJBDirectory",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "projectId",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_baseUri",
+          "type": "string"
+        }
+      ],
+      "name": "setBaseUri",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "_contractMetadataUri",
+          "type": "string"
+        }
+      ],
+      "name": "setContractUri",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IJBTokenUriResolver",
+          "name": "_tokenUriResolver",
+          "type": "address"
+        }
+      ],
+      "name": "setTokenUriResolver",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "directory()": "c41c2f24",
+    "projectId()": "3fafa127",
+    "setBaseUri(string)": "a0bcfc7f",
+    "setContractUri(string)": "ccb4807b",
+    "setTokenUriResolver(address)": "2407497e"
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJB721Delegate.sol",
+    "id": 33802,
+    "exportedSymbols": {
+      "IERC165": [
+        56744
+      ],
+      "IERC721": [
+        55006
+      ],
+      "IJB721Delegate": [
+        33801
+      ],
+      "IJBDirectory": [
+        46589
+      ],
+      "IJBFundingCycleBallot": [
+        46623
+      ],
+      "IJBFundingCycleStore": [
+        46760
+      ],
+      "IJBPaymentTerminal": [
+        46933
+      ],
+      "IJBProjects": [
+        47419
+      ],
+      "IJBTokenUriResolver": [
+        48038
+      ],
+      "JBBallotState": [
+        46017
+      ],
+      "JBFundingCycle": [
+        49026
+      ],
+      "JBFundingCycleData": [
+        49039
+      ],
+      "JBProjectMetadata": [
+        49152
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:772:36",
+    "nodes": [
+      {
+        "id": 33752,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:36",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 33753,
+        "nodeType": "ImportDirective",
+        "src": "57:80:36",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBDirectory.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBDirectory.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 33802,
+        "sourceUnit": 46590,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 33754,
+        "nodeType": "ImportDirective",
+        "src": "138:87:36",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBTokenUriResolver.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBTokenUriResolver.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 33802,
+        "sourceUnit": 48039,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 33801,
+        "nodeType": "ContractDefinition",
+        "src": "227:576:36",
+        "nodes": [
+          {
+            "id": 33760,
+            "nodeType": "EventDefinition",
+            "src": "256:57:36",
+            "anonymous": false,
+            "eventSelector": "7bc9110d5de090dd59e07912d2b93a5a27ac70a60c8d8e324db4f9ee8b8b5c13",
+            "name": "SetBaseUri",
+            "nameLocation": "262:10:36",
+            "parameters": {
+              "id": 33759,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33756,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "baseUri",
+                  "nameLocation": "288:7:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33760,
+                  "src": "273:22:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 33755,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "273:6:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 33758,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "caller",
+                  "nameLocation": "305:6:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33760,
+                  "src": "297:14:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 33757,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "297:7:36",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "272:40:36"
+            }
+          },
+          {
+            "id": 33766,
+            "nodeType": "EventDefinition",
+            "src": "317:65:36",
+            "anonymous": false,
+            "eventSelector": "d36dc0c1a06103fdcaf15f3f6fb797d1a97997514c78de073640c8b5005454b8",
+            "name": "SetContractUri",
+            "nameLocation": "323:14:36",
+            "parameters": {
+              "id": 33765,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33762,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "contractUri",
+                  "nameLocation": "353:11:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33766,
+                  "src": "338:26:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 33761,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "338:6:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 33764,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "caller",
+                  "nameLocation": "374:6:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33766,
+                  "src": "366:14:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 33763,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "366:7:36",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "337:44:36"
+            }
+          },
+          {
+            "id": 33773,
+            "nodeType": "EventDefinition",
+            "src": "386:83:36",
+            "anonymous": false,
+            "eventSelector": "e7784d93cfbfa4408e19577e6cc0436f4dbb51214b70e100905dfce9def88c16",
+            "name": "SetTokenUriResolver",
+            "nameLocation": "392:19:36",
+            "parameters": {
+              "id": 33772,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33769,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "newResolver",
+                  "nameLocation": "440:11:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33773,
+                  "src": "412:39:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IJBTokenUriResolver_$48038",
+                    "typeString": "contract IJBTokenUriResolver"
+                  },
+                  "typeName": {
+                    "id": 33768,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 33767,
+                      "name": "IJBTokenUriResolver",
+                      "nameLocations": [
+                        "412:19:36"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 48038,
+                      "src": "412:19:36"
+                    },
+                    "referencedDeclaration": 48038,
+                    "src": "412:19:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IJBTokenUriResolver_$48038",
+                      "typeString": "contract IJBTokenUriResolver"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 33771,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "caller",
+                  "nameLocation": "461:6:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33773,
+                  "src": "453:14:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 33770,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "453:7:36",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "411:57:36"
+            }
+          },
+          {
+            "id": 33778,
+            "nodeType": "FunctionDefinition",
+            "src": "473:53:36",
+            "functionSelector": "3fafa127",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "projectId",
+            "nameLocation": "482:9:36",
+            "parameters": {
+              "id": 33774,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "491:2:36"
+            },
+            "returnParameters": {
+              "id": 33777,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33776,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33778,
+                  "src": "517:7:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33775,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "517:7:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "516:9:36"
+            },
+            "scope": 33801,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33784,
+            "nodeType": "FunctionDefinition",
+            "src": "530:58:36",
+            "functionSelector": "c41c2f24",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "directory",
+            "nameLocation": "539:9:36",
+            "parameters": {
+              "id": 33779,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "548:2:36"
+            },
+            "returnParameters": {
+              "id": 33783,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33782,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33784,
+                  "src": "574:12:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IJBDirectory_$46589",
+                    "typeString": "contract IJBDirectory"
+                  },
+                  "typeName": {
+                    "id": 33781,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 33780,
+                      "name": "IJBDirectory",
+                      "nameLocations": [
+                        "574:12:36"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 46589,
+                      "src": "574:12:36"
+                    },
+                    "referencedDeclaration": 46589,
+                    "src": "574:12:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IJBDirectory_$46589",
+                      "typeString": "contract IJBDirectory"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "573:14:36"
+            },
+            "scope": 33801,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33789,
+            "nodeType": "FunctionDefinition",
+            "src": "592:53:36",
+            "functionSelector": "a0bcfc7f",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setBaseUri",
+            "nameLocation": "601:10:36",
+            "parameters": {
+              "id": 33787,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33786,
+                  "mutability": "mutable",
+                  "name": "_baseUri",
+                  "nameLocation": "626:8:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33789,
+                  "src": "612:22:36",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_memory_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 33785,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "612:6:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "611:24:36"
+            },
+            "returnParameters": {
+              "id": 33788,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "644:0:36"
+            },
+            "scope": 33801,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33794,
+            "nodeType": "FunctionDefinition",
+            "src": "649:71:36",
+            "functionSelector": "ccb4807b",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setContractUri",
+            "nameLocation": "658:14:36",
+            "parameters": {
+              "id": 33792,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33791,
+                  "mutability": "mutable",
+                  "name": "_contractMetadataUri",
+                  "nameLocation": "689:20:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33794,
+                  "src": "673:36:36",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_string_calldata_ptr",
+                    "typeString": "string"
+                  },
+                  "typeName": {
+                    "id": 33790,
+                    "name": "string",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "673:6:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_string_storage_ptr",
+                      "typeString": "string"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "672:38:36"
+            },
+            "returnParameters": {
+              "id": 33793,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "719:0:36"
+            },
+            "scope": 33801,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33800,
+            "nodeType": "FunctionDefinition",
+            "src": "724:77:36",
+            "functionSelector": "2407497e",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "setTokenUriResolver",
+            "nameLocation": "733:19:36",
+            "parameters": {
+              "id": 33798,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33797,
+                  "mutability": "mutable",
+                  "name": "_tokenUriResolver",
+                  "nameLocation": "773:17:36",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33800,
+                  "src": "753:37:36",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IJBTokenUriResolver_$48038",
+                    "typeString": "contract IJBTokenUriResolver"
+                  },
+                  "typeName": {
+                    "id": 33796,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 33795,
+                      "name": "IJBTokenUriResolver",
+                      "nameLocations": [
+                        "753:19:36"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 48038,
+                      "src": "753:19:36"
+                    },
+                    "referencedDeclaration": 48038,
+                    "src": "753:19:36",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IJBTokenUriResolver_$48038",
+                      "typeString": "contract IJBTokenUriResolver"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "752:39:36"
+            },
+            "returnParameters": {
+              "id": 33799,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "800:0:36"
+            },
+            "scope": 33801,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IJB721Delegate",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          33801
+        ],
+        "name": "IJB721Delegate",
+        "nameLocation": "237:14:36",
+        "scope": 33802,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 36
+}

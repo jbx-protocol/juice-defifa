@@ -1,0 +1,649 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "MAX_VOTING_POWER_TIER",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "defifaDelegate",
+      "outputs": [
+        {
+          "internalType": "contract IDefifaDelegate",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "redemptionWeight",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct DefifaTierRedemptionWeight[]",
+          "name": "_tierWeights",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "ratifyScorecard",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "id",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "redemptionWeight",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct DefifaTierRedemptionWeight[]",
+          "name": "_tierWeights",
+          "type": "tuple[]"
+        }
+      ],
+      "name": "submitScorecards",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "votingStartTime",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "MAX_VOTING_POWER_TIER()": "4b501fbd",
+    "defifaDelegate()": "58d5ac0a",
+    "ratifyScorecard((uint256,uint256)[])": "64d87a61",
+    "submitScorecards((uint256,uint256)[])": "59f397bd",
+    "votingStartTime()": "2019a608"
+  },
+  "ast": {
+    "absolutePath": "contracts/interfaces/IDefifaGovernor.sol",
+    "id": 3278,
+    "exportedSymbols": {
+      "DefifaTierRedemptionWeight": [
+        3801
+      ],
+      "IDefifaDelegate": [
+        3118
+      ],
+      "IDefifaGovernor": [
+        3277
+      ],
+      "IERC165": [
+        57235
+      ],
+      "IERC721": [
+        55497
+      ],
+      "IJB721TieredGovernance": [
+        34635
+      ],
+      "IJBDirectory": [
+        47325
+      ],
+      "IJBFundingCycleBallot": [
+        47359
+      ],
+      "IJBFundingCycleStore": [
+        47496
+      ],
+      "IJBPaymentTerminal": [
+        47669
+      ],
+      "IJBPriceFeed": [
+        48032
+      ],
+      "IJBPrices": [
+        48076
+      ],
+      "IJBProjects": [
+        48155
+      ],
+      "IJBTiered721Delegate": [
+        34819
+      ],
+      "IJBTiered721DelegateStore": [
+        35185
+      ],
+      "IJBTokenUriResolver": [
+        48774
+      ],
+      "JB721PricingParams": [
+        35763
+      ],
+      "JB721Tier": [
+        35788
+      ],
+      "JB721TierParams": [
+        35811
+      ],
+      "JBBallotState": [
+        46753
+      ],
+      "JBFundingCycle": [
+        49762
+      ],
+      "JBFundingCycleData": [
+        49775
+      ],
+      "JBProjectMetadata": [
+        49888
+      ],
+      "JBTiered721Flags": [
+        35960
+      ],
+      "JBTiered721MintForTiersData": [
+        35975
+      ],
+      "JBTiered721MintReservesForTiersData": [
+        35982
+      ],
+      "JBTiered721SetTierDelegatesData": [
+        35989
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:574:6",
+    "nodes": [
+      {
+        "id": 3240,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:6",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 3241,
+        "nodeType": "ImportDirective",
+        "src": "57:51:6",
+        "absolutePath": "contracts/structs/DefifaTierRedemptionWeight.sol",
+        "file": "../structs/DefifaTierRedemptionWeight.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3278,
+        "sourceUnit": 3802,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3242,
+        "nodeType": "ImportDirective",
+        "src": "109:31:6",
+        "absolutePath": "contracts/interfaces/IDefifaDelegate.sol",
+        "file": "./IDefifaDelegate.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3278,
+        "sourceUnit": 3119,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3277,
+        "nodeType": "ContractDefinition",
+        "src": "142:463:6",
+        "nodes": [
+          {
+            "id": 3247,
+            "nodeType": "FunctionDefinition",
+            "src": "172:65:6",
+            "functionSelector": "4b501fbd",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MAX_VOTING_POWER_TIER",
+            "nameLocation": "181:21:6",
+            "parameters": {
+              "id": 3243,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "202:2:6"
+            },
+            "returnParameters": {
+              "id": 3246,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3245,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3247,
+                  "src": "228:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3244,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "228:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "227:9:6"
+            },
+            "scope": 3277,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 3253,
+            "nodeType": "FunctionDefinition",
+            "src": "241:66:6",
+            "functionSelector": "58d5ac0a",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "defifaDelegate",
+            "nameLocation": "250:14:6",
+            "parameters": {
+              "id": 3248,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "264:2:6"
+            },
+            "returnParameters": {
+              "id": 3252,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3251,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3253,
+                  "src": "290:15:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IDefifaDelegate_$3118",
+                    "typeString": "contract IDefifaDelegate"
+                  },
+                  "typeName": {
+                    "id": 3250,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 3249,
+                      "name": "IDefifaDelegate",
+                      "nameLocations": [
+                        "290:15:6"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 3118,
+                      "src": "290:15:6"
+                    },
+                    "referencedDeclaration": 3118,
+                    "src": "290:15:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IDefifaDelegate_$3118",
+                      "typeString": "contract IDefifaDelegate"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "289:17:6"
+            },
+            "scope": 3277,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 3258,
+            "nodeType": "FunctionDefinition",
+            "src": "311:59:6",
+            "functionSelector": "2019a608",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "votingStartTime",
+            "nameLocation": "320:15:6",
+            "parameters": {
+              "id": 3254,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "335:2:6"
+            },
+            "returnParameters": {
+              "id": 3257,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3256,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3258,
+                  "src": "361:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3255,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "361:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "360:9:6"
+            },
+            "scope": 3277,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 3267,
+            "nodeType": "FunctionDefinition",
+            "src": "374:113:6",
+            "functionSelector": "59f397bd",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "submitScorecards",
+            "nameLocation": "383:16:6",
+            "parameters": {
+              "id": 3263,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3262,
+                  "mutability": "mutable",
+                  "name": "_tierWeights",
+                  "nameLocation": "438:12:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3267,
+                  "src": "400:50:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$3801_calldata_ptr_$dyn_calldata_ptr",
+                    "typeString": "struct DefifaTierRedemptionWeight[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 3260,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 3259,
+                        "name": "DefifaTierRedemptionWeight",
+                        "nameLocations": [
+                          "400:26:6"
+                        ],
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 3801,
+                        "src": "400:26:6"
+                      },
+                      "referencedDeclaration": 3801,
+                      "src": "400:26:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_DefifaTierRedemptionWeight_$3801_storage_ptr",
+                        "typeString": "struct DefifaTierRedemptionWeight"
+                      }
+                    },
+                    "id": 3261,
+                    "nodeType": "ArrayTypeName",
+                    "src": "400:28:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$3801_storage_$dyn_storage_ptr",
+                      "typeString": "struct DefifaTierRedemptionWeight[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "399:52:6"
+            },
+            "returnParameters": {
+              "id": 3266,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3265,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3267,
+                  "src": "478:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3264,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "478:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "477:9:6"
+            },
+            "scope": 3277,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 3276,
+            "nodeType": "FunctionDefinition",
+            "src": "491:112:6",
+            "functionSelector": "64d87a61",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "ratifyScorecard",
+            "nameLocation": "500:15:6",
+            "parameters": {
+              "id": 3272,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3271,
+                  "mutability": "mutable",
+                  "name": "_tierWeights",
+                  "nameLocation": "554:12:6",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3276,
+                  "src": "516:50:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$3801_calldata_ptr_$dyn_calldata_ptr",
+                    "typeString": "struct DefifaTierRedemptionWeight[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 3269,
+                      "nodeType": "UserDefinedTypeName",
+                      "pathNode": {
+                        "id": 3268,
+                        "name": "DefifaTierRedemptionWeight",
+                        "nameLocations": [
+                          "516:26:6"
+                        ],
+                        "nodeType": "IdentifierPath",
+                        "referencedDeclaration": 3801,
+                        "src": "516:26:6"
+                      },
+                      "referencedDeclaration": 3801,
+                      "src": "516:26:6",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_struct$_DefifaTierRedemptionWeight_$3801_storage_ptr",
+                        "typeString": "struct DefifaTierRedemptionWeight"
+                      }
+                    },
+                    "id": 3270,
+                    "nodeType": "ArrayTypeName",
+                    "src": "516:28:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$3801_storage_$dyn_storage_ptr",
+                      "typeString": "struct DefifaTierRedemptionWeight[]"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "515:52:6"
+            },
+            "returnParameters": {
+              "id": 3275,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3274,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3276,
+                  "src": "594:7:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3273,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "594:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "593:9:6"
+            },
+            "scope": 3277,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IDefifaGovernor",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          3277
+        ],
+        "name": "IDefifaGovernor",
+        "nameLocation": "152:15:6",
+        "scope": 3278,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 6
+}

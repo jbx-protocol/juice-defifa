@@ -1,0 +1,130 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/structs/JBGlobalFundingCycleMetadata.sol",
+    "id": 49090,
+    "exportedSymbols": {
+      "JBGlobalFundingCycleMetadata": [
+        49089
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:511:116",
+    "nodes": [
+      {
+        "id": 49082,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:116",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 49089,
+        "nodeType": "StructDefinition",
+        "src": "427:115:116",
+        "canonicalName": "JBGlobalFundingCycleMetadata",
+        "members": [
+          {
+            "constant": false,
+            "id": 49084,
+            "mutability": "mutable",
+            "name": "allowSetTerminals",
+            "nameLocation": "472:17:116",
+            "nodeType": "VariableDeclaration",
+            "scope": 49089,
+            "src": "467:22:116",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 49083,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "467:4:116",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 49086,
+            "mutability": "mutable",
+            "name": "allowSetController",
+            "nameLocation": "498:18:116",
+            "nodeType": "VariableDeclaration",
+            "scope": 49089,
+            "src": "493:23:116",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 49085,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "493:4:116",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 49088,
+            "mutability": "mutable",
+            "name": "pauseTransfers",
+            "nameLocation": "525:14:116",
+            "nodeType": "VariableDeclaration",
+            "scope": 49089,
+            "src": "520:19:116",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 49087,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "520:4:116",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "visibility": "internal"
+          }
+        ],
+        "name": "JBGlobalFundingCycleMetadata",
+        "nameLocation": "434:28:116",
+        "scope": 49090,
+        "visibility": "public"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 116
+}

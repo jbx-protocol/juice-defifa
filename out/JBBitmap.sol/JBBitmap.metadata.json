@@ -1,0 +1,61 @@
+{
+  "compiler": {
+    "version": "0.8.16+commit.07a7930e"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {},
+      "version": 1
+    },
+    "userdoc": {
+      "kind": "user",
+      "methods": {},
+      "notice": "Utilities to manage bool bitmap storing the inactive tiers.",
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "node_modules/@jbx-protocol/juice-721-delegate/contracts/libraries/JBBitmap.sol": "JBBitmap"
+    },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": [
+      ":@jbx-protocol/=node_modules/@jbx-protocol/",
+      ":@openzeppelin/=node_modules/@openzeppelin/",
+      ":@paulrberg/=node_modules/@paulrberg/",
+      ":ds-test/=lib/forge-std/lib/ds-test/src/",
+      ":forge-std/=lib/forge-std/src/",
+      ":prb-math/=node_modules/prb-math/"
+    ]
+  },
+  "sources": {
+    "node_modules/@jbx-protocol/juice-721-delegate/contracts/libraries/JBBitmap.sol": {
+      "keccak256": "0x2e1ff90df6624e291b8b75261f438e4ab5c4ce737bc80994834b9e1b4897c0f3",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://33bbe4fa1e86651c2b2b798a624cb48715cbe83e4b8d663ab609b73870f054b6",
+        "dweb:/ipfs/QmY9RUUiSVQB39UT9VyLymSSYYze8B5iuc6a2rGQRMicdm"
+      ]
+    },
+    "node_modules/@jbx-protocol/juice-721-delegate/contracts/structs/JBBitmapWord.sol": {
+      "keccak256": "0x3cb3491c43e48a91763975191edbc4e5b6ea5a2c471ef61a5c002b9c5c51dc96",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://ed499e21b19251e68aae594fe5e2d9087e3b2fce06d8f39b68271f5c10e871d8",
+        "dweb:/ipfs/QmSndiy5j334hys8y3M8ccymkeheJmvQWYCccyU5BVPTQ9"
+      ]
+    }
+  },
+  "version": 1
+}

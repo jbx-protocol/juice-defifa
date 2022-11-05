@@ -1,0 +1,60 @@
+{
+  "compiler": {
+    "version": "0.8.16+commit.07a7930e"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [],
+    "devdoc": {
+      "kind": "dev",
+      "methods": {},
+      "version": 1
+    },
+    "userdoc": {
+      "kind": "user",
+      "methods": {},
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "lib/forge-std/src/StdStorage.sol": "stdStorage"
+    },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": [
+      ":@jbx-protocol/=node_modules/@jbx-protocol/",
+      ":@openzeppelin/=node_modules/@openzeppelin/",
+      ":@paulrberg/=node_modules/@paulrberg/",
+      ":ds-test/=lib/forge-std/lib/ds-test/src/",
+      ":forge-std/=lib/forge-std/src/",
+      ":prb-math/=node_modules/prb-math/"
+    ]
+  },
+  "sources": {
+    "lib/forge-std/src/StdStorage.sol": {
+      "keccak256": "0xb0da85ce6999940eba6190a26c15b9bc7aede57123891287e1b30f80333a9cf5",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://d287fd41de40ef992588f7a9531e66d1e9f8e4f3f194b9e721ac576d4613964a",
+        "dweb:/ipfs/QmbFYYjoc8WGLKVfDe4rscYPwdGq48incbwRQNoLtcMMjn"
+      ]
+    },
+    "lib/forge-std/src/Vm.sol": {
+      "keccak256": "0x2d0cec0827a5ee9df571cde75cb742f8b977218283739e163801baa8c34439f6",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://310afde56e845d7f36ca7ce191715038f8259d7a9250c171689744a797223556",
+        "dweb:/ipfs/QmULG8AwNa5B64EMUSCwG1bAyJJK1sodAsAYvjk3vXbgMj"
+      ]
+    }
+  },
+  "version": 1
+}

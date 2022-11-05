@@ -1,0 +1,103 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/structs/JBBitmapWord.sol",
+    "id": 35083,
+    "exportedSymbols": {
+      "JBBitmapWord": [
+        35082
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:171:47",
+    "nodes": [
+      {
+        "id": 35077,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:47",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 35082,
+        "nodeType": "StructDefinition",
+        "src": "132:70:47",
+        "canonicalName": "JBBitmapWord",
+        "members": [
+          {
+            "constant": false,
+            "id": 35079,
+            "mutability": "mutable",
+            "name": "currentWord",
+            "nameLocation": "164:11:47",
+            "nodeType": "VariableDeclaration",
+            "scope": 35082,
+            "src": "156:19:47",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 35078,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "156:7:47",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 35081,
+            "mutability": "mutable",
+            "name": "currentDepth",
+            "nameLocation": "187:12:47",
+            "nodeType": "VariableDeclaration",
+            "scope": 35082,
+            "src": "179:20:47",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint256",
+              "typeString": "uint256"
+            },
+            "typeName": {
+              "id": 35080,
+              "name": "uint256",
+              "nodeType": "ElementaryTypeName",
+              "src": "179:7:47",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint256",
+                "typeString": "uint256"
+              }
+            },
+            "visibility": "internal"
+          }
+        ],
+        "name": "JBBitmapWord",
+        "nameLocation": "139:12:47",
+        "scope": 35083,
+        "visibility": "public"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 47
+}
