@@ -27,7 +27,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
   error GAME_ISNT_OVER_YET();
   error INVALID_TIER_ID();
-  error NEUTRAL_OUTCOME();
   error INVALID_REDEMPTION_WEIGHTS();
   error NOTHING_TO_CLAIM();
   error UNEXPECTED();
@@ -194,16 +193,9 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Keep a reference to the number of tier weights.
     uint256 _numberOfTierWeights = _tierWeights.length;
 
-    // Keep a reference to the lowest weight in the new set.
-    uint256 _lowestRedemptionWeight = _numberOfTierWeights != 0 ? _tierWeights[0].redemptionWeight : 0;
-
     for (uint256 _i; _i < _numberOfTierWeights; ) {
       // Attempting to set the redemption weight for a tier that does not exist (yet) reverts. 
       if (_tierWeights[_i].id > _maxTierId) revert INVALID_TIER_ID();
-
-      // If this is the lowest we have seen so far we keep track of it.
-      if (_tierWeights[_i].redemptionWeight < _lowestRedemptionWeight) 
-        _lowestRedemptionWeight = _tierWeights[_i].redemptionWeight;
 
       // Save the tier weight. Tier's are 1 indexed and should be stored 0 indexed.
       _tierRedemptionWeights[_tierWeights[_i].id - 1] = _tierWeights[_i].redemptionWeight;
@@ -218,12 +210,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
     // Make sure the cumulative amount is contained within the total redemption weight.
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
-
-    // Check if all tiers are being set and check if its an even distribution (accounting for rounding errors)
-    if (
-      _numberOfTierWeights == _maxTierId &&
-      _lowestRedemptionWeight >= TOTAL_REDEMPTION_WEIGHT / _maxTierId - 1
-    ) revert NEUTRAL_OUTCOME();
   }
 
   //*********************************************************************//
