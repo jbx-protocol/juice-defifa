@@ -156,10 +156,10 @@ contract DeployGoerli is Script {
 
     address _defifaBallcats = 0x11834239698c7336EF232C00a2A9926d3375DF9D;
     // Game params.
-    uint48 _mintDuration = 14400; // 4 hrs
-    uint48 _start = 1669024800; // 4 hrs after 3pm PST Nov 4
-    uint48 _tradeDeadline = 1667599200 + 14400 + 10800; // 3 hours after start.
-    uint48 _end = 1667599200 + 14400 + 10800 + 10800; // 3 hours after trade deadline.
+    uint48 _start = 1669024800; // 2am PST, Nov 21.
+    uint48 _mintDuration = 1209600; // 2 weeks.
+    uint48 _tradeDeadline = 1670598000; // 7am, Dec 9.
+    uint48 _end = 1671375600 + 604800; // 7 days after the finals. Dec 25, 7am PST.
 
     JB721TierParams[] memory _tiers = new JB721TierParams[](32);
 

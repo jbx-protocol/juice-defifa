@@ -67,6 +67,11 @@
       },
       {
         "inputs": [],
+        "name": "INVALID_TIER_ID",
+        "type": "error"
+      },
+      {
+        "inputs": [],
         "name": "INVALID_TOKEN_ID",
         "type": "error"
       },
@@ -134,11 +139,6 @@
       {
         "inputs": [],
         "name": "UNAUTHORIZED",
-        "type": "error"
-      },
-      {
-        "inputs": [],
-        "name": "UNEXPECTED",
         "type": "error"
       },
       {
@@ -2483,11 +2483,11 @@
   },
   "sources": {
     "contracts/DefifaDelegate.sol": {
-      "keccak256": "0xb54be551a7abde2a9b05f57d6a7912e21846f500315a1659ab1afdcd142758c5",
+      "keccak256": "0x8bc18e3db2b727b140ebda999f26416dced48bfbde9f7deb98bad9af6f98133f",
       "license": "MIT",
       "urls": [
-        "bzz-raw://b3fb3be2d1e19206127cca1bd163b0bfafa9d6c032a50ab9dec57958736dcda1",
-        "dweb:/ipfs/QmcUM8L2DkRNN6mgXT5hYQXUYvM9mjedEDciUEPcg2MVC2"
+        "bzz-raw://b1bc6efeede3f3d37ac36e6a3139c17048cafa52acb7f51c3156dad4da55dbca",
+        "dweb:/ipfs/QmfPmSx2AtbgzBXyCTV2AzgtWyxxNz1FaEAXgmcdFJ613H"
       ]
     },
     "contracts/interfaces/IDefifaDelegate.sol": {
