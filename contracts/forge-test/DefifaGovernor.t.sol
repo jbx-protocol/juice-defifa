@@ -381,7 +381,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // block time is 12 secs
     vm.warp(block.timestamp + (_governor.votingDelay() * 12));
 
-
     // All the users vote
     // 0 = Against
     // 1 = For
@@ -392,8 +391,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
 
     // Execute the proposal
-     vm.expectRevert('Governor: proposal not successful'); // phhase 4 not reached yet
-     _governor.ratifyScorecard(scorecards);
+    vm.expectRevert('Governor: proposal not successful'); // phhase 4 not reached yet
+    _governor.ratifyScorecard(scorecards);
   }
 
   function testWhenRedemptionWeightisMoreThanMaxRedemptionWeight() public {

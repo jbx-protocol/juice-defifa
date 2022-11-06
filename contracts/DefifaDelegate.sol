@@ -193,7 +193,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     uint256 _numberOfTierWeights = _tierWeights.length;
 
     for (uint256 _i; _i < _numberOfTierWeights; ) {
-      // Attempting to set the redemption weight for a tier that does not exist (yet) reverts. 
+      // Attempting to set the redemption weight for a tier that does not exist (yet) reverts.
       if (_tierWeights[_i].id > _maxTierId) revert INVALID_TIER_ID();
 
       // Save the tier weight. Tier's are 1 indexed and should be stored 0 indexed.
@@ -215,7 +215,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   // ------------------------ internal functions ----------------------- //
   //*********************************************************************//
 
-   /**
+  /**
    @notice
    handles the tier voting accounting
 
@@ -231,9 +231,9 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     JB721Tier memory _tier
   ) internal virtual override {
     _tokenId; // Prevents unused var compiler and natspec complaints.
-    if (_tier.votingUnits != 0){
+    if (_tier.votingUnits != 0) {
       // Delegate the tier to the recipient user themselves if they are not delegating yet
-      if (_tierDelegation[_to][_tier.id] == address(0)){
+      if (_tierDelegation[_to][_tier.id] == address(0)) {
         _tierDelegation[_to][_tier.id] = _to;
         emit DelegateChanged(_to, address(0), _to);
       }
