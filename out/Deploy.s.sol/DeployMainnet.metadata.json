@@ -109,11 +109,11 @@
       ]
     },
     "contracts/scripts/Deploy.s.sol": {
-      "keccak256": "0x63b259dc5763d379bef9c8bf166530f081d0db9775fa535d93552d0017de25db",
+      "keccak256": "0x93caae18ffcb6a101374c59166a8d1f8e0b5a36a6f6d90c19de29698a8294f3d",
       "license": "UNLICENSED",
       "urls": [
-        "bzz-raw://ead36fbb0f5c523fc37e2d58f7cec0e037e9daa12cabddc27b1b1db2d942de01",
-        "dweb:/ipfs/QmY5cxL5zyYQ28bgwRD9vm2TJzsda9MkPvLKE8ZifmfSrZ"
+        "bzz-raw://544e26e844dfc3147a529797b5e8f6885dd641c4e86be1b297cb74db9cec5030",
+        "dweb:/ipfs/QmVwtLeDZFHQ5Y3qZCwQxqtT9DvrA3uhxxn6vCdpPPdvc6"
       ]
     },
     "contracts/structs/DefifaDelegateData.sol": {

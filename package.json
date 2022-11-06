@@ -7,7 +7,7 @@
     "type": "git",
     "url": "https://github.com/jbx-protocol/juice-defifa"
   },
-  "version": "4.0.0",
+  "version": "5.0.0",
   "license": "MIT",
   "dependencies": {
     "@jbx-protocol/juice-721-delegate": "^2.0.3",
