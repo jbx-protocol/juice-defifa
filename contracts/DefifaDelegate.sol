@@ -29,7 +29,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   error INVALID_TIER_ID();
   error INVALID_REDEMPTION_WEIGHTS();
   error NOTHING_TO_CLAIM();
-  error UNEXPECTED();
 
   //*********************************************************************//
   // --------------------------- properties ---------------------------- //
