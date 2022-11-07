@@ -96,7 +96,249 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_user, block.number - 1));
   }
 
-  function testSetRedemptionRates(bool _useHelper) public {
+  function testSetRedemptionRates_fails_unmetQuorum(bool _useHelper) external {
+
+    uint8 nTiers = 10;
+    address[] memory _users = new address[](nTiers);
+
+    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+      uint256(nTiers),
+      getBasicDefifaLaunchData()
+    );
+
+    for (uint256 i = 0; i < nTiers; i++) {
+      // Generate a new address for each tier
+      _users[i] = address(bytes20(keccak256(abi.encode('user', Strings.toString(i)))));
+
+      // fund user
+      vm.deal(_users[i], 1 ether);
+
+      // Build metadata to buy specific NFT
+      uint16[] memory rawMetadata = new uint16[](1);
+      rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
+      bytes memory metadata = abi.encode(
+        bytes32(0),
+        bytes32(0),
+        type(IJB721Delegate).interfaceId,
+        false,
+        false,
+        false,
+        rawMetadata
+      );
+
+      // Pay to the project and mint an NFT
+      vm.prank(_users[i]);
+      _terminals[0].pay{value: 1 ether}(
+        _projectId,
+        1 ether,
+        address(0),
+        _users[i],
+        0,
+        true,
+        '',
+        metadata
+      );
+
+      // Set the delegate as the user themselves
+      JBTiered721SetTierDelegatesData[]
+        memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
+      tiered721SetDelegatesData[0] = JBTiered721SetTierDelegatesData({
+        delegatee: _users[i],
+        tierId: uint256(i + 1)
+      });
+      vm.prank(_users[i]);
+      _nft.setTierDelegates(tiered721SetDelegatesData);
+
+      // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
+      vm.roll(block.number + 1);
+      assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_users[i], block.number - 1));
+    }
+
+    // Phase 2
+    vm.warp(block.timestamp + 1 days);
+    deployer.queueNextPhaseOf(_projectId);
+
+    // Phase 3
+    vm.warp(block.timestamp + 1 days);
+    deployer.queueNextPhaseOf(_projectId);
+
+    address[] memory targets = new address[](1);
+    uint256[] memory values = new uint256[](1);
+    bytes[] memory calldatas = new bytes[](1);
+
+    // Generate the scorecards
+    DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
+
+    // We can't have a neutral outcome, so we only give shares to tiers that are an even number (in our array)
+    for (uint256 i = 0; i < scorecards.length; i++) {
+      scorecards[i].id = i + 1;
+      scorecards[i].redemptionWeight = i % 2 == 0 ? 1_000_000_000 / (scorecards.length / 2) : 0;
+    }
+
+    // Forward time so proposals can be created
+    uint256 _proposalId;
+    if (_useHelper) {
+      _proposalId = _governor.submitScorecards(scorecards);
+    } else {
+      targets[0] = address(_nft);
+      calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
+
+      // Create the proposal
+      _proposalId = _governor.propose(targets, values, calldatas, 'Governance!');
+    }
+
+    // Forward time so voting becomes active
+    vm.roll(block.number + _governor.votingDelay() + 1);
+    // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
+    // block time is 12 secs
+    vm.warp(block.timestamp + (_governor.votingDelay() * 12));
+
+    // No voting delay after the initial voting delay has passed in
+    assertEq(_governor.votingDelay(), 0);
+
+    // Atleast 50% has to vote, anything less won't pass
+    for (uint256 i = 0; i < _users.length / 2 - 1; i++) {
+      vm.prank(_users[i]);
+      _governor.castVote(_proposalId, 1);
+    }
+
+    // Phase 4
+    vm.warp(block.timestamp + 1 weeks);
+    vm.roll(deployer.endOf(_projectId));
+    deployer.queueNextPhaseOf(_projectId);
+    vm.warp(block.timestamp + 1 weeks);
+
+    // Execute the proposal
+    vm.expectRevert("Governor: proposal not successful");
+    if (_useHelper) {
+      _governor.ratifyScorecard(scorecards);
+    } else {
+      _governor.execute(targets, values, calldatas, keccak256('Governance!'));
+    }
+  }
+
+  function testSetRedemptionRates_fails_declined(bool _useHelper) external {
+
+    uint8 nTiers = 10;
+    address[] memory _users = new address[](nTiers);
+
+    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+      uint256(nTiers),
+      getBasicDefifaLaunchData()
+    );
+
+    for (uint256 i = 0; i < nTiers; i++) {
+      // Generate a new address for each tier
+      _users[i] = address(bytes20(keccak256(abi.encode('user', Strings.toString(i)))));
+
+      // fund user
+      vm.deal(_users[i], 1 ether);
+
+      // Build metadata to buy specific NFT
+      uint16[] memory rawMetadata = new uint16[](1);
+      rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
+      bytes memory metadata = abi.encode(
+        bytes32(0),
+        bytes32(0),
+        type(IJB721Delegate).interfaceId,
+        false,
+        false,
+        false,
+        rawMetadata
+      );
+
+      // Pay to the project and mint an NFT
+      vm.prank(_users[i]);
+      _terminals[0].pay{value: 1 ether}(
+        _projectId,
+        1 ether,
+        address(0),
+        _users[i],
+        0,
+        true,
+        '',
+        metadata
+      );
+
+      // Set the delegate as the user themselves
+      JBTiered721SetTierDelegatesData[]
+        memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
+      tiered721SetDelegatesData[0] = JBTiered721SetTierDelegatesData({
+        delegatee: _users[i],
+        tierId: uint256(i + 1)
+      });
+      vm.prank(_users[i]);
+      _nft.setTierDelegates(tiered721SetDelegatesData);
+
+      // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
+      vm.roll(block.number + 1);
+      assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_users[i], block.number - 1));
+    }
+
+    // Phase 2
+    vm.warp(block.timestamp + 1 days);
+    deployer.queueNextPhaseOf(_projectId);
+
+    // Phase 3
+    vm.warp(block.timestamp + 1 days);
+    deployer.queueNextPhaseOf(_projectId);
+
+    address[] memory targets = new address[](1);
+    uint256[] memory values = new uint256[](1);
+    bytes[] memory calldatas = new bytes[](1);
+
+    // Generate the scorecards
+    DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
+
+    // We can't have a neutral outcome, so we only give shares to tiers that are an even number (in our array)
+    for (uint256 i = 0; i < scorecards.length; i++) {
+      scorecards[i].id = i + 1;
+      scorecards[i].redemptionWeight = i % 2 == 0 ? 1_000_000_000 / (scorecards.length / 2) : 0;
+    }
+
+    // Forward time so proposals can be created
+    uint256 _proposalId;
+    if (_useHelper) {
+      _proposalId = _governor.submitScorecards(scorecards);
+    } else {
+      targets[0] = address(_nft);
+      calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
+
+      // Create the proposal
+      _proposalId = _governor.propose(targets, values, calldatas, 'Governance!');
+    }
+
+    // Forward time so voting becomes active
+    vm.roll(block.number + _governor.votingDelay() + 1);
+    // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
+    // block time is 12 secs
+    vm.warp(block.timestamp + (_governor.votingDelay() * 12));
+
+    // No voting delay after the initial voting delay has passed in
+    assertEq(_governor.votingDelay(), 0);
+
+    // We have 60% vote against and 40% vote in favor
+    for (uint256 i = 0; i < _users.length; i++) {
+      vm.prank(_users[i]);
+      _governor.castVote(_proposalId, 0);
+    }
+
+    // Phase 4
+    vm.warp(block.timestamp + 1 weeks);
+    vm.roll(deployer.endOf(_projectId));
+    deployer.queueNextPhaseOf(_projectId);
+    vm.warp(block.timestamp + 1 weeks);
+
+    // Execute the proposal
+    vm.expectRevert("Governor: proposal not successful");
+    if (_useHelper) {
+      _governor.ratifyScorecard(scorecards);
+    } else {
+      _governor.execute(targets, values, calldatas, keccak256('Governance!'));
+    }
+  }
+
+  function testSetRedemptionRatesAndRedeem(bool _useHelper) public {
     uint8 nTiers = 10;
     address[] memory _users = new address[](nTiers);
 
@@ -217,12 +459,51 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       _governor.execute(targets, values, calldatas, keccak256('Governance!'));
     }
 
+    vm.roll(block.number + 1);
+
     uint256[100] memory redemptionWeights = _nft.tierRedemptionWeights();
 
     // Verify that the redemptionWeights actually changed
-    for (uint256 i = 0; i < scorecards.length - 1; i++) {
+    for (uint256 i = 0; i < scorecards.length; i++) {
+      address _user = _users[i];
+
       // Tier's are 1 indexed and should be stored 0 indexed.
       assertEq(redemptionWeights[i], scorecards[i].redemptionWeight);
+
+      // Craft the metadata: redeem the tokenId
+      bytes memory redemptionMetadata;
+      {
+        uint256[] memory redemptionId = new uint256[](1);
+        redemptionId[0] = _generateTokenId(i + 1, 1);
+        redemptionMetadata = abi.encode(bytes32(0), type(IJB721Delegate).interfaceId, redemptionId);
+      }
+
+      // Track the users balance so we can see the change
+      uint256 _userBalanceBefore = _user.balance;
+
+      // If the redemption is 0 this will revert
+      if(scorecards[i].redemptionWeight == 0) vm.expectRevert(abi.encodeWithSignature("NOTHING_TO_CLAIM()"));
+      
+      vm.prank(_user);
+      JBETHPaymentTerminal(address(_terminals[0])).redeemTokensOf({
+        _holder: _user,
+        _projectId: _projectId,
+        _tokenCount: 0,
+        _token: address(0),
+        _minReturnedTokens: 0,
+        _beneficiary: payable(_user),
+        _memo: 'imma out of here',
+        _metadata: redemptionMetadata
+      });
+
+      if(scorecards[i].redemptionWeight == 0) continue;
+
+      // Each tier costs 1 ether, half the tiers receive no redemption,
+      // the other half shares the rest. That should mean they receive 2 ether
+      assertEq(
+          _userBalanceBefore + 2 ether,
+          _user.balance
+      );
     }
   }
 
@@ -635,5 +916,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       terminals: _terminals,
       memo: ''
     });
+  }
+
+   function _generateTokenId(uint256 _tierId, uint256 _tokenNumber) internal pure returns (uint256) {
+    return (_tierId * 1_000_000_000) + _tokenNumber;
   }
 }

@@ -2,6 +2,7 @@
 pragma solidity ^0.8.16;
 
 import '@jbx-protocol/juice-721-delegate/contracts/JB721TieredGovernance.sol';
+import '@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminal.sol';
 
 import './interfaces/IDefifaDelegate.sol';
 
@@ -42,6 +43,12 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     Tiers are limited to ID 100
   */
   uint256[100] private _tierRedemptionWeights;
+
+  /**
+   * @notice 
+   * The overflow in the terminal at the end of the game
+   */
+  uint256 private _overflowAtGameEnd;
 
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
@@ -147,7 +154,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Return the weighted overflow, and this contract as the delegate so that tokens can be deleted.
     return (
       PRBMath.mulDiv(
-        _data.overflow,
+        _overflowAtGameEnd,
         _redemptionWeightOf(_decodedTokenIds, _data),
         _totalRedemptionWeight(_data)
       ),
@@ -206,6 +213,12 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
         ++_i;
       }
     }
+
+    // Get the overflow at the game end and store it
+    IJBSingleTokenPaymentTerminal _terminal = IJBSingleTokenPaymentTerminal(
+      address(directory.terminalsOf(projectId)[0])
+    );
+    _overflowAtGameEnd = _terminal.currentEthOverflowOf(projectId);
 
     // Make sure the cumulative amount is contained within the total redemption weight.
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
