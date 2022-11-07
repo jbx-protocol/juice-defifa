@@ -120,8 +120,7 @@ contract DeployMainnet is Script {
     );
 
     // Set the owner as the governor (done here to easily count future nonces)
-    _delegateData.owner = computeCreateAddress(address(this), vm.getNonce(address(this)) + 1);
-    console.log(_delegateData.owner);
+    _delegateData.owner = computeCreateAddress(tx.origin, vm.getNonce(tx.origin) + 1);
 
     // Launch the game - initialNonce
     uint256 _projectId = defifaDeployer.launchGameWith(_delegateData, _launchProjectData);
@@ -134,10 +133,18 @@ contract DeployMainnet is Script {
     // initialNonce + 1 (view function)
 
     // Deploy the governor
-    new DefifaGovernor(DefifaDelegate(_metadata.dataSource), _end);
+    {
+      address _governor = address(new DefifaGovernor(DefifaDelegate(_metadata.dataSource), _end));
+      
+      // These 3 should be the same:
+      console.log(_delegateData.owner);
+      console.log(_governor);
+      console.log(Ownable(_metadata.dataSource).owner());
+    }
 
     console.log(address(defifaDeployer));
     console.log(address(store));
+    console.log(_metadata.dataSource);
   }
 }
 
@@ -156,10 +163,10 @@ contract DeployGoerli is Script {
 
     address _defifaBallcats = 0x11834239698c7336EF232C00a2A9926d3375DF9D;
     // Game params.
-    uint48 _start = 1667768400; // 1pm PST, Nov 6.
+    uint48 _start = 1667968400; // 1pm PST, Nov 6.
     uint48 _mintDuration = 7200; // 2 hours.
-    uint48 _tradeDeadline = 1667768400 + 7200; // 2 hours after start.
-    uint48 _end = 1667768400 + 7200 + 7200; // 2 hours after trade deadline.
+    uint48 _tradeDeadline = 1667968400 + 7200; // 2 hours after start.
+    uint48 _end = 1667968400 + 7200 + 7200; // 2 hours after trade deadline.
 
     JB721TierParams[] memory _tiers = new JB721TierParams[](32);
 
@@ -254,8 +261,7 @@ contract DeployGoerli is Script {
     );
 
     // Set the owner as the governor (done here to easily count future nonces)
-    _delegateData.owner = computeCreateAddress(address(this), vm.getNonce(address(this)) + 1);
-    console.log(_delegateData.owner);
+    _delegateData.owner = computeCreateAddress(tx.origin, vm.getNonce(tx.origin) + 1);
 
     // Launch the game - initialNonce
     uint256 _projectId = defifaDeployer.launchGameWith(_delegateData, _launchProjectData);
@@ -268,9 +274,17 @@ contract DeployGoerli is Script {
     // initialNonce + 1 (view function)
 
     // Deploy the governor
-    new DefifaGovernor(DefifaDelegate(_metadata.dataSource), _end);
+    {
+      address _governor = address(new DefifaGovernor(DefifaDelegate(_metadata.dataSource), _end));
+      
+      // These 3 should be the same:
+      console.log(_delegateData.owner);
+      console.log(_governor);
+      console.log(Ownable(_metadata.dataSource).owner());
+    }
 
     console.log(address(defifaDeployer));
     console.log(address(store));
+    console.log(_metadata.dataSource);
   }
 }
