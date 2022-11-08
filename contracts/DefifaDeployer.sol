@@ -112,7 +112,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     @notice
     The address that should be forwarded JBX accumulated in this contract from game fund distributions.
   */
-  address public override protocolFeeProjectTokenAccount;
+  address public override immutable protocolFeeProjectTokenAccount;
 
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
