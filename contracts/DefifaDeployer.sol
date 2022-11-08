@@ -169,6 +169,24 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     return _currentFundingCycle.number;
   }
 
+  /**
+    @notice
+    Whether or not the next phase still needs queuing.
+
+    @param _gameId The ID of the game to get the queue status of.
+
+    @return Whether or not the next phase still needs queuing.
+  */
+  function nextPhaseNeedsQueueing(uint256 _gameId) external view override returns (bool) {
+    // Get the project's current funding cycle along with its metadata.
+    JBFundingCycle memory _currentFundingCycle = controller.fundingCycleStore().currentOf(_gameId);
+    // Get the project's queued funding cycle along with its metadata.
+    JBFundingCycle memory _queuedFundingCycle = controller.fundingCycleStore().queuedOf(_gameId);
+
+    // If the configurations are the same and the game hasn't ended, queueing is still needed.
+    return _currentFundingCycle.number != 4 && _currentFundingCycle.configuration == _queuedFundingCycle.configuration;
+  }
+
   //*********************************************************************//
   // -------------------------- constructor ---------------------------- //
   //*********************************************************************//
