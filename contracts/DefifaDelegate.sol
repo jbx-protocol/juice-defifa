@@ -22,7 +22,6 @@ import './interfaces/IDefifaDelegate.sol';
   JB721TieredGovernance: A generic tiered 721 delegate.
 */
 contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
-  using Checkpoints for Checkpoints.History;
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
@@ -53,9 +52,9 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
   /**
    * @notice 
-   * The blocknumber to use the snapshot of, this is only used to calculate the active total (tier) supply at the time
+   * The amount of tokens that have been redeemed from a tier, refunds are not counted
    */
-  uint256 private _redemptionBlockSnapshot;
+  mapping(uint256 => uint256) private _redeemedFromTier;
 
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
@@ -227,9 +226,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     );
     _overflowAtGameEnd = _terminal.currentEthOverflowOf(projectId);
 
-    // Set the blocknumber for the redemption snapshot to use
-    _redemptionBlockSnapshot = block.number;
-
     // Make sure the cumulative amount is contained within the total redemption weight.
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
   }
@@ -295,10 +291,8 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       // Calculate what percentage of the tier redemption amount a single token counts for.
       cumulativeWeight += 
         // Tier's are 1 indexed and are stored 0 indexed.
-        _tierRedemptionWeights[_tierId - 1] / 
-        // Use the snapshot from the redemptionblock to calculate the active total supply at the time
-        (_totalTierCheckpoints[_tierId].getAtBlock(_redemptionBlockSnapshot)
-          / _tier.votingUnits);
+        _tierRedemptionWeights[_tierId - 1] /
+        (_tier.initialQuantity - _tier.remainingQuantity + _redeemedFromTier[_tierId]);
 
       unchecked {
         ++_i;
@@ -324,5 +318,29 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   {
     // Set the total weight as the total scorecard weight.
     return TOTAL_REDEMPTION_WEIGHT;
+  }
+
+  /** 
+    @notice
+    A function that will run when tokens are burned via redemption.
+
+    @param _tokenIds The IDs of the tokens that were burned.
+  */
+  function _didBurn(uint256[] memory _tokenIds) internal virtual override {
+    // Call the hook we are overwriting
+    super._didBurn(_tokenIds);
+
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
+
+    // Check if this is a refund or a redemption, if its a refund we do nothing
+    if (_currentFundingCycle.number < END_GAME_PHASE) return;
+
+    for(uint256 _i; _i < _tokenIds.length;){
+      unchecked {
+        ++_redeemedFromTier[store.tierIdOfToken(_tokenIds[_i])];
+        ++_i;
+      }
+    }
   }
 }
