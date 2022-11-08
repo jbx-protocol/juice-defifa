@@ -22,6 +22,7 @@ import './interfaces/IDefifaDelegate.sol';
   JB721TieredGovernance: A generic tiered 721 delegate.
 */
 contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
+  using Checkpoints for Checkpoints.History;
   //*********************************************************************//
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
@@ -49,6 +50,12 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
    * The overflow in the terminal at the end of the game
    */
   uint256 private _overflowAtGameEnd;
+
+  /**
+   * @notice 
+   * The blocknumber to use the snapshot of, this is only used to calculate the active total (tier) supply at the time
+   */
+  uint256 private _redemptionBlockSnapshot;
 
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
@@ -220,6 +227,9 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     );
     _overflowAtGameEnd = _terminal.currentEthOverflowOf(projectId);
 
+    // Set the blocknumber for the redemption snapshot to use
+    _redemptionBlockSnapshot = block.number;
+
     // Make sure the cumulative amount is contained within the total redemption weight.
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
   }
@@ -283,10 +293,12 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       JB721Tier memory _tier = store.tier(address(this), _tierId);
 
       // Calculate what percentage of the tier redemption amount a single token counts for.
-      cumulativeWeight +=
+      cumulativeWeight += 
         // Tier's are 1 indexed and are stored 0 indexed.
-        _tierRedemptionWeights[_tierId - 1] /
-        (_tier.initialQuantity - _tier.remainingQuantity);
+        _tierRedemptionWeights[_tierId - 1] / 
+        // Use the snapshot from the redemptionblock to calculate the active total supply at the time
+        (_totalTierCheckpoints[_tierId].getAtBlock(_redemptionBlockSnapshot)
+          / _tier.votingUnits);
 
       unchecked {
         ++_i;
