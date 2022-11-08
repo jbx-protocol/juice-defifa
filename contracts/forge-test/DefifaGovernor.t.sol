@@ -499,10 +499,15 @@ contract DefifaGovernorTest is TestBaseWorkflow {
   }
 
   function testSetRedemptionRatesAndRedeem_singleTier(
-    uint8 nUsersWithWinningTier
+    uint8 nUsersWithWinningTier,
+    uint8 winningTierExtraWeight,
+    uint8 baseRedemptionWeight
   ) public {
-    uint256 nOfOtherTiers = 5;
+    uint256 nOfOtherTiers = 31;
     vm.assume(nUsersWithWinningTier > 1 && nUsersWithWinningTier < 100);
+
+    uint256 totalWeight = baseRedemptionWeight * (nOfOtherTiers + 1) + winningTierExtraWeight;
+    vm.assume(totalWeight > 1);
 
     address[] memory _users = new address[](nOfOtherTiers + nUsersWithWinningTier);
 
@@ -595,28 +600,34 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // We can't have a neutral outcome, so we only give shares to tiers that are an even number (in our array)
     for (uint256 i = 0; i < scorecards.length; i++) {
       scorecards[i].id = i + 1;
-      if( i == nOfOtherTiers ) scorecards[i].redemptionWeight = 1_000_000_000;
+      if (baseRedemptionWeight != 0) 
+      scorecards[i].redemptionWeight = 1_000_000_000 * uint256(baseRedemptionWeight) / totalWeight;
+
+      if( i == nOfOtherTiers && winningTierExtraWeight != 0)
+       scorecards[i].redemptionWeight += 1_000_000_000 * uint256(winningTierExtraWeight) / totalWeight;
     }
 
-    // Forward time so proposals can be created
-    uint256 _proposalId = _governor.submitScorecards(scorecards);
+    {
+      // Forward time so proposals can be created
+      uint256 _proposalId = _governor.submitScorecards(scorecards);
 
-    // Forward time so voting becomes active
-    vm.roll(block.number + _governor.votingDelay() + 1);
-    // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
-    // block time is 12 secs
-    vm.warp(block.timestamp + (_governor.votingDelay() * 12));
+      // Forward time so voting becomes active
+      vm.roll(block.number + _governor.votingDelay() + 1);
+      // '_governor.votingDelay()' internally uses the timestamp and not the block number, so we have to modify it for the next assert
+      // block time is 12 secs
+      vm.warp(block.timestamp + (_governor.votingDelay() * 12));
 
-    // No voting delay after the initial voting delay has passed in
-    assertEq(_governor.votingDelay(), 0);
+      // No voting delay after the initial voting delay has passed in
+      assertEq(_governor.votingDelay(), 0);
 
-    // All the users vote
-    // 0 = Against
-    // 1 = For
-    // 2 = Abstain
-    for (uint256 i = 0; i < _users.length; i++) {
-      vm.prank(_users[i]);
-      _governor.castVote(_proposalId, 1);
+      // All the users vote
+      // 0 = Against
+      // 1 = For
+      // 2 = Abstain
+      for (uint256 i = 0; i < _users.length; i++) {
+        vm.prank(_users[i]);
+        _governor.castVote(_proposalId, 1);
+      }
     }
 
     // Phase 4
@@ -641,8 +652,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         redemptionMetadata = abi.encode(bytes32(0), type(IJB721Delegate).interfaceId, redemptionId);
       }
 
+      // Calculate how much weight his tier has
+      uint256 _tierWeight = _tier == nOfOtherTiers + 1 ?
+        uint256(baseRedemptionWeight) + uint256(winningTierExtraWeight) :
+        baseRedemptionWeight;
+
       // If the redemption is 0 this will revert
-      if(i < nOfOtherTiers) vm.expectRevert(abi.encodeWithSignature("NOTHING_TO_CLAIM()"));
+      if(_tierWeight == 0) vm.expectRevert(abi.encodeWithSignature("NOTHING_TO_CLAIM()"));
       
       vm.prank(_user);
       JBETHPaymentTerminal(address(_terminals[0])).redeemTokensOf({
@@ -655,12 +671,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         _memo: 'imma out of here',
         _metadata: redemptionMetadata
       });
-
-      if(i < nOfOtherTiers) continue;
-
+    
       // We calculate the expected output based on the given distribution and how much is in the pot
-      uint256 _expectedTierRedemption = uint256(_users.length) * 1 ether;
-      _expectedTierRedemption = _expectedTierRedemption / nUsersWithWinningTier;
+      uint256 _expectedTierRedemption = uint256(_users.length) * 1 ether * _tierWeight / totalWeight;
+      {
+        // If this is the winning tier then the amount is divided among the nUsersWithWinningTier
+        if(_tier == nOfOtherTiers + 1) _expectedTierRedemption =  _expectedTierRedemption / nUsersWithWinningTier;
+      }
 
       // Assert that our expected tier redemption is ~equal to the actual amount
       // Allowing for some rounding errors, max allowed error is 0.000001 ether
