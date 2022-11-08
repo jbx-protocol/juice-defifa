@@ -338,8 +338,20 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     }
   }
 
-  function testSetRedemptionRatesAndRedeem(bool _useHelper) public {
-    uint8 nTiers = 10;
+  function testSetRedemptionRatesAndRedeem(
+    uint8 nTiers,
+    uint8[] calldata distribution
+  ) public {
+    vm.assume(nTiers > 10 && nTiers < 100);
+    vm.assume(distribution.length < nTiers);
+
+    uint256 _sumDistribution;
+    for (uint i = 0; i < distribution.length; i++) {
+      _sumDistribution += distribution[i];
+    }
+
+    vm.assume(_sumDistribution > 0);
+
     address[] memory _users = new address[](nTiers);
 
     (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
@@ -380,16 +392,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         metadata
       );
 
-      // Set the delegate as the user themselves
-      JBTiered721SetTierDelegatesData[]
-        memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
-      tiered721SetDelegatesData[0] = JBTiered721SetTierDelegatesData({
-        delegatee: _users[i],
-        tierId: uint256(i + 1)
-      });
-      vm.prank(_users[i]);
-      _nft.setTierDelegates(tiered721SetDelegatesData);
-
       // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
       vm.roll(block.number + 1);
       assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_users[i], block.number - 1));
@@ -403,30 +405,19 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     vm.warp(block.timestamp + 1 days);
     deployer.queueNextPhaseOf(_projectId);
 
-    address[] memory targets = new address[](1);
-    uint256[] memory values = new uint256[](1);
-    bytes[] memory calldatas = new bytes[](1);
-
     // Generate the scorecards
     DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
 
     // We can't have a neutral outcome, so we only give shares to tiers that are an even number (in our array)
     for (uint256 i = 0; i < scorecards.length; i++) {
       scorecards[i].id = i + 1;
-      scorecards[i].redemptionWeight = i % 2 == 0 ? 1_000_000_000 / (scorecards.length / 2) : 0;
+
+      if(distribution.length <= i) continue;
+      scorecards[i].redemptionWeight = uint256(distribution[i]) * 1_000_000_000 / _sumDistribution;
     }
 
     // Forward time so proposals can be created
-    uint256 _proposalId;
-    if (_useHelper) {
-      _proposalId = _governor.submitScorecards(scorecards);
-    } else {
-      targets[0] = address(_nft);
-      calldatas[0] = abi.encodeCall(_nft.setTierRedemptionWeights, scorecards);
-
-      // Create the proposal
-      _proposalId = _governor.propose(targets, values, calldatas, 'Governance!');
-    }
+    uint256 _proposalId = _governor.submitScorecards(scorecards);
 
     // Forward time so voting becomes active
     vm.roll(block.number + _governor.votingDelay() + 1);
@@ -452,23 +443,15 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     deployer.queueNextPhaseOf(_projectId);
     vm.warp(block.timestamp + 1 weeks);
 
-    // Execute the proposal
-    if (_useHelper) {
-      _governor.ratifyScorecard(scorecards);
-    } else {
-      _governor.execute(targets, values, calldatas, keccak256('Governance!'));
-    }
-
+    _governor.ratifyScorecard(scorecards);
     vm.roll(block.number + 1);
-
-    uint256[100] memory redemptionWeights = _nft.tierRedemptionWeights();
 
     // Verify that the redemptionWeights actually changed
     for (uint256 i = 0; i < scorecards.length; i++) {
       address _user = _users[i];
 
       // Tier's are 1 indexed and should be stored 0 indexed.
-      assertEq(redemptionWeights[i], scorecards[i].redemptionWeight);
+      assertEq(_nft.tierRedemptionWeights()[i], scorecards[i].redemptionWeight);
 
       // Craft the metadata: redeem the tokenId
       bytes memory redemptionMetadata;
@@ -477,9 +460,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         redemptionId[0] = _generateTokenId(i + 1, 1);
         redemptionMetadata = abi.encode(bytes32(0), type(IJB721Delegate).interfaceId, redemptionId);
       }
-
-      // Track the users balance so we can see the change
-      uint256 _userBalanceBefore = _user.balance;
 
       // If the redemption is 0 this will revert
       if(scorecards[i].redemptionWeight == 0) vm.expectRevert(abi.encodeWithSignature("NOTHING_TO_CLAIM()"));
@@ -498,13 +478,24 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
       if(scorecards[i].redemptionWeight == 0) continue;
 
-      // Each tier costs 1 ether, half the tiers receive no redemption,
-      // the other half shares the rest. That should mean they receive 2 ether
-      assertEq(
-          _userBalanceBefore + 2 ether,
-          _user.balance
+      // We calculate the expected output based on the given distribution and how much is in the pot
+      uint256 _expectedTierRedemption = uint256(nTiers) * 1 ether;
+      _expectedTierRedemption = _expectedTierRedemption * distribution[i] / _sumDistribution;
+
+      // Assert that our expected tier redemption is ~equal to the actual amount
+      // Allowing for some rounding errors, max allowed error is 0.000001 ether
+      assertLt(
+          _expectedTierRedemption - _user.balance,
+          10 ** 12
       );
     }
+
+    // All NFTs should have been redeemed, only some dust should be left
+    // Max allowed dust is 0.0001
+    assertLt(
+      address(_terminals[0]).balance,
+      10 ** 14
+    );
   }
 
   function testWhenPhaseIsAlreadyQueued() public {
