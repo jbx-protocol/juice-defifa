@@ -44,18 +44,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   */
   uint256[100] private _tierRedemptionWeights;
 
-  /**
-   * @notice 
-   * The overflow in the terminal at the end of the game
-   */
-  uint256 private _overflowAtGameEnd;
-
-  /**
-   * @notice 
-   * The amount of tokens that have been redeemed from a tier, refunds are not counted
-   */
-  mapping(uint256 => uint256) private _redeemedFromTier;
-
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
   //*********************************************************************//
@@ -81,6 +69,22 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     The total weight that can be divided among tiers.
   */
   uint256 public constant TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
+
+  //*********************************************************************//
+  // --------------------- public stored properties -------------------- //
+  //*********************************************************************//
+
+  /**
+    @notice
+    The amount that has been redeemed.
+   */
+  uint256 public amountRedeemed;
+
+  /**
+    @notice
+    The amount of tokens that have been redeemed from a tier, refunds are not counted
+  */
+  mapping(uint256 => uint256) public redeemedFromTier;
 
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
@@ -160,7 +164,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Return the weighted overflow, and this contract as the delegate so that tokens can be deleted.
     return (
       PRBMath.mulDiv(
-        _overflowAtGameEnd,
+        _data.overflow + amountRedeemed,
         _redemptionWeightOf(_decodedTokenIds, _data),
         _totalRedemptionWeight(_data)
       ),
@@ -220,14 +224,67 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       }
     }
 
-    // Get the overflow at the game end and store it
-    IJBSingleTokenPaymentTerminal _terminal = IJBSingleTokenPaymentTerminal(
-      address(directory.terminalsOf(projectId)[0])
-    );
-    _overflowAtGameEnd = _terminal.currentEthOverflowOf(projectId);
-
     // Make sure the cumulative amount is contained within the total redemption weight.
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
+  }
+
+  /**
+    @notice
+    Part of IJBRedeemDelegate, this function gets called when the token holder redeems. It will burn the specified NFTs to reclaim from the treasury to the _data.beneficiary.
+
+    @dev
+    This function will revert if the contract calling is not one of the project's terminals.
+
+    @param _data The Juicebox standard project redemption data.
+  */
+  function didRedeem(JBDidRedeemData calldata _data) external payable virtual override {
+    // Make sure the caller is a terminal of the project, and the call is being made on behalf of an interaction with the correct project.
+    if (
+      msg.value != 0 ||
+      !directory.isTerminalOf(projectId, IJBPaymentTerminal(msg.sender)) ||
+      _data.projectId != projectId
+    ) revert INVALID_REDEMPTION_EVENT();
+
+    // Check the 4 bytes interfaceId and handle the case where the metadata was not intended for this contract
+    // Skip 32 bytes reserved for generic extension parameters.
+    if (
+      _data.metadata.length < 36 ||
+      bytes4(_data.metadata[32:36]) != type(IJB721Delegate).interfaceId
+    ) revert INVALID_REDEMPTION_METADATA();
+
+    // Decode the metadata.
+    (, , uint256[] memory _decodedTokenIds) = abi.decode(
+      _data.metadata,
+      (bytes32, bytes4, uint256[])
+    );
+
+    // Get a reference to the number of token IDs being checked.
+    uint256 _numberOfTokenIds = _decodedTokenIds.length;
+
+    // Keep a reference to the token ID being iterated on.
+    uint256 _tokenId;
+
+    // Iterate through all tokens, burning them if the owner is correct.
+    for (uint256 _i; _i < _numberOfTokenIds; ) {
+      // Set the token's ID.
+      _tokenId = _decodedTokenIds[_i];
+
+      // Make sure the token's owner is correct.
+      if (_owners[_tokenId] != _data.holder) revert UNAUTHORIZED();
+
+      // Burn the token.
+      _burn(_tokenId);
+
+      unchecked {
+        ++_i;
+      }
+    }
+
+    // Call the hook.
+    _didBurn(_decodedTokenIds);
+
+    // Increment the amount redeemed.
+    amountRedeemed += _data.reclaimedAmount.value;
   }
 
   //*********************************************************************//
@@ -289,10 +346,10 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       JB721Tier memory _tier = store.tier(address(this), _tierId);
 
       // Calculate what percentage of the tier redemption amount a single token counts for.
-      cumulativeWeight += 
+      cumulativeWeight +=
         // Tier's are 1 indexed and are stored 0 indexed.
         _tierRedemptionWeights[_tierId - 1] /
-        (_tier.initialQuantity - _tier.remainingQuantity + _redeemedFromTier[_tierId]);
+        (_tier.initialQuantity - _tier.remainingQuantity + redeemedFromTier[_tierId]);
 
       unchecked {
         ++_i;
@@ -336,9 +393,9 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Check if this is a refund or a redemption, if its a refund we do nothing
     if (_currentFundingCycle.number < END_GAME_PHASE) return;
 
-    for(uint256 _i; _i < _tokenIds.length;){
+    for (uint256 _i; _i < _tokenIds.length; ) {
       unchecked {
-        ++_redeemedFromTier[store.tierIdOfToken(_tokenIds[_i])];
+        ++redeemedFromTier[store.tierIdOfToken(_tokenIds[_i])];
         ++_i;
       }
     }
