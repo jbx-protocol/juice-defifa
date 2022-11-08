@@ -531,6 +531,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
   {
     (JBDeployTiered721DelegateData memory NFTRewardDeployerData, ) = createData(nTiers);
 
+    // Set the owner as the governor (done here to easily count future nonces)
+    // in the tests the nonce of address(this) is updated when doing deployments so hence
+    address _owner = computeCreateAddress(address(this), vm.getNonce(address(this)));
+
     projectId = deployer.launchGameWith(
       DefifaDelegateData({
         name: NFTRewardDeployerData.name,
@@ -539,21 +543,22 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         contractUri: NFTRewardDeployerData.contractUri,
         tiers: NFTRewardDeployerData.pricing.tiers,
         store: NFTRewardDeployerData.store,
-        owner: address(this)
+        owner: _owner
       }),
       defifaLaunchData
     );
 
+    // Get a reference to the latest configured funding cycle's data source, which should be the delegate that was deployed and attached to the project.
     JBFundingCycle memory _fc = _jbFundingCycleStore.currentOf(projectId);
 
-    // Get the NFT (it was set as the datasource)
+    // Deploy the governor
+    governor = new DefifaGovernor(DefifaDelegate(_fc.dataSource()), defifaLaunchData.tradeDeadline);
+    
+    // making sure the addresses match
+    assertEq(address(governor),  _owner);
+
     nft = DefifaDelegate(_fc.dataSource());
 
-    // Deploy the new governor
-    governor = new DefifaGovernor(nft, defifaLaunchData.tradeDeadline);
-
-    // Transfer the ownership so governance can control the settings of the RewardsNFT
-    nft.transferOwnership(address(governor));
   }
 
   // Create launchProjectFor(..) payload
