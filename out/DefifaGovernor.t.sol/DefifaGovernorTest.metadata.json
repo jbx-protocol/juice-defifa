@@ -423,12 +423,56 @@
       {
         "inputs": [
           {
+            "internalType": "uint8",
+            "name": "nTiers",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8[]",
+            "name": "distribution",
+            "type": "uint8[]"
+          }
+        ],
+        "name": "testSetRedemptionRatesAndRedeem_multipleTiers",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint8",
+            "name": "nUsersWithWinningTier",
+            "type": "uint8"
+          }
+        ],
+        "name": "testSetRedemptionRatesAndRedeem_singleTier",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "bool",
             "name": "_useHelper",
             "type": "bool"
           }
         ],
-        "name": "testSetRedemptionRates",
+        "name": "testSetRedemptionRates_fails_declined",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bool",
+            "name": "_useHelper",
+            "type": "bool"
+          }
+        ],
+        "name": "testSetRedemptionRates_fails_unmetQuorum",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -490,19 +534,19 @@
   },
   "sources": {
     "contracts/DefifaDelegate.sol": {
-      "keccak256": "0x8bc18e3db2b727b140ebda999f26416dced48bfbde9f7deb98bad9af6f98133f",
+      "keccak256": "0x98958b985303d277451beac0d24fd6a8980a3d223bc3f0e9693cb868e40dfcc0",
       "license": "MIT",
       "urls": [
-        "bzz-raw://b1bc6efeede3f3d37ac36e6a3139c17048cafa52acb7f51c3156dad4da55dbca",
-        "dweb:/ipfs/QmfPmSx2AtbgzBXyCTV2AzgtWyxxNz1FaEAXgmcdFJ613H"
+        "bzz-raw://9fda0ac81d8884d9716fdd0bf2d2f78674405735188a23f0c4fe978eec1d3c6e",
+        "dweb:/ipfs/Qme7A6KzPsuLQUFxkYgULvqjJLDracmLspsRLKJMLkL2M8"
       ]
     },
     "contracts/DefifaDeployer.sol": {
-      "keccak256": "0xaf694de9f8a752c7e109f96114427b2c4556608dbec67a04ac48b34642ecdda1",
+      "keccak256": "0xf6c4021e3df32c2ab0fc7944db11b88bb9c051915e1da64414bcd6dfff90a57c",
       "license": "MIT",
       "urls": [
-        "bzz-raw://d4640bde214ed7a26bc002caca7d273ce50fa085f85d93143bcb175d98e46702",
-        "dweb:/ipfs/QmPVXqr2CvxULJDVAQTDfSRguBn85KGWSqYAauTXbPxhYg"
+        "bzz-raw://45e528b2c1912a59b8b4ff5f8004a01c73b4b38ab446cf53ac30078eb54f0377",
+        "dweb:/ipfs/Qmcd3kD6EHqA55ftdfRdvhFjh7yiZXuPVrUPnX1pXuEYWW"
       ]
     },
     "contracts/DefifaGovernor.sol": {
@@ -514,11 +558,11 @@
       ]
     },
     "contracts/forge-test/DefifaGovernor.t.sol": {
-      "keccak256": "0xc1b8f09526f1781e1c6e22ecd63b446b48a820f7c5b3b883b5facef126201d20",
+      "keccak256": "0x97a4c7d5f1528be403fcc004af5b6f7b5e4006b8e5be78332548af4f78146f8f",
       "license": "UNLICENSED",
       "urls": [
-        "bzz-raw://a91d3040ad3e79791e0fd58de00a33b6f201d37e1c0f7db28731c14855d57db0",
-        "dweb:/ipfs/QmY9ithsx163WmYatxsRWcXR7XLBYTTLruXuNAyX9w4We6"
+        "bzz-raw://f444494f19a7f50788733f9291dadf87ce255c70ccd545b157a714d2ae47b0ff",
+        "dweb:/ipfs/QmNfLG7DKuSrEFZwRD9DLM9TpouP9zS69LqVDFLipxV5gS"
       ]
     },
     "contracts/interfaces/IDefifaDelegate.sol": {
@@ -530,11 +574,11 @@
       ]
     },
     "contracts/interfaces/IDefifaDeployer.sol": {
-      "keccak256": "0x4f58e4b207f6b9f4a1e0b0ca56af532e4763502a3e0f577eabdfbb390a575ae3",
+      "keccak256": "0x31b44677eed4404cab3ad0bf060889815de3c734fca971f1a6cff2ac1ac91d35",
       "license": "MIT",
       "urls": [
-        "bzz-raw://a0a4b943d995a6f1cc37bfd78fd8e546f1a942d371afadb9e17219e013248a17",
-        "dweb:/ipfs/QmNNZAEd7adJLk2SiPX9uEDAuE6sVBGoqdnzn78egARnn5"
+        "bzz-raw://ccc03c21b3512c74d142b279efe06ddb09d8c452bc8a3a7a33863d45515a2f7f",
+        "dweb:/ipfs/QmWBDiN868Czka1ZpMue2crihpR7MsTxTdpbquBQvHCLAH"
       ]
     },
     "contracts/interfaces/IDefifaGovernor.sol": {
@@ -706,11 +750,11 @@
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/JBTiered721Delegate.sol": {
-      "keccak256": "0x7e502135ddf32cbd3cfc60ad856dba5d74ac7f6da63c1e905e515953d8fbec97",
+      "keccak256": "0x741264950a8b719fa0ee761fa58096336db683650967b5e6a12fe943adb2d2a9",
       "license": "MIT",
       "urls": [
-        "bzz-raw://50c067033f20948e4b98e49e1cf264516fe23171dd2754b7accc29c9725bc2f5",
-        "dweb:/ipfs/QmT1xatN1dhTgjBycPV1Xrj1V2DFpc7A7bgVf2fJAkDgat"
+        "bzz-raw://7cf5ef615353fe7800a2cf5a4579a826890ca61dac848906e1e29b725e445d04",
+        "dweb:/ipfs/QmQh1qfJhiS8AQEFyot6jDspqivbPgcyw2W4S6vA5GSwXi"
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/JBTiered721DelegateStore.sol": {
@@ -778,11 +822,11 @@
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721Delegate.sol": {
-      "keccak256": "0xd514619d1c1bfce3d7f83606e15194e09f61416dc9d51ed6553d408304722d15",
+      "keccak256": "0x323d9023292e6994e22d253adb9c185dc73fbee4bbb2bc266ddcc80ee47c292a",
       "license": "MIT",
       "urls": [
-        "bzz-raw://9733e6affc80da81c1fe303e8050c66597af545c1091f9e76ae88e9bc06e4beb",
-        "dweb:/ipfs/QmRSFGiXAkxpXMmdcfeNgH2piFAiC7jLCjw8cudXsKgToS"
+        "bzz-raw://4f34da8e019554376049670eeec991bad268f0dd19bbca0790fbe027d57457cc",
+        "dweb:/ipfs/QmUxjktmXDKxDz4cuUX2t1Kv6EKZXubsUvRUoann63F4ER"
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateDeployer.sol": {
@@ -810,11 +854,11 @@
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/libraries/JBIpfsDecoder.sol": {
-      "keccak256": "0xeac3c92c65a8e6c0b6d30d9cb4a15f5b4124263124479627ce86bf6eeb957b0c",
+      "keccak256": "0x0a1627087401de6a634de45dd6c158f96aecdd17f911a942ac5d3ce4b168b29d",
       "license": "MIT",
       "urls": [
-        "bzz-raw://373d7d2723015c862afe6de5b4d88f2a7a8fc695d97781997009a2351f9fdf36",
-        "dweb:/ipfs/QmRgauJ4exa311qEqtUftHKVH6pxshDyzdQPwhu5pgLVxB"
+        "bzz-raw://d0ba301942c2291ac8037d9a999c509a8feb99c87bc756292e58e3437b89e163",
+        "dweb:/ipfs/QmZZiFXd3FsFAwHCW3RVR65Uc3zf5SFjQvi1WVfQkcgCqa"
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/libraries/JBTiered721FundingCycleMetadataResolver.sol": {

@@ -356,6 +356,25 @@
         "type": "function"
       },
       {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_gameId",
+            "type": "uint256"
+          }
+        ],
+        "name": "nextPhaseNeedsQueueing",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "protocolFeeProjectTokenAccount",
         "outputs": [
@@ -534,11 +553,11 @@
   },
   "sources": {
     "contracts/interfaces/IDefifaDeployer.sol": {
-      "keccak256": "0x4f58e4b207f6b9f4a1e0b0ca56af532e4763502a3e0f577eabdfbb390a575ae3",
+      "keccak256": "0x31b44677eed4404cab3ad0bf060889815de3c734fca971f1a6cff2ac1ac91d35",
       "license": "MIT",
       "urls": [
-        "bzz-raw://a0a4b943d995a6f1cc37bfd78fd8e546f1a942d371afadb9e17219e013248a17",
-        "dweb:/ipfs/QmNNZAEd7adJLk2SiPX9uEDAuE6sVBGoqdnzn78egARnn5"
+        "bzz-raw://ccc03c21b3512c74d142b279efe06ddb09d8c452bc8a3a7a33863d45515a2f7f",
+        "dweb:/ipfs/QmWBDiN868Czka1ZpMue2crihpR7MsTxTdpbquBQvHCLAH"
       ]
     },
     "contracts/structs/DefifaDelegateData.sol": {
@@ -573,12 +592,20 @@
         "dweb:/ipfs/QmNVQEmC8gtgmTVwZbgycU84xd9wiWWrimHA4ih7QvqXzw"
       ]
     },
-    "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721Delegate.sol": {
-      "keccak256": "0xd514619d1c1bfce3d7f83606e15194e09f61416dc9d51ed6553d408304722d15",
+    "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJB721Delegate.sol": {
+      "keccak256": "0xa8fbb99c63314f21fb37435c4c3beb7b036b1fa423091ecb4908333612598e6f",
       "license": "MIT",
       "urls": [
-        "bzz-raw://9733e6affc80da81c1fe303e8050c66597af545c1091f9e76ae88e9bc06e4beb",
-        "dweb:/ipfs/QmRSFGiXAkxpXMmdcfeNgH2piFAiC7jLCjw8cudXsKgToS"
+        "bzz-raw://f06796c0da61e0642eb7d2170e0ddd2ebd97d33c42b8f01ea5dd233882b2fb87",
+        "dweb:/ipfs/QmXmfmSScCwpimkyJEB3USwvzfA18zoL4KqkPvE2ZPuP8J"
+      ]
+    },
+    "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721Delegate.sol": {
+      "keccak256": "0x323d9023292e6994e22d253adb9c185dc73fbee4bbb2bc266ddcc80ee47c292a",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://4f34da8e019554376049670eeec991bad268f0dd19bbca0790fbe027d57457cc",
+        "dweb:/ipfs/QmUxjktmXDKxDz4cuUX2t1Kv6EKZXubsUvRUoann63F4ER"
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateDeployer.sol": {
