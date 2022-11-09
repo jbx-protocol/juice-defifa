@@ -695,6 +695,103 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     );
   }
 
+  function testPhaseTimes(
+    uint16 _durationUntilProjectLaunch,
+    uint16 _mintDuration,
+    uint16 _inBetweenMintAndFifa,
+    uint16 _fifaDuration
+  ) public {
+    vm.warp(1667953355);
+
+    vm.assume(
+      _durationUntilProjectLaunch > 2 &&
+      _mintDuration > 1 &&
+      _inBetweenMintAndFifa > 1 &&
+      _fifaDuration > 1
+    );
+
+    uint48 _launchProjectAt = uint48(block.timestamp) + _durationUntilProjectLaunch;
+    uint48 _end = _launchProjectAt + uint48(_mintDuration) + uint48(_inBetweenMintAndFifa) + uint48(_fifaDuration);
+
+    DefifaLaunchProjectData memory _launchData = DefifaLaunchProjectData({
+        projectMetadata: JBProjectMetadata({content: '', domain: 0}),
+        mintDuration: _mintDuration,
+        start: _launchProjectAt + uint48(_mintDuration),
+        tradeDeadline: _launchProjectAt + uint48(_mintDuration) + uint48(_inBetweenMintAndFifa),
+        end: _end,
+        holdFees: false,
+        splits: new JBSplit[](0),
+        distributionLimit: 0,
+        terminal: _jbETHPaymentTerminal
+      });
+
+    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+      uint256(10),
+      _launchData
+    );
+
+    // Wait until the phase 1 start
+    vm.warp(_launchProjectAt);
+    // Get the delegate
+    _nft = DefifaDelegate(_jbFundingCycleStore.currentOf(_projectId).dataSource());
+
+    // We should be in the minting phase now
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      _nft.MINT_GAME_PHASE()
+    );
+     // Queue Phase 2
+    deployer.queueNextPhaseOf(_projectId);
+
+    // Go to the end of the minting phase and check if we are still in the minting phase
+    vm.warp(_launchProjectAt + _mintDuration - 1);
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      _nft.MINT_GAME_PHASE()
+    );
+
+    // We should now be in phase 2, minting is paused and the treasury is frozen
+    vm.warp(_launchProjectAt + _mintDuration);
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      2
+    );
+
+    // Queue Phase 3
+    deployer.queueNextPhaseOf(_projectId);
+
+    // Go to the end of phase 2
+    vm.warp(_launchProjectAt + _mintDuration + _inBetweenMintAndFifa - 1);
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      2
+    );
+
+    // We should now be in phase 3, trading deadline (start of fifa)
+    vm.warp(_launchProjectAt + _mintDuration + _inBetweenMintAndFifa);
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      3
+    );
+
+    // Go to the end of phase 3
+    vm.warp(_launchProjectAt + _mintDuration + _inBetweenMintAndFifa + _fifaDuration - 1);
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      3
+    );
+
+    // Queue Phase 4
+    deployer.queueNextPhaseOf(_projectId);
+
+    // We should now be in phase 4, game has ended
+    vm.warp(_launchProjectAt + _mintDuration + _inBetweenMintAndFifa + _fifaDuration);
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      _nft.END_GAME_PHASE()
+    );
+  }
+
   function testWhenPhaseIsAlreadyQueued() public {
     uint8 nTiers = 10;
     address[] memory _users = new address[](nTiers);
