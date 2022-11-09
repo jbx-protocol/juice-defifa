@@ -32,17 +32,8 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   error NOTHING_TO_CLAIM();
 
   //*********************************************************************//
-  // --------------------------- properties ---------------------------- //
+  // -------------------- private constant properties ------------------ //
   //*********************************************************************//
-
-  /** 
-    @notice 
-    The redemption weight for each tier.
-
-    @dev
-    Tiers are limited to ID 128
-  */
-  uint256[128] private _tierRedemptionWeights;
 
   /** 
     @notice
@@ -69,6 +60,15 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   //*********************************************************************//
   // --------------------- private stored properties ------------------- //
   //*********************************************************************//
+
+  /** 
+    @notice 
+    The redemption weight for each tier.
+
+    @dev
+    Tiers are limited to ID 128
+  */
+  uint256[128] private _tierRedemptionWeights;
 
   /**
     @notice
@@ -126,9 +126,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       bytes4(_data.metadata[32:36]) != type(IJB721Delegate).interfaceId
     ) revert INVALID_REDEMPTION_METADATA();
 
-    // Get a reference to the current funding cycle.
-    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(_data.projectId);
-
     // Set the only delegate allocation to be a callback to this contract.
     delegateAllocations = new JBRedemptionDelegateAllocation[](1);
     delegateAllocations[0] = JBRedemptionDelegateAllocation(this, 0);
@@ -140,7 +137,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     );
 
     // If the game is in its minting phase, reclaim Amount is the same as it cost to mint.
-    if (_currentFundingCycle.number == _MINT_GAME_PHASE) {
+    if (fundingCycleStore.currentOf(_data.projectId).number == _MINT_GAME_PHASE) {
       // Keep a reference to the number of tokens.
       uint256 _numberOfTokenIds = _decodedTokenIds.length;
 
@@ -187,11 +184,9 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     override
     onlyOwner
   {
-    // Get a reference to the current funding cycle.
-    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
-
     // Make sure the game has ended.
-    if (_currentFundingCycle.number < _END_GAME_PHASE) revert GAME_ISNT_OVER_YET();
+    if (fundingCycleStore.currentOf(projectId).number < _END_GAME_PHASE)
+      revert GAME_ISNT_OVER_YET();
 
     // Delete the currently set redemption weights.
     delete _tierRedemptionWeights;
