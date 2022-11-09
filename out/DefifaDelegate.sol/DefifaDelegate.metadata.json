@@ -581,32 +581,6 @@
       },
       {
         "inputs": [],
-        "name": "END_GAME_PHASE",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "MINT_GAME_PHASE",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [],
         "name": "TOTAL_REDEMPTION_WEIGHT",
         "outputs": [
           {
@@ -686,19 +660,6 @@
         "name": "adjustTiers",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "inputs": [],
-        "name": "amountRedeemed",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -1788,25 +1749,6 @@
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "name": "redeemedFromTier",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -2369,20 +2311,11 @@
       },
       "kind": "user",
       "methods": {
-        "END_GAME_PHASE()": {
-          "notice": "The funding cycle number of the end game phase. "
-        },
-        "MINT_GAME_PHASE()": {
-          "notice": "The funding cycle number of the mint phase. "
-        },
         "TOTAL_REDEMPTION_WEIGHT()": {
           "notice": " The total weight that can be divided among tiers."
         },
         "adjustTiers((uint80,uint48,uint40,uint16,uint16,address,bytes32,bool,bool,bool)[],uint256[])": {
           "notice": "Adjust the tiers mintable through this contract, adhering to any locked tier constraints. "
-        },
-        "amountRedeemed()": {
-          "notice": "The amount that has been redeemed."
         },
         "balanceOf(address)": {
           "notice": " The total number of tokens owned by the given owner across all tiers. "
@@ -2456,9 +2389,6 @@
         "redeemParams((address,address,uint256,uint256,uint256,uint256,uint256,(address,uint256,uint256,uint256),bool,uint256,string,bytes))": {
           "notice": " Part of IJBFundingCycleDataSource, this function gets called when a project's token holders redeem."
         },
-        "redeemedFromTier(uint256)": {
-          "notice": "The amount of tokens that have been redeemed from a tier, refunds are not counted"
-        },
         "setBaseUri(string)": {
           "notice": "Set a base token URI."
         },
@@ -2521,19 +2451,19 @@
   },
   "sources": {
     "contracts/DefifaDelegate.sol": {
-      "keccak256": "0x6ac9bed1ec794ef6015aedddccba3cc4e97314b778938a4b6c5058cc1ad99f46",
+      "keccak256": "0x7b4fd39a11e321d8f1e3e8d03cb7e0d4e60a30d0fae38451ad5f2886f50c85bc",
       "license": "MIT",
       "urls": [
-        "bzz-raw://5fa2d92c35db533c79906b6aef3505dd7cae3726b26617b49b9dab3b88388c0f",
-        "dweb:/ipfs/QmZpRd9nknK2TyHxok61EBa8VPmZUrsDgfNLb2We448Jnu"
+        "bzz-raw://01a8a5895bd1622eecdfa3261334cb54ce307a80b79805a36a16e7259f862296",
+        "dweb:/ipfs/QmTgV1FB5vwuFfgjMT625sCZXeBbsddwYqfVRpndJKsxjj"
       ]
     },
     "contracts/interfaces/IDefifaDelegate.sol": {
-      "keccak256": "0x20cb7ebf4ed786f92d6290756df8be8951e2549cf8809b26145777f5dd1156a9",
+      "keccak256": "0x5919d0b81e17b39b98de9ed706f0ccb59814284d505ffaa6babf8939a7a2dd6b",
       "license": "MIT",
       "urls": [
-        "bzz-raw://554dbce70f4f2a6ace7157ca8f19f6242cdde5d8db1d986849f4fba27eb793b8",
-        "dweb:/ipfs/QmbsF2EHGF3uRu7BbaZh2TdJ5vmABLdqNNRzcRAH9AK8Lm"
+        "bzz-raw://f2061c8985c53ea7bde602fe626e85bdb49727cf06a4477e574f331678594c36",
+        "dweb:/ipfs/QmS1nEwiqft56P1T8y1UWCi3Uxw2v39CtLZkXmEQpKfzDs"
       ]
     },
     "contracts/structs/DefifaTierRedemptionWeight.sol": {
