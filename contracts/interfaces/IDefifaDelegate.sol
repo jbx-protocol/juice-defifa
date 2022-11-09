@@ -9,9 +9,5 @@ interface IDefifaDelegate is IJB721TieredGovernance {
 
   function tierRedemptionWeights() external returns (uint256[128] memory);
 
-  function amountRedeemed() external returns (uint256);
-
-  function redeemedFromTier(uint256 _tierId) external returns (uint256);
-
   function setTierRedemptionWeights(DefifaTierRedemptionWeight[] memory _tierWeights) external;
 }

@@ -67,20 +67,20 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   uint256 public constant override TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
 
   //*********************************************************************//
-  // --------------------- public stored properties -------------------- //
+  // --------------------- private stored properties ------------------- //
   //*********************************************************************//
 
   /**
     @notice
     The amount that has been redeemed.
    */
-  uint256 public override amountRedeemed;
+  uint256 private _amountRedeemed;
 
   /**
     @notice
     The amount of tokens that have been redeemed from a tier, refunds are not counted
   */
-  mapping(uint256 => uint256) public override redeemedFromTier;
+  mapping(uint256 => uint256) private _redeemedFromTier;
 
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
@@ -160,7 +160,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Return the weighted overflow, and this contract as the delegate so that tokens can be deleted.
     return (
       PRBMath.mulDiv(
-        _data.overflow + amountRedeemed,
+        _data.overflow + _amountRedeemed,
         _redemptionWeightOf(_decodedTokenIds, _data),
         _totalRedemptionWeight(_data)
       ),
@@ -278,7 +278,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       _burn(_tokenId);
 
       unchecked {
-        if (_isEndPhase) ++redeemedFromTier[store.tierIdOfToken(_tokenId)];
+        if (_isEndPhase) ++_redeemedFromTier[store.tierIdOfToken(_tokenId)];
         ++_i;
       }
     }
@@ -287,7 +287,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     _didBurn(_decodedTokenIds);
 
     // Increment the amount redeemed if this is the end phase.
-    if (_isEndPhase) amountRedeemed += _data.reclaimedAmount.value;
+    if (_isEndPhase) _amountRedeemed += _data.reclaimedAmount.value;
   }
 
   //*********************************************************************//
@@ -352,7 +352,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       cumulativeWeight +=
         // Tier's are 1 indexed and are stored 0 indexed.
         _tierRedemptionWeights[_tierId - 1] /
-        (_tier.initialQuantity - _tier.remainingQuantity + redeemedFromTier[_tierId]);
+        (_tier.initialQuantity - _tier.remainingQuantity + _redeemedFromTier[_tierId]);
 
       unchecked {
         ++_i;
