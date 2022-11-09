@@ -286,7 +286,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Get a reference to the current funding cycle.
     JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
 
-    // Check if this is a refund or a redemption, if its a refund we do nothing
+    // Check if this is a refund or a redemption, if its a refund do nothing.
     if (_currentFundingCycle.number < END_GAME_PHASE) return;
 
     // Increment the amount redeemed.
@@ -396,7 +396,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Get a reference to the current funding cycle.
     JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
 
-    // Check if this is a refund or a redemption, if its a refund we do nothing
+    // Check if this is a refund or a redemption, if its a refund do nothing.
     if (_currentFundingCycle.number < END_GAME_PHASE) return;
 
     for (uint256 _i; _i < _tokenIds.length; ) {
