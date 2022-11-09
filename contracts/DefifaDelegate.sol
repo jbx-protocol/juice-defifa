@@ -264,6 +264,12 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Keep a reference to the token ID being iterated on.
     uint256 _tokenId;
 
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
+
+    // Keep track of whether the redemption is happening during the end phase.
+    bool _isEndPhase = _currentFundingCycle.number == END_GAME_PHASE;
+
     // Iterate through all tokens, burning them if the owner is correct.
     for (uint256 _i; _i < _numberOfTokenIds; ) {
       // Set the token's ID.
@@ -276,6 +282,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       _burn(_tokenId);
 
       unchecked {
+        if (_isEndPhase) ++redeemedFromTier[store.tierIdOfToken(_tokenId)];
         ++_i;
       }
     }
@@ -283,14 +290,8 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Call the hook.
     _didBurn(_decodedTokenIds);
 
-    // Get a reference to the current funding cycle.
-    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
-
-    // Check if this is a refund or a redemption, if its a refund do nothing.
-    if (_currentFundingCycle.number < END_GAME_PHASE) return;
-
-    // Increment the amount redeemed.
-    amountRedeemed += _data.reclaimedAmount.value;
+    // Increment the amount redeemed if this is the end phase.
+    if (_isEndPhase) amountRedeemed += _data.reclaimedAmount.value;
   }
 
   //*********************************************************************//
@@ -381,29 +382,5 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   {
     // Set the total weight as the total scorecard weight.
     return TOTAL_REDEMPTION_WEIGHT;
-  }
-
-  /** 
-    @notice
-    A function that will run when tokens are burned via redemption.
-
-    @param _tokenIds The IDs of the tokens that were burned.
-  */
-  function _didBurn(uint256[] memory _tokenIds) internal virtual override {
-    // Call the hook we are overwriting
-    super._didBurn(_tokenIds);
-
-    // Get a reference to the current funding cycle.
-    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
-
-    // Check if this is a refund or a redemption, if its a refund do nothing.
-    if (_currentFundingCycle.number < END_GAME_PHASE) return;
-
-    for (uint256 _i; _i < _tokenIds.length; ) {
-      unchecked {
-        ++redeemedFromTier[store.tierIdOfToken(_tokenIds[_i])];
-        ++_i;
-      }
-    }
   }
 }
