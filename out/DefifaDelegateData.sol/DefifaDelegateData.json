@@ -1,0 +1,307 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "contracts/structs/DefifaDelegateData.sol",
+    "id": 3122,
+    "exportedSymbols": {
+      "DefifaDelegateData": [
+        3121
+      ],
+      "IJBTiered721DelegateStore": [
+        34552
+      ],
+      "IJBTokenUriResolver": [
+        48141
+      ],
+      "JB721Tier": [
+        35155
+      ],
+      "JB721TierParams": [
+        35178
+      ],
+      "JBTiered721Flags": [
+        35327
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:769:8",
+    "nodes": [
+      {
+        "id": 3101,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:8",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 3102,
+        "nodeType": "ImportDirective",
+        "src": "57:80:8",
+        "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/structs/JB721TierParams.sol",
+        "file": "@jbx-protocol/juice-721-delegate/contracts/structs/JB721TierParams.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3122,
+        "sourceUnit": 35179,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3103,
+        "nodeType": "ImportDirective",
+        "src": "138:93:8",
+        "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateStore.sol",
+        "file": "@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateStore.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3122,
+        "sourceUnit": 34553,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3121,
+        "nodeType": "StructDefinition",
+        "src": "620:180:8",
+        "canonicalName": "DefifaDelegateData",
+        "members": [
+          {
+            "constant": false,
+            "id": 3105,
+            "mutability": "mutable",
+            "name": "name",
+            "nameLocation": "657:4:8",
+            "nodeType": "VariableDeclaration",
+            "scope": 3121,
+            "src": "650:11:8",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_storage_ptr",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 3104,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "650:6:8",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3107,
+            "mutability": "mutable",
+            "name": "symbol",
+            "nameLocation": "672:6:8",
+            "nodeType": "VariableDeclaration",
+            "scope": 3121,
+            "src": "665:13:8",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_storage_ptr",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 3106,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "665:6:8",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3109,
+            "mutability": "mutable",
+            "name": "baseUri",
+            "nameLocation": "689:7:8",
+            "nodeType": "VariableDeclaration",
+            "scope": 3121,
+            "src": "682:14:8",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_storage_ptr",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 3108,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "682:6:8",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3111,
+            "mutability": "mutable",
+            "name": "contractUri",
+            "nameLocation": "707:11:8",
+            "nodeType": "VariableDeclaration",
+            "scope": 3121,
+            "src": "700:18:8",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_string_storage_ptr",
+              "typeString": "string"
+            },
+            "typeName": {
+              "id": 3110,
+              "name": "string",
+              "nodeType": "ElementaryTypeName",
+              "src": "700:6:8",
+              "typeDescriptions": {
+                "typeIdentifier": "t_string_storage_ptr",
+                "typeString": "string"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3115,
+            "mutability": "mutable",
+            "name": "tiers",
+            "nameLocation": "740:5:8",
+            "nodeType": "VariableDeclaration",
+            "scope": 3121,
+            "src": "722:23:8",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_array$_t_struct$_JB721TierParams_$35178_storage_$dyn_storage_ptr",
+              "typeString": "struct JB721TierParams[]"
+            },
+            "typeName": {
+              "baseType": {
+                "id": 3113,
+                "nodeType": "UserDefinedTypeName",
+                "pathNode": {
+                  "id": 3112,
+                  "name": "JB721TierParams",
+                  "nameLocations": [
+                    "722:15:8"
+                  ],
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 35178,
+                  "src": "722:15:8"
+                },
+                "referencedDeclaration": 35178,
+                "src": "722:15:8",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_struct$_JB721TierParams_$35178_storage_ptr",
+                  "typeString": "struct JB721TierParams"
+                }
+              },
+              "id": 3114,
+              "nodeType": "ArrayTypeName",
+              "src": "722:17:8",
+              "typeDescriptions": {
+                "typeIdentifier": "t_array$_t_struct$_JB721TierParams_$35178_storage_$dyn_storage_ptr",
+                "typeString": "struct JB721TierParams[]"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3118,
+            "mutability": "mutable",
+            "name": "store",
+            "nameLocation": "775:5:8",
+            "nodeType": "VariableDeclaration",
+            "scope": 3121,
+            "src": "749:31:8",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_IJBTiered721DelegateStore_$34552",
+              "typeString": "contract IJBTiered721DelegateStore"
+            },
+            "typeName": {
+              "id": 3117,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 3116,
+                "name": "IJBTiered721DelegateStore",
+                "nameLocations": [
+                  "749:25:8"
+                ],
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 34552,
+                "src": "749:25:8"
+              },
+              "referencedDeclaration": 34552,
+              "src": "749:25:8",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_IJBTiered721DelegateStore_$34552",
+                "typeString": "contract IJBTiered721DelegateStore"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3120,
+            "mutability": "mutable",
+            "name": "owner",
+            "nameLocation": "792:5:8",
+            "nodeType": "VariableDeclaration",
+            "scope": 3121,
+            "src": "784:13:8",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_address",
+              "typeString": "address"
+            },
+            "typeName": {
+              "id": 3119,
+              "name": "address",
+              "nodeType": "ElementaryTypeName",
+              "src": "784:7:8",
+              "stateMutability": "nonpayable",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              }
+            },
+            "visibility": "internal"
+          }
+        ],
+        "name": "DefifaDelegateData",
+        "nameLocation": "627:18:8",
+        "scope": 3122,
+        "visibility": "public"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 8
+}

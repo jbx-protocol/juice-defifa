@@ -1,0 +1,164 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_from",
+          "type": "address"
+        }
+      ],
+      "name": "prepForMigrationOf",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "prepForMigrationOf(uint256,address)": "3e8c615b"
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBMigratable.sol",
+    "id": 46771,
+    "exportedSymbols": {
+      "IJBMigratable": [
+        46770
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:128:82",
+    "nodes": [
+      {
+        "id": 46762,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:82",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 46770,
+        "nodeType": "ContractDefinition",
+        "src": "57:102:82",
+        "nodes": [
+          {
+            "id": 46769,
+            "nodeType": "FunctionDefinition",
+            "src": "85:72:82",
+            "functionSelector": "3e8c615b",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "prepForMigrationOf",
+            "nameLocation": "94:18:82",
+            "parameters": {
+              "id": 46767,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 46764,
+                  "mutability": "mutable",
+                  "name": "_projectId",
+                  "nameLocation": "121:10:82",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 46769,
+                  "src": "113:18:82",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 46763,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "113:7:82",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 46766,
+                  "mutability": "mutable",
+                  "name": "_from",
+                  "nameLocation": "141:5:82",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 46769,
+                  "src": "133:13:82",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 46765,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "133:7:82",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "112:35:82"
+            },
+            "returnParameters": {
+              "id": 46768,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "156:0:82"
+            },
+            "scope": 46770,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IJBMigratable",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          46770
+        ],
+        "name": "IJBMigratable",
+        "nameLocation": "67:13:82",
+        "scope": 46771,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 82
+}

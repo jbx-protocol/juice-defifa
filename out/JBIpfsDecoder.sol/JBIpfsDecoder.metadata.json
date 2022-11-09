@@ -1,0 +1,59 @@
+{
+  "compiler": {
+    "version": "0.8.16+commit.07a7930e"
+  },
+  "language": "Solidity",
+  "output": {
+    "abi": [],
+    "devdoc": {
+      "details": "This is fairly gas intensive, due to multiple nested loops, onchain  IPFS hash decoding is therefore not advised (storing them as a string, in that use-case, *might* be more efficient).",
+      "kind": "dev",
+      "methods": {},
+      "stateVariables": {
+        "_ALPHABET": {
+          "details": "Used in base58ToString"
+        }
+      },
+      "version": 1
+    },
+    "userdoc": {
+      "kind": "user",
+      "methods": {},
+      "notice": "Utilities to decode an IPFS hash.",
+      "version": 1
+    }
+  },
+  "settings": {
+    "compilationTarget": {
+      "node_modules/@jbx-protocol/juice-721-delegate/contracts/libraries/JBIpfsDecoder.sol": "JBIpfsDecoder"
+    },
+    "evmVersion": "london",
+    "libraries": {},
+    "metadata": {
+      "bytecodeHash": "ipfs"
+    },
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "remappings": [
+      ":@jbx-protocol/=node_modules/@jbx-protocol/",
+      ":@openzeppelin/=node_modules/@openzeppelin/",
+      ":@paulrberg/=node_modules/@paulrberg/",
+      ":ds-test/=lib/forge-std/lib/ds-test/src/",
+      ":forge-std/=lib/forge-std/src/",
+      ":prb-math/=node_modules/prb-math/"
+    ]
+  },
+  "sources": {
+    "node_modules/@jbx-protocol/juice-721-delegate/contracts/libraries/JBIpfsDecoder.sol": {
+      "keccak256": "0x0a1627087401de6a634de45dd6c158f96aecdd17f911a942ac5d3ce4b168b29d",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://d0ba301942c2291ac8037d9a999c509a8feb99c87bc756292e58e3437b89e163",
+        "dweb:/ipfs/QmZZiFXd3FsFAwHCW3RVR65Uc3zf5SFjQvi1WVfQkcgCqa"
+      ]
+    }
+  },
+  "version": 1
+}

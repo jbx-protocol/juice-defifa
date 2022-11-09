@@ -1,0 +1,34 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "contracts/forge-test/deployScript.t.sol",
+    "id": 4285,
+    "exportedSymbols": {},
+    "nodeType": "SourceUnit",
+    "src": "39:5710:4",
+    "nodes": [
+      {
+        "id": 4284,
+        "nodeType": "PragmaDirective",
+        "src": "39:24:4",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".16"
+        ]
+      }
+    ],
+    "license": "UNLICENSED"
+  },
+  "id": 4
+}

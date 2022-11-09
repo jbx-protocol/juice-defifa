@@ -1,0 +1,1098 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "ETH",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "ETHToken",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MAX_DISCOUNT_RATE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MAX_FEE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MAX_FEE_DISCOUNT",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MAX_REDEMPTION_RATE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "MAX_RESERVED_RATE",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "SPLITS_TOTAL_PERCENT",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "USD",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x608060405234801561001057600080fd5b5060fd8061001f6000396000f3fe6080604052348015600f57600080fd5b506004361060875760003560e01c80638322fff211605e5780638322fff21460b2578063870bc1fd14608c578063bc063e1a14608c578063d3c4fca914608c578063deda20c21460b857600080fd5b806319a9f94114608c5780631bf6c21b1460a55780634bb970421460ab5780635d14fef81460ab575b600080fd5b633b9aca005b6040519081526020015b60405180910390f35b60026092565b6127106092565b60016092565b60405161eeee8152602001609c56fea2646970667358221220a21f617a5bcf1e6a72607e19550bda04e714d6c8a7cdb2b26a1c97b3b05eee2364736f6c63430008100033",
+    "sourceMap": "294:939:34:-:0;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x6080604052348015600f57600080fd5b506004361060875760003560e01c80638322fff211605e5780638322fff21460b2578063870bc1fd14608c578063bc063e1a14608c578063d3c4fca914608c578063deda20c21460b857600080fd5b806319a9f94114608c5780631bf6c21b1460a55780634bb970421460ab5780635d14fef81460ab575b600080fd5b633b9aca005b6040519081526020015b60405180910390f35b60026092565b6127106092565b60016092565b60405161eeee8152602001609c56fea2646970667358221220a21f617a5bcf1e6a72607e19550bda04e714d6c8a7cdb2b26a1c97b3b05eee2364736f6c63430008100033",
+    "sourceMap": "294:939:34:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1125:106;478:13:101;1125:106:34;;;160:25:165;;;148:2;133:18;1125:106:34;;;;;;;;404:81;147:1:102;404:81:34;;779:112;249:6:101;779:112:34;;319:81;112:1:102;319:81:34;;489:82;;;241:42:108;342:51:165;;330:2;315:18;489:82:34;196:203:165",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "ETH()": "8322fff2",
+    "ETHToken()": "deda20c2",
+    "MAX_DISCOUNT_RATE()": "870bc1fd",
+    "MAX_FEE()": "bc063e1a",
+    "MAX_FEE_DISCOUNT()": "19a9f941",
+    "MAX_REDEMPTION_RATE()": "4bb97042",
+    "MAX_RESERVED_RATE()": "5d14fef8",
+    "SPLITS_TOTAL_PERCENT()": "d3c4fca9",
+    "USD()": "1bf6c21b"
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/forge-test/utils/AccessJBLib.sol",
+    "id": 33127,
+    "exportedSymbols": {
+      "AccessJBLib": [
+        33126
+      ],
+      "JBConstants": [
+        48060
+      ],
+      "JBCurrencies": [
+        48069
+      ],
+      "JBTokens": [
+        48925
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:1202:34",
+    "nodes": [
+      {
+        "id": 33041,
+        "nodeType": "PragmaDirective",
+        "src": "32:24:34",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".16"
+        ]
+      },
+      {
+        "id": 33042,
+        "nodeType": "ImportDirective",
+        "src": "58:79:34",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/libraries/JBCurrencies.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/libraries/JBCurrencies.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 33127,
+        "sourceUnit": 48070,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 33043,
+        "nodeType": "ImportDirective",
+        "src": "138:78:34",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/libraries/JBConstants.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/libraries/JBConstants.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 33127,
+        "sourceUnit": 48061,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 33044,
+        "nodeType": "ImportDirective",
+        "src": "217:75:34",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/libraries/JBTokens.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/libraries/JBTokens.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 33127,
+        "sourceUnit": 48926,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 33126,
+        "nodeType": "ContractDefinition",
+        "src": "294:939:34",
+        "nodes": [
+          {
+            "id": 33053,
+            "nodeType": "FunctionDefinition",
+            "src": "319:81:34",
+            "body": {
+              "id": 33052,
+              "nodeType": "Block",
+              "src": "366:34:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33049,
+                      "name": "JBCurrencies",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48069,
+                      "src": "379:12:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBCurrencies_$48069_$",
+                        "typeString": "type(library JBCurrencies)"
+                      }
+                    },
+                    "id": 33050,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "392:3:34",
+                    "memberName": "ETH",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48065,
+                    "src": "379:16:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 33048,
+                  "id": 33051,
+                  "nodeType": "Return",
+                  "src": "372:23:34"
+                }
+              ]
+            },
+            "functionSelector": "8322fff2",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "ETH",
+            "nameLocation": "328:3:34",
+            "parameters": {
+              "id": 33045,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "331:2:34"
+            },
+            "returnParameters": {
+              "id": 33048,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33047,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33053,
+                  "src": "357:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33046,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "357:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "356:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33062,
+            "nodeType": "FunctionDefinition",
+            "src": "404:81:34",
+            "body": {
+              "id": 33061,
+              "nodeType": "Block",
+              "src": "451:34:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33058,
+                      "name": "JBCurrencies",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48069,
+                      "src": "464:12:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBCurrencies_$48069_$",
+                        "typeString": "type(library JBCurrencies)"
+                      }
+                    },
+                    "id": 33059,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "477:3:34",
+                    "memberName": "USD",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48068,
+                    "src": "464:16:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 33057,
+                  "id": 33060,
+                  "nodeType": "Return",
+                  "src": "457:23:34"
+                }
+              ]
+            },
+            "functionSelector": "1bf6c21b",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "USD",
+            "nameLocation": "413:3:34",
+            "parameters": {
+              "id": 33054,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "416:2:34"
+            },
+            "returnParameters": {
+              "id": 33057,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33056,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33062,
+                  "src": "442:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33055,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "442:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "441:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33071,
+            "nodeType": "FunctionDefinition",
+            "src": "489:82:34",
+            "body": {
+              "id": 33070,
+              "nodeType": "Block",
+              "src": "541:30:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33067,
+                      "name": "JBTokens",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48925,
+                      "src": "554:8:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBTokens_$48925_$",
+                        "typeString": "type(library JBTokens)"
+                      }
+                    },
+                    "id": 33068,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "563:3:34",
+                    "memberName": "ETH",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48924,
+                    "src": "554:12:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "functionReturnParameters": 33066,
+                  "id": 33069,
+                  "nodeType": "Return",
+                  "src": "547:19:34"
+                }
+              ]
+            },
+            "functionSelector": "deda20c2",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "ETHToken",
+            "nameLocation": "498:8:34",
+            "parameters": {
+              "id": 33063,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "506:2:34"
+            },
+            "returnParameters": {
+              "id": 33066,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33065,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33071,
+                  "src": "532:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 33064,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "532:7:34",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "531:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33080,
+            "nodeType": "FunctionDefinition",
+            "src": "575:88:34",
+            "body": {
+              "id": 33079,
+              "nodeType": "Block",
+              "src": "626:37:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33076,
+                      "name": "JBConstants",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48060,
+                      "src": "639:11:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBConstants_$48060_$",
+                        "typeString": "type(library JBConstants)"
+                      }
+                    },
+                    "id": 33077,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "651:7:34",
+                    "memberName": "MAX_FEE",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48056,
+                    "src": "639:19:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 33075,
+                  "id": 33078,
+                  "nodeType": "Return",
+                  "src": "632:26:34"
+                }
+              ]
+            },
+            "functionSelector": "bc063e1a",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MAX_FEE",
+            "nameLocation": "584:7:34",
+            "parameters": {
+              "id": 33072,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "591:2:34"
+            },
+            "returnParameters": {
+              "id": 33075,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33074,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33080,
+                  "src": "617:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33073,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "617:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "616:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33089,
+            "nodeType": "FunctionDefinition",
+            "src": "667:108:34",
+            "body": {
+              "id": 33088,
+              "nodeType": "Block",
+              "src": "728:47:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33085,
+                      "name": "JBConstants",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48060,
+                      "src": "741:11:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBConstants_$48060_$",
+                        "typeString": "type(library JBConstants)"
+                      }
+                    },
+                    "id": 33086,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "753:17:34",
+                    "memberName": "MAX_RESERVED_RATE",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48044,
+                    "src": "741:29:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 33084,
+                  "id": 33087,
+                  "nodeType": "Return",
+                  "src": "734:36:34"
+                }
+              ]
+            },
+            "functionSelector": "5d14fef8",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MAX_RESERVED_RATE",
+            "nameLocation": "676:17:34",
+            "parameters": {
+              "id": 33081,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "693:2:34"
+            },
+            "returnParameters": {
+              "id": 33084,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33083,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33089,
+                  "src": "719:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33082,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "719:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "718:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33098,
+            "nodeType": "FunctionDefinition",
+            "src": "779:112:34",
+            "body": {
+              "id": 33097,
+              "nodeType": "Block",
+              "src": "842:49:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33094,
+                      "name": "JBConstants",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48060,
+                      "src": "855:11:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBConstants_$48060_$",
+                        "typeString": "type(library JBConstants)"
+                      }
+                    },
+                    "id": 33095,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "867:19:34",
+                    "memberName": "MAX_REDEMPTION_RATE",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48047,
+                    "src": "855:31:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 33093,
+                  "id": 33096,
+                  "nodeType": "Return",
+                  "src": "848:38:34"
+                }
+              ]
+            },
+            "functionSelector": "4bb97042",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MAX_REDEMPTION_RATE",
+            "nameLocation": "788:19:34",
+            "parameters": {
+              "id": 33090,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "807:2:34"
+            },
+            "returnParameters": {
+              "id": 33093,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33092,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33098,
+                  "src": "833:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33091,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "833:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "832:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33107,
+            "nodeType": "FunctionDefinition",
+            "src": "895:108:34",
+            "body": {
+              "id": 33106,
+              "nodeType": "Block",
+              "src": "956:47:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33103,
+                      "name": "JBConstants",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48060,
+                      "src": "969:11:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBConstants_$48060_$",
+                        "typeString": "type(library JBConstants)"
+                      }
+                    },
+                    "id": 33104,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "981:17:34",
+                    "memberName": "MAX_DISCOUNT_RATE",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48050,
+                    "src": "969:29:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 33102,
+                  "id": 33105,
+                  "nodeType": "Return",
+                  "src": "962:36:34"
+                }
+              ]
+            },
+            "functionSelector": "870bc1fd",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MAX_DISCOUNT_RATE",
+            "nameLocation": "904:17:34",
+            "parameters": {
+              "id": 33099,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "921:2:34"
+            },
+            "returnParameters": {
+              "id": 33102,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33101,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33107,
+                  "src": "947:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33100,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "947:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "946:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33116,
+            "nodeType": "FunctionDefinition",
+            "src": "1007:114:34",
+            "body": {
+              "id": 33115,
+              "nodeType": "Block",
+              "src": "1071:50:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33112,
+                      "name": "JBConstants",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48060,
+                      "src": "1084:11:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBConstants_$48060_$",
+                        "typeString": "type(library JBConstants)"
+                      }
+                    },
+                    "id": 33113,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "1096:20:34",
+                    "memberName": "SPLITS_TOTAL_PERCENT",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48053,
+                    "src": "1084:32:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 33111,
+                  "id": 33114,
+                  "nodeType": "Return",
+                  "src": "1077:39:34"
+                }
+              ]
+            },
+            "functionSelector": "d3c4fca9",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "SPLITS_TOTAL_PERCENT",
+            "nameLocation": "1016:20:34",
+            "parameters": {
+              "id": 33108,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1036:2:34"
+            },
+            "returnParameters": {
+              "id": 33111,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33110,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33116,
+                  "src": "1062:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33109,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1062:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1061:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 33125,
+            "nodeType": "FunctionDefinition",
+            "src": "1125:106:34",
+            "body": {
+              "id": 33124,
+              "nodeType": "Block",
+              "src": "1185:46:34",
+              "statements": [
+                {
+                  "expression": {
+                    "expression": {
+                      "id": 33121,
+                      "name": "JBConstants",
+                      "nodeType": "Identifier",
+                      "overloadedDeclarations": [],
+                      "referencedDeclaration": 48060,
+                      "src": "1198:11:34",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_type$_t_contract$_JBConstants_$48060_$",
+                        "typeString": "type(library JBConstants)"
+                      }
+                    },
+                    "id": 33122,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": true,
+                    "lValueRequested": false,
+                    "memberLocation": "1210:16:34",
+                    "memberName": "MAX_FEE_DISCOUNT",
+                    "nodeType": "MemberAccess",
+                    "referencedDeclaration": 48059,
+                    "src": "1198:28:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "functionReturnParameters": 33120,
+                  "id": 33123,
+                  "nodeType": "Return",
+                  "src": "1191:35:34"
+                }
+              ]
+            },
+            "functionSelector": "19a9f941",
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [],
+            "name": "MAX_FEE_DISCOUNT",
+            "nameLocation": "1134:16:34",
+            "parameters": {
+              "id": 33117,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1150:2:34"
+            },
+            "returnParameters": {
+              "id": 33120,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 33119,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 33125,
+                  "src": "1176:7:34",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 33118,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1176:7:34",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1175:9:34"
+            },
+            "scope": 33126,
+            "stateMutability": "pure",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "AccessJBLib",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          33126
+        ],
+        "name": "AccessJBLib",
+        "nameLocation": "303:11:34",
+        "scope": 33127,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 34
+}

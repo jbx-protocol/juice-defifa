@@ -1,0 +1,68 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/enums/JB721GovernanceType.sol",
+    "id": 33040,
+    "exportedSymbols": {
+      "JB721GovernanceType": [
+        33039
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:81:33",
+    "nodes": [
+      {
+        "id": 33035,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:33",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 33039,
+        "nodeType": "EnumDefinition",
+        "src": "57:55:33",
+        "canonicalName": "JB721GovernanceType",
+        "members": [
+          {
+            "id": 33036,
+            "name": "NONE",
+            "nameLocation": "86:4:33",
+            "nodeType": "EnumValue",
+            "src": "86:4:33"
+          },
+          {
+            "id": 33037,
+            "name": "TIERED",
+            "nameLocation": "94:6:33",
+            "nodeType": "EnumValue",
+            "src": "94:6:33"
+          },
+          {
+            "id": 33038,
+            "name": "GLOBAL",
+            "nameLocation": "104:6:33",
+            "nodeType": "EnumValue",
+            "src": "104:6:33"
+          }
+        ],
+        "name": "JB721GovernanceType",
+        "nameLocation": "62:19:33"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 33
+}

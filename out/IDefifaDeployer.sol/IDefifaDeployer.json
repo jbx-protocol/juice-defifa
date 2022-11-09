@@ -1,0 +1,2152 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "name": "SPLIT_DOMAIN",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "SPLIT_PROJECT_ID",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "claimProtocolProjectToken",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "controller",
+      "outputs": [
+        {
+          "internalType": "contract IJBController",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "currentGamePhaseOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "distributionLimit",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "endOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "holdFeesDuring",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "string",
+              "name": "name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "symbol",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "baseUri",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "contractUri",
+              "type": "string"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint80",
+                  "name": "contributionFloor",
+                  "type": "uint80"
+                },
+                {
+                  "internalType": "uint48",
+                  "name": "lockedUntil",
+                  "type": "uint48"
+                },
+                {
+                  "internalType": "uint40",
+                  "name": "initialQuantity",
+                  "type": "uint40"
+                },
+                {
+                  "internalType": "uint16",
+                  "name": "votingUnits",
+                  "type": "uint16"
+                },
+                {
+                  "internalType": "uint16",
+                  "name": "reservedRate",
+                  "type": "uint16"
+                },
+                {
+                  "internalType": "address",
+                  "name": "reservedTokenBeneficiary",
+                  "type": "address"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "encodedIPFSUri",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "allowManualMint",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "shouldUseBeneficiaryAsDefault",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "transfersPausable",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct JB721TierParams[]",
+              "name": "tiers",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "contract IJBTiered721DelegateStore",
+              "name": "store",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct DefifaDelegateData",
+          "name": "_delegateData",
+          "type": "tuple"
+        },
+        {
+          "components": [
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "content",
+                  "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "domain",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct JBProjectMetadata",
+              "name": "projectMetadata",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint48",
+              "name": "mintDuration",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "start",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "tradeDeadline",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "end",
+              "type": "uint48"
+            },
+            {
+              "internalType": "bool",
+              "name": "holdFees",
+              "type": "bool"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "bool",
+                  "name": "preferClaimed",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "preferAddToBalance",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "percent",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "projectId",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address payable",
+                  "name": "beneficiary",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "lockedUntil",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "contract IJBSplitAllocator",
+                  "name": "allocator",
+                  "type": "address"
+                }
+              ],
+              "internalType": "struct JBSplit[]",
+              "name": "splits",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "uint88",
+              "name": "distributionLimit",
+              "type": "uint88"
+            },
+            {
+              "internalType": "contract IJBPaymentTerminal",
+              "name": "terminal",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct DefifaLaunchProjectData",
+          "name": "_launchProjectData",
+          "type": "tuple"
+        }
+      ],
+      "name": "launchGameWith",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "projectId",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "mintDurationOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "nextPhaseNeedsQueueing",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "protocolFeeProjectTokenAccount",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_projectId",
+          "type": "uint256"
+        }
+      ],
+      "name": "queueNextPhaseOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "configuration",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "startOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "terminalOf",
+      "outputs": [
+        {
+          "internalType": "contract IJBPaymentTerminal",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "timesFor",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint48",
+              "name": "mintDuration",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "start",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "tradeDeadline",
+              "type": "uint48"
+            },
+            {
+              "internalType": "uint48",
+              "name": "end",
+              "type": "uint48"
+            }
+          ],
+          "internalType": "struct DefifaTimeData",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "token",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "_gameId",
+          "type": "uint256"
+        }
+      ],
+      "name": "tradeDeadlineOf",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "SPLIT_DOMAIN()": "ff16a2f2",
+    "SPLIT_PROJECT_ID()": "a372c2a9",
+    "claimProtocolProjectToken()": "ca449a25",
+    "controller()": "f77c4791",
+    "currentGamePhaseOf(uint256)": "0715610a",
+    "distributionLimit(uint256)": "27655cfd",
+    "endOf(uint256)": "b965933e",
+    "holdFeesDuring(uint256)": "78632633",
+    "launchGameWith((string,string,string,string,(uint80,uint48,uint40,uint16,uint16,address,bytes32,bool,bool,bool)[],address,address),((string,uint256),uint48,uint48,uint48,uint48,bool,(bool,bool,uint256,uint256,address,uint256,address)[],uint88,address))": "ebcfaa65",
+    "mintDurationOf(uint256)": "0589d292",
+    "nextPhaseNeedsQueueing(uint256)": "81312a14",
+    "protocolFeeProjectTokenAccount()": "3f3090d9",
+    "queueNextPhaseOf(uint256)": "1c069dbb",
+    "startOf(uint256)": "b41e7f47",
+    "terminalOf(uint256)": "4fe0eced",
+    "timesFor(uint256)": "b07925d3",
+    "token()": "fc0c546a",
+    "tradeDeadlineOf(uint256)": "380bde20"
+  },
+  "ast": {
+    "absolutePath": "contracts/interfaces/IDefifaDeployer.sol",
+    "id": 6450,
+    "exportedSymbols": {
+      "DefifaDelegateData": [
+        7447
+      ],
+      "DefifaLaunchProjectData": [
+        7476
+      ],
+      "DefifaTimeData": [
+        7506
+      ],
+      "IDefifaDeployer": [
+        6449
+      ],
+      "IERC165": [
+        60776
+      ],
+      "IERC721": [
+        59038
+      ],
+      "IJB721Delegate": [
+        38253
+      ],
+      "IJBController": [
+        50894
+      ],
+      "IJBDirectory": [
+        51044
+      ],
+      "IJBFundingCycleBallot": [
+        51078
+      ],
+      "IJBFundingCycleStore": [
+        51215
+      ],
+      "IJBMigratable": [
+        51225
+      ],
+      "IJBPaymentTerminal": [
+        51388
+      ],
+      "IJBPriceFeed": [
+        51751
+      ],
+      "IJBPrices": [
+        51795
+      ],
+      "IJBProjects": [
+        51874
+      ],
+      "IJBSplitAllocator": [
+        52155
+      ],
+      "IJBSplitsStore": [
+        52211
+      ],
+      "IJBTiered721Delegate": [
+        38538
+      ],
+      "IJBTiered721DelegateDeployer": [
+        38565
+      ],
+      "IJBTiered721DelegateStore": [
+        38904
+      ],
+      "IJBToken": [
+        52287
+      ],
+      "IJBTokenStore": [
+        52483
+      ],
+      "IJBTokenUriResolver": [
+        52493
+      ],
+      "JB721GovernanceType": [
+        37491
+      ],
+      "JB721PricingParams": [
+        39482
+      ],
+      "JB721Tier": [
+        39507
+      ],
+      "JB721TierParams": [
+        39530
+      ],
+      "JBBallotState": [
+        50472
+      ],
+      "JBDeployTiered721DelegateData": [
+        39580
+      ],
+      "JBFundAccessConstraints": [
+        53458
+      ],
+      "JBFundingCycle": [
+        53481
+      ],
+      "JBFundingCycleData": [
+        53494
+      ],
+      "JBFundingCycleMetadata": [
+        53535
+      ],
+      "JBGlobalFundingCycleMetadata": [
+        53544
+      ],
+      "JBGroupedSplits": [
+        53554
+      ],
+      "JBProjectMetadata": [
+        53607
+      ],
+      "JBSplit": [
+        53666
+      ],
+      "JBSplitAllocationData": [
+        53683
+      ],
+      "JBTiered721Flags": [
+        39679
+      ],
+      "JBTiered721MintForTiersData": [
+        39694
+      ],
+      "JBTiered721MintReservesForTiersData": [
+        39701
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:1779:5",
+    "nodes": [
+      {
+        "id": 6324,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:5",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 6325,
+        "nodeType": "ImportDirective",
+        "src": "57:96:5",
+        "absolutePath": "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateDeployer.sol",
+        "file": "@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateDeployer.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 6450,
+        "sourceUnit": 38566,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 6326,
+        "nodeType": "ImportDirective",
+        "src": "154:81:5",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBController.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 6450,
+        "sourceUnit": 50895,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 6327,
+        "nodeType": "ImportDirective",
+        "src": "236:48:5",
+        "absolutePath": "contracts/structs/DefifaLaunchProjectData.sol",
+        "file": "../structs/DefifaLaunchProjectData.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 6450,
+        "sourceUnit": 7477,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 6328,
+        "nodeType": "ImportDirective",
+        "src": "285:43:5",
+        "absolutePath": "contracts/structs/DefifaDelegateData.sol",
+        "file": "../structs/DefifaDelegateData.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 6450,
+        "sourceUnit": 7448,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 6329,
+        "nodeType": "ImportDirective",
+        "src": "329:39:5",
+        "absolutePath": "contracts/structs/DefifaTimeData.sol",
+        "file": "../structs/DefifaTimeData.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 6450,
+        "sourceUnit": 7507,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 6449,
+        "nodeType": "ContractDefinition",
+        "src": "370:1440:5",
+        "nodes": [
+          {
+            "id": 6334,
+            "nodeType": "FunctionDefinition",
+            "src": "400:60:5",
+            "functionSelector": "a372c2a9",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "SPLIT_PROJECT_ID",
+            "nameLocation": "409:16:5",
+            "parameters": {
+              "id": 6330,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "425:2:5"
+            },
+            "returnParameters": {
+              "id": 6333,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6332,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6334,
+                  "src": "451:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6331,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "451:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "450:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6339,
+            "nodeType": "FunctionDefinition",
+            "src": "464:56:5",
+            "functionSelector": "ff16a2f2",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "SPLIT_DOMAIN",
+            "nameLocation": "473:12:5",
+            "parameters": {
+              "id": 6335,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "485:2:5"
+            },
+            "returnParameters": {
+              "id": 6338,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6337,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6339,
+                  "src": "511:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6336,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "511:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "510:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6344,
+            "nodeType": "FunctionDefinition",
+            "src": "524:49:5",
+            "functionSelector": "fc0c546a",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "token",
+            "nameLocation": "533:5:5",
+            "parameters": {
+              "id": 6340,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "538:2:5"
+            },
+            "returnParameters": {
+              "id": 6343,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6342,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6344,
+                  "src": "564:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 6341,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "564:7:5",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "563:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6350,
+            "nodeType": "FunctionDefinition",
+            "src": "577:60:5",
+            "functionSelector": "f77c4791",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "controller",
+            "nameLocation": "586:10:5",
+            "parameters": {
+              "id": 6345,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "596:2:5"
+            },
+            "returnParameters": {
+              "id": 6349,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6348,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6350,
+                  "src": "622:13:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IJBController_$50894",
+                    "typeString": "contract IJBController"
+                  },
+                  "typeName": {
+                    "id": 6347,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 6346,
+                      "name": "IJBController",
+                      "nameLocations": [
+                        "622:13:5"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 50894,
+                      "src": "622:13:5"
+                    },
+                    "referencedDeclaration": 50894,
+                    "src": "622:13:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IJBController_$50894",
+                      "typeString": "contract IJBController"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "621:15:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6355,
+            "nodeType": "FunctionDefinition",
+            "src": "641:74:5",
+            "functionSelector": "3f3090d9",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "protocolFeeProjectTokenAccount",
+            "nameLocation": "650:30:5",
+            "parameters": {
+              "id": 6351,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "680:2:5"
+            },
+            "returnParameters": {
+              "id": 6354,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6353,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6355,
+                  "src": "706:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 6352,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "706:7:5",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "705:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6363,
+            "nodeType": "FunctionDefinition",
+            "src": "719:81:5",
+            "functionSelector": "b07925d3",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "timesFor",
+            "nameLocation": "728:8:5",
+            "parameters": {
+              "id": 6358,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6357,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "745:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6363,
+                  "src": "737:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6356,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "737:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "736:17:5"
+            },
+            "returnParameters": {
+              "id": 6362,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6361,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6363,
+                  "src": "777:21:5",
+                  "stateVariable": false,
+                  "storageLocation": "memory",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_DefifaTimeData_$7506_memory_ptr",
+                    "typeString": "struct DefifaTimeData"
+                  },
+                  "typeName": {
+                    "id": 6360,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 6359,
+                      "name": "DefifaTimeData",
+                      "nameLocations": [
+                        "777:14:5"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 7506,
+                      "src": "777:14:5"
+                    },
+                    "referencedDeclaration": 7506,
+                    "src": "777:14:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_DefifaTimeData_$7506_storage_ptr",
+                      "typeString": "struct DefifaTimeData"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "776:23:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6370,
+            "nodeType": "FunctionDefinition",
+            "src": "804:73:5",
+            "functionSelector": "0589d292",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "mintDurationOf",
+            "nameLocation": "813:14:5",
+            "parameters": {
+              "id": 6366,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6365,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "836:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6370,
+                  "src": "828:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6364,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "828:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "827:17:5"
+            },
+            "returnParameters": {
+              "id": 6369,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6368,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6370,
+                  "src": "868:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6367,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "868:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "867:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6377,
+            "nodeType": "FunctionDefinition",
+            "src": "881:66:5",
+            "functionSelector": "b41e7f47",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "startOf",
+            "nameLocation": "890:7:5",
+            "parameters": {
+              "id": 6373,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6372,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "906:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6377,
+                  "src": "898:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6371,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "898:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "897:17:5"
+            },
+            "returnParameters": {
+              "id": 6376,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6375,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6377,
+                  "src": "938:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6374,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "938:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "937:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6384,
+            "nodeType": "FunctionDefinition",
+            "src": "951:74:5",
+            "functionSelector": "380bde20",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "tradeDeadlineOf",
+            "nameLocation": "960:15:5",
+            "parameters": {
+              "id": 6380,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6379,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "984:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6384,
+                  "src": "976:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6378,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "976:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "975:17:5"
+            },
+            "returnParameters": {
+              "id": 6383,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6382,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6384,
+                  "src": "1016:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6381,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1016:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1015:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6391,
+            "nodeType": "FunctionDefinition",
+            "src": "1029:64:5",
+            "functionSelector": "b965933e",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "endOf",
+            "nameLocation": "1038:5:5",
+            "parameters": {
+              "id": 6387,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6386,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "1052:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6391,
+                  "src": "1044:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6385,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1044:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1043:17:5"
+            },
+            "returnParameters": {
+              "id": 6390,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6389,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6391,
+                  "src": "1084:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6388,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1084:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1083:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6399,
+            "nodeType": "FunctionDefinition",
+            "src": "1097:80:5",
+            "functionSelector": "4fe0eced",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "terminalOf",
+            "nameLocation": "1106:10:5",
+            "parameters": {
+              "id": 6394,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6393,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "1125:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6399,
+                  "src": "1117:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6392,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1117:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1116:17:5"
+            },
+            "returnParameters": {
+              "id": 6398,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6397,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6399,
+                  "src": "1157:18:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_contract$_IJBPaymentTerminal_$51388",
+                    "typeString": "contract IJBPaymentTerminal"
+                  },
+                  "typeName": {
+                    "id": 6396,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 6395,
+                      "name": "IJBPaymentTerminal",
+                      "nameLocations": [
+                        "1157:18:5"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 51388,
+                      "src": "1157:18:5"
+                    },
+                    "referencedDeclaration": 51388,
+                    "src": "1157:18:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_contract$_IJBPaymentTerminal_$51388",
+                      "typeString": "contract IJBPaymentTerminal"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1156:20:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6406,
+            "nodeType": "FunctionDefinition",
+            "src": "1181:76:5",
+            "functionSelector": "27655cfd",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "distributionLimit",
+            "nameLocation": "1190:17:5",
+            "parameters": {
+              "id": 6402,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6401,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "1216:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6406,
+                  "src": "1208:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6400,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1208:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1207:17:5"
+            },
+            "returnParameters": {
+              "id": 6405,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6404,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6406,
+                  "src": "1248:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6403,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1248:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1247:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6413,
+            "nodeType": "FunctionDefinition",
+            "src": "1261:70:5",
+            "functionSelector": "78632633",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "holdFeesDuring",
+            "nameLocation": "1270:14:5",
+            "parameters": {
+              "id": 6409,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6408,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "1293:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6413,
+                  "src": "1285:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6407,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1285:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1284:17:5"
+            },
+            "returnParameters": {
+              "id": 6412,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6411,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6413,
+                  "src": "1325:4:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 6410,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1325:4:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1324:6:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6420,
+            "nodeType": "FunctionDefinition",
+            "src": "1335:77:5",
+            "functionSelector": "0715610a",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "currentGamePhaseOf",
+            "nameLocation": "1344:18:5",
+            "parameters": {
+              "id": 6416,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6415,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "1371:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6420,
+                  "src": "1363:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6414,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1363:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1362:17:5"
+            },
+            "returnParameters": {
+              "id": 6419,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6418,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6420,
+                  "src": "1403:7:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6417,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1403:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1402:9:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6427,
+            "nodeType": "FunctionDefinition",
+            "src": "1416:78:5",
+            "functionSelector": "81312a14",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "nextPhaseNeedsQueueing",
+            "nameLocation": "1425:22:5",
+            "parameters": {
+              "id": 6423,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6422,
+                  "mutability": "mutable",
+                  "name": "_gameId",
+                  "nameLocation": "1456:7:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6427,
+                  "src": "1448:15:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6421,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1448:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1447:17:5"
+            },
+            "returnParameters": {
+              "id": 6426,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6425,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6427,
+                  "src": "1488:4:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 6424,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1488:4:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1487:6:5"
+            },
+            "scope": 6449,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6438,
+            "nodeType": "FunctionDefinition",
+            "src": "1498:169:5",
+            "functionSelector": "ebcfaa65",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "launchGameWith",
+            "nameLocation": "1507:14:5",
+            "parameters": {
+              "id": 6434,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6430,
+                  "mutability": "mutable",
+                  "name": "_delegateData",
+                  "nameLocation": "1555:13:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6438,
+                  "src": "1527:41:5",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_DefifaDelegateData_$7447_calldata_ptr",
+                    "typeString": "struct DefifaDelegateData"
+                  },
+                  "typeName": {
+                    "id": 6429,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 6428,
+                      "name": "DefifaDelegateData",
+                      "nameLocations": [
+                        "1527:18:5"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 7447,
+                      "src": "1527:18:5"
+                    },
+                    "referencedDeclaration": 7447,
+                    "src": "1527:18:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_DefifaDelegateData_$7447_storage_ptr",
+                      "typeString": "struct DefifaDelegateData"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 6433,
+                  "mutability": "mutable",
+                  "name": "_launchProjectData",
+                  "nameLocation": "1607:18:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6438,
+                  "src": "1574:51:5",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_struct$_DefifaLaunchProjectData_$7476_calldata_ptr",
+                    "typeString": "struct DefifaLaunchProjectData"
+                  },
+                  "typeName": {
+                    "id": 6432,
+                    "nodeType": "UserDefinedTypeName",
+                    "pathNode": {
+                      "id": 6431,
+                      "name": "DefifaLaunchProjectData",
+                      "nameLocations": [
+                        "1574:23:5"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 7476,
+                      "src": "1574:23:5"
+                    },
+                    "referencedDeclaration": 7476,
+                    "src": "1574:23:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_struct$_DefifaLaunchProjectData_$7476_storage_ptr",
+                      "typeString": "struct DefifaLaunchProjectData"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1521:108:5"
+            },
+            "returnParameters": {
+              "id": 6437,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6436,
+                  "mutability": "mutable",
+                  "name": "projectId",
+                  "nameLocation": "1656:9:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6438,
+                  "src": "1648:17:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6435,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1648:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1647:19:5"
+            },
+            "scope": 6449,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6445,
+            "nodeType": "FunctionDefinition",
+            "src": "1671:87:5",
+            "functionSelector": "1c069dbb",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "queueNextPhaseOf",
+            "nameLocation": "1680:16:5",
+            "parameters": {
+              "id": 6441,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6440,
+                  "mutability": "mutable",
+                  "name": "_projectId",
+                  "nameLocation": "1705:10:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6445,
+                  "src": "1697:18:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6439,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1697:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1696:20:5"
+            },
+            "returnParameters": {
+              "id": 6444,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 6443,
+                  "mutability": "mutable",
+                  "name": "configuration",
+                  "nameLocation": "1743:13:5",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 6445,
+                  "src": "1735:21:5",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 6442,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1735:7:5",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1734:23:5"
+            },
+            "scope": 6449,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 6448,
+            "nodeType": "FunctionDefinition",
+            "src": "1762:46:5",
+            "functionSelector": "ca449a25",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "claimProtocolProjectToken",
+            "nameLocation": "1771:25:5",
+            "parameters": {
+              "id": 6446,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1796:2:5"
+            },
+            "returnParameters": {
+              "id": 6447,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1807:0:5"
+            },
+            "scope": 6449,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IDefifaDeployer",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          6449
+        ],
+        "name": "IDefifaDeployer",
+        "nameLocation": "380:15:5",
+        "scope": 6450,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 5
+}

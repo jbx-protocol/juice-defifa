@@ -1,0 +1,158 @@
+{
+  "abi": [],
+  "bytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "linkReferences": {}
+  },
+  "ast": {
+    "absolutePath": "contracts/structs/DefifaStoredOpsData.sol",
+    "id": 3061,
+    "exportedSymbols": {
+      "DefifaStoredOpsData": [
+        3060
+      ],
+      "IERC165": [
+        56744
+      ],
+      "IJBPaymentTerminal": [
+        46933
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:480:10",
+    "nodes": [
+      {
+        "id": 3051,
+        "nodeType": "PragmaDirective",
+        "src": "32:23:10",
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".0"
+        ]
+      },
+      {
+        "id": 3052,
+        "nodeType": "ImportDirective",
+        "src": "57:86:10",
+        "absolutePath": "node_modules/@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol",
+        "file": "@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBPaymentTerminal.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 3061,
+        "sourceUnit": 46934,
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "id": 3060,
+        "nodeType": "StructDefinition",
+        "src": "405:106:10",
+        "canonicalName": "DefifaStoredOpsData",
+        "members": [
+          {
+            "constant": false,
+            "id": 3055,
+            "mutability": "mutable",
+            "name": "terminal",
+            "nameLocation": "455:8:10",
+            "nodeType": "VariableDeclaration",
+            "scope": 3060,
+            "src": "436:27:10",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_contract$_IJBPaymentTerminal_$46933",
+              "typeString": "contract IJBPaymentTerminal"
+            },
+            "typeName": {
+              "id": 3054,
+              "nodeType": "UserDefinedTypeName",
+              "pathNode": {
+                "id": 3053,
+                "name": "IJBPaymentTerminal",
+                "nameLocations": [
+                  "436:18:10"
+                ],
+                "nodeType": "IdentifierPath",
+                "referencedDeclaration": 46933,
+                "src": "436:18:10"
+              },
+              "referencedDeclaration": 46933,
+              "src": "436:18:10",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_IJBPaymentTerminal_$46933",
+                "typeString": "contract IJBPaymentTerminal"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3057,
+            "mutability": "mutable",
+            "name": "distributionLimit",
+            "nameLocation": "474:17:10",
+            "nodeType": "VariableDeclaration",
+            "scope": 3060,
+            "src": "467:24:10",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_uint88",
+              "typeString": "uint88"
+            },
+            "typeName": {
+              "id": 3056,
+              "name": "uint88",
+              "nodeType": "ElementaryTypeName",
+              "src": "467:6:10",
+              "typeDescriptions": {
+                "typeIdentifier": "t_uint88",
+                "typeString": "uint88"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "constant": false,
+            "id": 3059,
+            "mutability": "mutable",
+            "name": "holdFees",
+            "nameLocation": "500:8:10",
+            "nodeType": "VariableDeclaration",
+            "scope": 3060,
+            "src": "495:13:10",
+            "stateVariable": false,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_bool",
+              "typeString": "bool"
+            },
+            "typeName": {
+              "id": 3058,
+              "name": "bool",
+              "nodeType": "ElementaryTypeName",
+              "src": "495:4:10",
+              "typeDescriptions": {
+                "typeIdentifier": "t_bool",
+                "typeString": "bool"
+              }
+            },
+            "visibility": "internal"
+          }
+        ],
+        "name": "DefifaStoredOpsData",
+        "nameLocation": "412:19:10",
+        "scope": 3061,
+        "visibility": "public"
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 10
+}
