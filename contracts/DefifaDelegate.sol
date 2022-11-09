@@ -45,30 +45,26 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   uint256[128] private _tierRedemptionWeights;
 
   //*********************************************************************//
-  // -------------------- private constant properties ------------------ //
+  // --------------------- public constant properties ------------------ //
   //*********************************************************************//
 
   /** 
     @notice
     The funding cycle number of the mint phase. 
   */
-  uint256 public constant MINT_GAME_PHASE = 1;
+  uint256 public constant override MINT_GAME_PHASE = 1;
 
   /** 
     @notice
     The funding cycle number of the end game phase. 
   */
-  uint256 public constant END_GAME_PHASE = 4;
-
-  //*********************************************************************//
-  // --------------------- public constant properties ------------------ //
-  //*********************************************************************//
+  uint256 public constant override END_GAME_PHASE = 4;
 
   /** 
     @notice 
     The total weight that can be divided among tiers.
   */
-  uint256 public constant TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
+  uint256 public constant override TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
 
   //*********************************************************************//
   // --------------------- public stored properties -------------------- //
@@ -78,13 +74,13 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     @notice
     The amount that has been redeemed.
    */
-  uint256 public amountRedeemed;
+  uint256 public override amountRedeemed;
 
   /**
     @notice
     The amount of tokens that have been redeemed from a tier, refunds are not counted
   */
-  mapping(uint256 => uint256) public redeemedFromTier;
+  mapping(uint256 => uint256) public override redeemedFromTier;
 
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
