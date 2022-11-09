@@ -215,7 +215,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     // Phase 4
     vm.warp(block.timestamp + 1 weeks);
-    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, _nft._END_GAME_PHASE());
+    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, 4);
 
     for (uint256 i = 0; i < _users.length; i++) {
       address _user = _users[i];
@@ -341,7 +341,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Phase 4
     vm.warp(block.timestamp + 1 weeks);
     // Make sure this is actually Phase 4
-    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, _nft._END_GAME_PHASE());
+    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, 4);
 
     for (uint256 i = 0; i < nTiers; i++) {
       // Generate a new address for each tier
@@ -1133,7 +1133,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     // We should now be in phase 4, game has ended
     vm.warp(_launchProjectAt + _mintDuration + _inBetweenMintAndFifa + _fifaDuration);
-    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, _nft._END_GAME_PHASE());
+    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, 4);
   }
 
   function testWhenPhaseIsAlreadyQueued() public {
