@@ -96,6 +96,164 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_user, block.number - 1));
   }
 
+  function testRefund_fails_afterMintPhase() external {
+    uint8 nTiers = 10;
+    address[] memory _users = new address[](nTiers);
+
+    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+      uint256(nTiers),
+      getBasicDefifaLaunchData()
+    );
+
+    for (uint256 i = 0; i < nTiers; i++) {
+      // Generate a new address for each tier
+      _users[i] = address(bytes20(keccak256(abi.encode('user', Strings.toString(i)))));
+
+      // fund user
+      vm.deal(_users[i], 1 ether);
+
+      // Build metadata to buy specific NFT
+      uint16[] memory rawMetadata = new uint16[](1);
+      rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
+      bytes memory metadata = abi.encode(
+        bytes32(0),
+        bytes32(0),
+        type(IJB721Delegate).interfaceId,
+        false,
+        false,
+        false,
+        rawMetadata
+      );
+
+      // Pay to the project and mint an NFT
+      vm.prank(_users[i]);
+      _terminals[0].pay{value: 1 ether}(
+        _projectId,
+        1 ether,
+        address(0),
+        _users[i],
+        0,
+        true,
+        '',
+        metadata
+      );
+
+      // Set the delegate as the user themselves
+      JBTiered721SetTierDelegatesData[]
+        memory tiered721SetDelegatesData = new JBTiered721SetTierDelegatesData[](1);
+      tiered721SetDelegatesData[0] = JBTiered721SetTierDelegatesData({
+        delegatee: _users[i],
+        tierId: uint256(i + 1)
+      });
+      vm.prank(_users[i]);
+      _nft.setTierDelegates(tiered721SetDelegatesData);
+    }
+
+    // Phase 2
+    vm.warp(block.timestamp + 1 days);
+    deployer.queueNextPhaseOf(_projectId);
+
+    // Attempt to do a refund
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      2
+    );
+
+    for (uint256 i = 0; i < _users.length; i++) {
+      address _user = _users[i];
+
+      // Craft the metadata: redeem the tokenId
+      bytes memory redemptionMetadata;
+      {
+        uint256[] memory redemptionId = new uint256[](1);
+        redemptionId[0] = _generateTokenId(i + 1, 1);
+        redemptionMetadata = abi.encode(bytes32(0), type(IJB721Delegate).interfaceId, redemptionId);
+      }
+
+      vm.expectRevert(abi.encodeWithSignature("FUNDING_CYCLE_REDEEM_PAUSED()"));
+      vm.prank(_user);
+      JBETHPaymentTerminal(address(_terminals[0])).redeemTokensOf({
+        _holder: _user,
+        _projectId: _projectId,
+        _tokenCount: 0,
+        _token: address(0),
+        _minReturnedTokens: 0,
+        _beneficiary: payable(_user),
+        _memo: 'Refund plz',
+        _metadata: redemptionMetadata
+      });
+    }
+
+    // Phase 3
+    vm.warp(block.timestamp + 1 weeks);
+    deployer.queueNextPhaseOf(_projectId);
+
+    // Attempt to do a refund
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      3
+    );
+
+    for (uint256 i = 0; i < _users.length; i++) {
+      address _user = _users[i];
+
+      // Craft the metadata: redeem the tokenId
+      bytes memory redemptionMetadata;
+      {
+        uint256[] memory redemptionId = new uint256[](1);
+        redemptionId[0] = _generateTokenId(i + 1, 1);
+        redemptionMetadata = abi.encode(bytes32(0), type(IJB721Delegate).interfaceId, redemptionId);
+      }
+
+      vm.expectRevert(abi.encodeWithSignature("FUNDING_CYCLE_REDEEM_PAUSED()"));
+      vm.prank(_user);
+      JBETHPaymentTerminal(address(_terminals[0])).redeemTokensOf({
+        _holder: _user,
+        _projectId: _projectId,
+        _tokenCount: 0,
+        _token: address(0),
+        _minReturnedTokens: 0,
+        _beneficiary: payable(_user),
+        _memo: 'Refund plz',
+        _metadata: redemptionMetadata
+      });
+    }
+
+    // Phase 4
+    vm.warp(block.timestamp + 1 weeks);
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      _nft.END_GAME_PHASE()
+    );
+
+    for (uint256 i = 0; i < _users.length; i++) {
+      address _user = _users[i];
+
+      // Craft the metadata: redeem the tokenId
+      bytes memory redemptionMetadata;
+      {
+        uint256[] memory redemptionId = new uint256[](1);
+        redemptionId[0] = _generateTokenId(i + 1, 1);
+        redemptionMetadata = abi.encode(bytes32(0), type(IJB721Delegate).interfaceId, redemptionId);
+      }
+
+      // Here the refunds are not allowed but redemptions are, 
+      // so it should instead revert with an error showing that there is no redemption set for our tier
+      vm.expectRevert(abi.encodeWithSignature("NOTHING_TO_CLAIM()"));
+      vm.prank(_user);
+      JBETHPaymentTerminal(address(_terminals[0])).redeemTokensOf({
+        _holder: _user,
+        _projectId: _projectId,
+        _tokenCount: 0,
+        _token: address(0),
+        _minReturnedTokens: 0,
+        _beneficiary: payable(_user),
+        _memo: 'Refund plz',
+        _metadata: redemptionMetadata
+      });
+    }
+  }
+
   function testSetRedemptionRates_fails_unmetQuorum(bool _useHelper) external {
 
     uint8 nTiers = 10;
@@ -196,10 +354,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // No voting delay after the initial voting delay has passed in
     assertEq(_governor.votingDelay(), 0);
 
-    // Atleast 50% has to vote, anything less won't pass
-    for (uint256 i = 0; i < _users.length / 2 - 1; i++) {
+    // We have 60% vote against and 40% vote in favor
+    for (uint256 i = 0; i < _users.length; i++) {
       vm.prank(_users[i]);
-      _governor.castVote(_proposalId, 1);
+      _governor.castVote(_proposalId, 0);
     }
 
     // Phase 4
@@ -395,7 +553,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       // Forward 1 block, user should receive all the voting power of the tier, as its the only NFT
       vm.roll(block.number + 1);
       assertEq(_governor.MAX_VOTING_POWER_TIER(), _governor.getVotes(_users[i], block.number - 1));
+
+      // Have a user mint and refund the tier
+      mintAndRefund(_nft, _projectId, i + 1);
     }
+
+    // Have a user mint and refund the tier
+    mintAndRefund(_nft, _projectId, 1);
 
     // Phase 2
     vm.warp(block.timestamp + 1 days);
@@ -520,6 +684,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       // Generate a new address for each tier
       _users[i] = address(bytes20(keccak256(abi.encode('user', Strings.toString(i)))));
 
+      // We randomly decide if we have a user mint and refund
+      //mintAndRefund(_nft, _projectId, i + 1);
+
       // fund user
       vm.deal(_users[i], 1 ether);
 
@@ -585,6 +752,9 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         assertEq(_governor.MAX_VOTING_POWER_TIER() / (i - nOfOtherTiers + 1), _governor.getVotes(_users[i], block.number - 1));
       }
     }
+
+    // Have a user mint and refund the tier
+    mintAndRefund(_nft, _projectId, 1);
 
     // Phase 2
     vm.warp(block.timestamp + 1 days);
@@ -1125,6 +1295,81 @@ contract DefifaGovernorTest is TestBaseWorkflow {
 
     nft = DefifaDelegate(_fc.dataSource());
 
+  }
+
+  function mintAndRefund(DefifaDelegate _delegate, uint256 _projectId, uint256 _tierId) internal {
+    JB721Tier memory _tier = _delegate.store().tier(address(_delegate), _tierId);
+    uint256 _cost = _tier.contributionFloor;
+    address _refundUser = address(bytes20(keccak256('refund_user')));
+
+    // The user should have no balance
+    assertEq(_delegate.balanceOf(_refundUser), 0);
+
+    // Build metadata to buy specific NFT
+    uint16[] memory rawMetadata = new uint16[](1);
+    rawMetadata[0] = uint16(_tierId); // reward tier, 1 indexed
+    bytes memory metadata = abi.encode(
+      bytes32(0),
+      bytes32(0),
+      type(IJB721Delegate).interfaceId,
+      false,
+      false,
+      false,
+      rawMetadata
+    );
+
+    // Pay to the project and mint an NFT
+    vm.deal(_refundUser, _cost);
+    vm.prank(_refundUser);
+    _terminals[0].pay{value: _cost}(
+      _projectId,
+      _cost,
+      address(0),
+      _refundUser,
+      0,
+      true,
+      '',
+      metadata
+    );
+
+    // User should no longer have any funds
+    assertEq(
+      _refundUser.balance,
+      0
+    );
+
+    // The user should have have a token
+    assertEq(_delegate.balanceOf(_refundUser), 1);
+
+    uint256 _numberBurned = _delegate.store().numberOfBurnedFor(address(_delegate), _tierId);
+
+    // Craft the metadata: redeem the tokenId
+    bytes memory redemptionMetadata;
+    {
+      uint256[] memory redemptionId = new uint256[](1);
+      redemptionId[0] = _generateTokenId(_tierId, _tier.initialQuantity - _tier.remainingQuantity + 1 + _numberBurned);
+      redemptionMetadata = abi.encode(bytes32(0), type(IJB721Delegate).interfaceId, redemptionId);
+    }
+  
+    vm.prank(_refundUser);
+    JBETHPaymentTerminal(address(_terminals[0])).redeemTokensOf({
+      _holder: _refundUser,
+      _projectId: _projectId,
+      _tokenCount: 0,
+      _token: address(0),
+      _minReturnedTokens: 0,
+      _beneficiary: payable(_refundUser),
+      _memo: 'imma out of here',
+      _metadata: redemptionMetadata
+    });
+
+    // User should have their original funds again
+    assertEq(
+      _refundUser.balance,
+      _cost
+    );
+    // User should no longer have the NFT
+    assertEq(_delegate.balanceOf(_refundUser), 0);
   }
 
   // Create launchProjectFor(..) payload
