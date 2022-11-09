@@ -1068,9 +1068,9 @@
       "name": "tierRedemptionWeights",
       "outputs": [
         {
-          "internalType": "uint256[100]",
+          "internalType": "uint256[128]",
           "name": "",
-          "type": "uint256[100]"
+          "type": "uint256[128]"
         }
       ],
       "stateMutability": "nonpayable",
@@ -1337,7 +1337,7 @@
                   "storageLocation": "memory",
                   "typeDescriptions": {
                     "typeIdentifier": "t_array$_t_uint256_$100_memory_ptr",
-                    "typeString": "uint256[100]"
+                    "typeString": "uint256[128]"
                   },
                   "typeName": {
                     "baseType": {
@@ -1371,7 +1371,7 @@
                     "src": "377:12:4",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$100_storage_ptr",
-                      "typeString": "uint256[100]"
+                      "typeString": "uint256[128]"
                     }
                   },
                   "visibility": "internal"

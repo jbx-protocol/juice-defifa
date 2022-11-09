@@ -2047,9 +2047,9 @@
       "name": "tierRedemptionWeights",
       "outputs": [
         {
-          "internalType": "uint256[100]",
+          "internalType": "uint256[128]",
           "name": "",
-          "type": "uint256[100]"
+          "type": "uint256[128]"
         }
       ],
       "stateMutability": "view",
@@ -2589,7 +2589,7 @@
             "storageLocation": "default",
             "typeDescriptions": {
               "typeIdentifier": "t_array$_t_uint256_$100_storage",
-              "typeString": "uint256[100]"
+              "typeString": "uint256[128]"
             },
             "typeName": {
               "baseType": {
@@ -2623,7 +2623,7 @@
               "src": "1376:12:0",
               "typeDescriptions": {
                 "typeIdentifier": "t_array$_t_uint256_$100_storage_ptr",
-                "typeString": "uint256[100]"
+                "typeString": "uint256[128]"
               }
             },
             "visibility": "private"
@@ -2887,7 +2887,7 @@
                     "src": "3210:22:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$100_storage",
-                      "typeString": "uint256[100] storage ref"
+                      "typeString": "uint256[128] storage ref"
                     }
                   },
                   "functionReturnParameters": 50,
@@ -2941,7 +2941,7 @@
                   "storageLocation": "memory",
                   "typeDescriptions": {
                     "typeIdentifier": "t_array$_t_uint256_$100_memory_ptr",
-                    "typeString": "uint256[100]"
+                    "typeString": "uint256[128]"
                   },
                   "typeName": {
                     "baseType": {
@@ -2975,7 +2975,7 @@
                     "src": "3176:12:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_array$_t_uint256_$100_storage_ptr",
-                      "typeString": "uint256[100]"
+                      "typeString": "uint256[128]"
                     }
                   },
                   "visibility": "internal"
@@ -5284,7 +5284,7 @@
                       "src": "6713:22:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_array$_t_uint256_$100_storage",
-                        "typeString": "uint256[100] storage ref"
+                        "typeString": "uint256[128] storage ref"
                       }
                     },
                     "typeDescriptions": {
@@ -5691,7 +5691,7 @@
                               "src": "7355:22:0",
                               "typeDescriptions": {
                                 "typeIdentifier": "t_array$_t_uint256_$100_storage",
-                                "typeString": "uint256[100] storage ref"
+                                "typeString": "uint256[128] storage ref"
                               }
                             },
                             "id": 281,
@@ -9078,7 +9078,7 @@
                                 "src": "12076:22:0",
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_array$_t_uint256_$100_storage",
-                                  "typeString": "uint256[100] storage ref"
+                                  "typeString": "uint256[128] storage ref"
                                 }
                               },
                               "id": 546,

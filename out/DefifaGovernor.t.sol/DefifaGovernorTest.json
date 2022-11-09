@@ -24598,7 +24598,7 @@
                                   "src": "14629:26:3",
                                   "typeDescriptions": {
                                     "typeIdentifier": "t_function_external_view$__$returns$_t_array$_t_uint256_$100_memory_ptr_$",
-                                    "typeString": "function () view external returns (uint256[100] memory)"
+                                    "typeString": "function () view external returns (uint256[128] memory)"
                                   }
                                 },
                                 "id": 4007,
@@ -24614,7 +24614,7 @@
                                 "tryCall": false,
                                 "typeDescriptions": {
                                   "typeIdentifier": "t_array$_t_uint256_$100_memory_ptr",
-                                  "typeString": "uint256[100] memory"
+                                  "typeString": "uint256[128] memory"
                                 }
                               },
                               "id": 4009,
