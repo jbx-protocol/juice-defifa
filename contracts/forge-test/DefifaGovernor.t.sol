@@ -153,7 +153,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     vm.warp(block.timestamp + 1 days);
     deployer.queueNextPhaseOf(_projectId);
 
-    // Attempt to do a refund
+    // Make sure this is actually Phase 2
     assertEq(
       _jbFundingCycleStore.currentOf(_projectId).number,
       2
@@ -188,7 +188,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     vm.warp(block.timestamp + 1 weeks);
     deployer.queueNextPhaseOf(_projectId);
 
-    // Attempt to do a refund
+    // Make sure this is actually Phase 3
     assertEq(
       _jbFundingCycleStore.currentOf(_projectId).number,
       3
@@ -251,6 +251,149 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         _memo: 'Refund plz',
         _metadata: redemptionMetadata
       });
+    }
+  }
+
+  function testMint_fails_afterMintPhase() external {
+    uint8 nTiers = 10;
+    address[] memory _users = new address[](nTiers);
+
+    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+      uint256(nTiers),
+      getBasicDefifaLaunchData()
+    );
+
+    // Phase 2
+    vm.warp(block.timestamp + 1 days);
+    deployer.queueNextPhaseOf(_projectId);
+
+    // Make sure this is actually Phase 2
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      2
+    );
+
+    for (uint256 i = 0; i < nTiers; i++) {
+      // Generate a new address for each tier
+      _users[i] = address(bytes20(keccak256(abi.encode('user', Strings.toString(i)))));
+
+      // fund user
+      vm.deal(_users[i], 1 ether);
+
+      // Build metadata to buy specific NFT
+      uint16[] memory rawMetadata = new uint16[](1);
+      rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
+      bytes memory metadata = abi.encode(
+        bytes32(0),
+        bytes32(0),
+        type(IJB721Delegate).interfaceId,
+        false,
+        false,
+        false,
+        rawMetadata
+      );
+
+      // Pay to the project and mint an NFT
+      vm.expectRevert(abi.encodeWithSignature("FUNDING_CYCLE_PAYMENT_PAUSED()"));
+      vm.prank(_users[i]);
+      _terminals[0].pay{value: 1 ether}(
+        _projectId,
+        1 ether,
+        address(0),
+        _users[i],
+        0,
+        true,
+        '',
+        metadata
+      );
+    }
+
+    // Phase 3
+    vm.warp(block.timestamp + 1 weeks);
+    deployer.queueNextPhaseOf(_projectId);
+
+    // Make sure this is actually Phase 3
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      3
+    );
+
+    for (uint256 i = 0; i < nTiers; i++) {
+      // Generate a new address for each tier
+      _users[i] = address(bytes20(keccak256(abi.encode('user', Strings.toString(i)))));
+
+      // fund user
+      vm.deal(_users[i], 1 ether);
+
+      // Build metadata to buy specific NFT
+      uint16[] memory rawMetadata = new uint16[](1);
+      rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
+      bytes memory metadata = abi.encode(
+        bytes32(0),
+        bytes32(0),
+        type(IJB721Delegate).interfaceId,
+        false,
+        false,
+        false,
+        rawMetadata
+      );
+
+      // Pay to the project and mint an NFT
+      vm.expectRevert(abi.encodeWithSignature("FUNDING_CYCLE_PAYMENT_PAUSED()"));
+      vm.prank(_users[i]);
+      _terminals[0].pay{value: 1 ether}(
+        _projectId,
+        1 ether,
+        address(0),
+        _users[i],
+        0,
+        true,
+        '',
+        metadata
+      );
+    }
+
+    // Phase 4
+    vm.warp(block.timestamp + 1 weeks);
+    // Make sure this is actually Phase 4
+    assertEq(
+      _jbFundingCycleStore.currentOf(_projectId).number,
+      _nft.END_GAME_PHASE()
+    );
+
+    for (uint256 i = 0; i < nTiers; i++) {
+      // Generate a new address for each tier
+      _users[i] = address(bytes20(keccak256(abi.encode('user', Strings.toString(i)))));
+
+      // fund user
+      vm.deal(_users[i], 1 ether);
+
+      // Build metadata to buy specific NFT
+      uint16[] memory rawMetadata = new uint16[](1);
+      rawMetadata[0] = uint16(i + 1); // reward tier, 1 indexed
+      bytes memory metadata = abi.encode(
+        bytes32(0),
+        bytes32(0),
+        type(IJB721Delegate).interfaceId,
+        false,
+        false,
+        false,
+        rawMetadata
+      );
+
+      // Pay to the project and mint an NFT
+      vm.expectRevert(abi.encodeWithSignature("FUNDING_CYCLE_PAYMENT_PAUSED()"));
+      vm.prank(_users[i]);
+      _terminals[0].pay{value: 1 ether}(
+        _projectId,
+        1 ether,
+        address(0),
+        _users[i],
+        0,
+        true,
+        '',
+        metadata
+      );
     }
   }
 
