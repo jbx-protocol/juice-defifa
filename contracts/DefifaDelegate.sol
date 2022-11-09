@@ -40,9 +40,9 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     The redemption weight for each tier.
 
     @dev
-    Tiers are limited to ID 100
+    Tiers are limited to ID 128
   */
-  uint256[100] private _tierRedemptionWeights;
+  uint256[128] private _tierRedemptionWeights;
 
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
@@ -96,7 +96,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
     @return The array of weights, indexed by tier.
   */
-  function tierRedemptionWeights() external view override returns (uint256[100] memory) {
+  function tierRedemptionWeights() external view override returns (uint256[128] memory) {
     return _tierRedemptionWeights;
   }
 
@@ -283,8 +283,13 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Call the hook.
     _didBurn(_decodedTokenIds);
 
-    // Increment the amount redeemed.
-    amountRedeemed += _data.reclaimedAmount.value;
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
+
+    // Make sure the game has ended.
+    if (_currentFundingCycle.number == END_GAME_PHASE)
+      // Increment the amount redeemed.
+      amountRedeemed += _data.reclaimedAmount.value;
   }
 
   //*********************************************************************//
