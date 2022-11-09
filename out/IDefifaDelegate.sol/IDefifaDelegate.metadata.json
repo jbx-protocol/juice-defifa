@@ -346,6 +346,32 @@
       },
       {
         "inputs": [],
+        "name": "END_GAME_PHASE",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "MINT_GAME_PHASE",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
         "name": "TOTAL_REDEMPTION_WEIGHT",
         "outputs": [
           {
@@ -424,6 +450,19 @@
         ],
         "name": "adjustTiers",
         "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "amountRedeemed",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "nonpayable",
         "type": "function"
       },
@@ -938,6 +977,25 @@
       {
         "inputs": [
           {
+            "internalType": "uint256",
+            "name": "_tierId",
+            "type": "uint256"
+          }
+        ],
+        "name": "redeemedFromTier",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "string",
             "name": "_baseUri",
             "type": "string"
@@ -1117,11 +1175,11 @@
   },
   "sources": {
     "contracts/interfaces/IDefifaDelegate.sol": {
-      "keccak256": "0x56d62b1ff97053f0a1713ccb01cd4b833645edb6ec64ed3b9726f8b1b29aa05e",
+      "keccak256": "0x20cb7ebf4ed786f92d6290756df8be8951e2549cf8809b26145777f5dd1156a9",
       "license": "MIT",
       "urls": [
-        "bzz-raw://4e54d40df122ec32061926ebec471f0f2ecdfd1fb458b5043fafcde2d4d32174",
-        "dweb:/ipfs/QmeRggYoSzA7U5s3BAzxum1ua6NqAn9Nfjx6HPfHveJLFV"
+        "bzz-raw://554dbce70f4f2a6ace7157ca8f19f6242cdde5d8db1d986849f4fba27eb793b8",
+        "dweb:/ipfs/QmbsF2EHGF3uRu7BbaZh2TdJ5vmABLdqNNRzcRAH9AK8Lm"
       ]
     },
     "contracts/structs/DefifaTierRedemptionWeight.sol": {

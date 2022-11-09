@@ -44,21 +44,21 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
   */
   uint256[128] private _tierRedemptionWeights;
 
-  //*********************************************************************//
-  // --------------------- public constant properties ------------------ //
-  //*********************************************************************//
-
   /** 
     @notice
     The funding cycle number of the mint phase. 
   */
-  uint256 public constant override MINT_GAME_PHASE = 1;
+  uint256 private constant _MINT_GAME_PHASE = 1;
 
   /** 
     @notice
     The funding cycle number of the end game phase. 
   */
-  uint256 public constant override END_GAME_PHASE = 4;
+  uint256 private constant _END_GAME_PHASE = 4;
+
+  //*********************************************************************//
+  // --------------------- public constant properties ------------------ //
+  //*********************************************************************//
 
   /** 
     @notice 
@@ -140,7 +140,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     );
 
     // If the game is in its minting phase, reclaim Amount is the same as it cost to mint.
-    if (_currentFundingCycle.number == MINT_GAME_PHASE) {
+    if (_currentFundingCycle.number == _MINT_GAME_PHASE) {
       // Keep a reference to the number of tokens.
       uint256 _numberOfTokenIds = _decodedTokenIds.length;
 
@@ -191,7 +191,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
 
     // Make sure the game has ended.
-    if (_currentFundingCycle.number < END_GAME_PHASE) revert GAME_ISNT_OVER_YET();
+    if (_currentFundingCycle.number < _END_GAME_PHASE) revert GAME_ISNT_OVER_YET();
 
     // Delete the currently set redemption weights.
     delete _tierRedemptionWeights;
@@ -264,7 +264,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
 
     // Keep track of whether the redemption is happening during the end phase.
-    bool _isEndPhase = _currentFundingCycle.number == END_GAME_PHASE;
+    bool _isEndPhase = _currentFundingCycle.number == _END_GAME_PHASE;
 
     // Iterate through all tokens, burning them if the owner is correct.
     for (uint256 _i; _i < _numberOfTokenIds; ) {

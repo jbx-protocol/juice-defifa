@@ -403,6 +403,41 @@
         "type": "function"
       },
       {
+        "inputs": [],
+        "name": "testMint_fails_afterMintPhase",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint16",
+            "name": "_durationUntilProjectLaunch",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "_mintDuration",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "_inBetweenMintAndFifa",
+            "type": "uint16"
+          },
+          {
+            "internalType": "uint16",
+            "name": "_fifaDuration",
+            "type": "uint16"
+          }
+        ],
+        "name": "testPhaseTimes",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
         "inputs": [
           {
             "internalType": "uint8",
@@ -416,6 +451,13 @@
           }
         ],
         "name": "testReceiveVotingPower",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "testRefund_fails_afterMintPhase",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -443,6 +485,16 @@
           {
             "internalType": "uint8",
             "name": "nUsersWithWinningTier",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "winningTierExtraWeight",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "baseRedemptionWeight",
             "type": "uint8"
           }
         ],
@@ -480,6 +532,13 @@
       {
         "inputs": [],
         "name": "testSettingTierRedemptionWeightBeforeEndPhase",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
+        "name": "testTransfer_fails_afterTradeDeadline",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -534,19 +593,19 @@
   },
   "sources": {
     "contracts/DefifaDelegate.sol": {
-      "keccak256": "0x98958b985303d277451beac0d24fd6a8980a3d223bc3f0e9693cb868e40dfcc0",
+      "keccak256": "0x6ac9bed1ec794ef6015aedddccba3cc4e97314b778938a4b6c5058cc1ad99f46",
       "license": "MIT",
       "urls": [
-        "bzz-raw://9fda0ac81d8884d9716fdd0bf2d2f78674405735188a23f0c4fe978eec1d3c6e",
-        "dweb:/ipfs/Qme7A6KzPsuLQUFxkYgULvqjJLDracmLspsRLKJMLkL2M8"
+        "bzz-raw://5fa2d92c35db533c79906b6aef3505dd7cae3726b26617b49b9dab3b88388c0f",
+        "dweb:/ipfs/QmZpRd9nknK2TyHxok61EBa8VPmZUrsDgfNLb2We448Jnu"
       ]
     },
     "contracts/DefifaDeployer.sol": {
-      "keccak256": "0xf6c4021e3df32c2ab0fc7944db11b88bb9c051915e1da64414bcd6dfff90a57c",
+      "keccak256": "0xa014934d34fac02fbc6e66a8149e0e73d4ae3dd35f2ff7b6d5175fce7779c0ff",
       "license": "MIT",
       "urls": [
-        "bzz-raw://45e528b2c1912a59b8b4ff5f8004a01c73b4b38ab446cf53ac30078eb54f0377",
-        "dweb:/ipfs/Qmcd3kD6EHqA55ftdfRdvhFjh7yiZXuPVrUPnX1pXuEYWW"
+        "bzz-raw://666368b9183f86fd88c758d96cfd87dc33ef7665bb6a10ffac2520295f3f7de7",
+        "dweb:/ipfs/QmaDDNeWpYcBZ9gcKQrn9hmQFPJbm2YEsdMtAKKvEteAVW"
       ]
     },
     "contracts/DefifaGovernor.sol": {
@@ -558,19 +617,19 @@
       ]
     },
     "contracts/forge-test/DefifaGovernor.t.sol": {
-      "keccak256": "0x97a4c7d5f1528be403fcc004af5b6f7b5e4006b8e5be78332548af4f78146f8f",
+      "keccak256": "0xd9e5b5ddce9b0823d88e38b4748a379b3e780bb4494b348ace12c747d39bb800",
       "license": "UNLICENSED",
       "urls": [
-        "bzz-raw://f444494f19a7f50788733f9291dadf87ce255c70ccd545b157a714d2ae47b0ff",
-        "dweb:/ipfs/QmNfLG7DKuSrEFZwRD9DLM9TpouP9zS69LqVDFLipxV5gS"
+        "bzz-raw://0b6866c32a154fb1e7b71f50846f53aa5cbc31351e094f44f6f521d74ff5f1c2",
+        "dweb:/ipfs/Qmcom3Aiq24AY7jySVHX8yWUpGzhmjZEx6rGBgk4K1DxML"
       ]
     },
     "contracts/interfaces/IDefifaDelegate.sol": {
-      "keccak256": "0x56d62b1ff97053f0a1713ccb01cd4b833645edb6ec64ed3b9726f8b1b29aa05e",
+      "keccak256": "0x20cb7ebf4ed786f92d6290756df8be8951e2549cf8809b26145777f5dd1156a9",
       "license": "MIT",
       "urls": [
-        "bzz-raw://4e54d40df122ec32061926ebec471f0f2ecdfd1fb458b5043fafcde2d4d32174",
-        "dweb:/ipfs/QmeRggYoSzA7U5s3BAzxum1ua6NqAn9Nfjx6HPfHveJLFV"
+        "bzz-raw://554dbce70f4f2a6ace7157ca8f19f6242cdde5d8db1d986849f4fba27eb793b8",
+        "dweb:/ipfs/QmbsF2EHGF3uRu7BbaZh2TdJ5vmABLdqNNRzcRAH9AK8Lm"
       ]
     },
     "contracts/interfaces/IDefifaDeployer.sol": {

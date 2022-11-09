@@ -7,10 +7,6 @@ import './../structs/DefifaTierRedemptionWeight.sol';
 interface IDefifaDelegate is IJB721TieredGovernance {
   function TOTAL_REDEMPTION_WEIGHT() external returns (uint256);
 
-  function MINT_GAME_PHASE() external returns (uint256);
-
-  function END_GAME_PHASE() external returns (uint256);
-
   function tierRedemptionWeights() external returns (uint256[128] memory);
 
   function amountRedeemed() external returns (uint256);

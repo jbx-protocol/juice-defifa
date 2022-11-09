@@ -121,98 +121,98 @@
   },
   "ast": {
     "absolutePath": "contracts/interfaces/IDefifaGovernor.sol",
-    "id": 6489,
+    "id": 8313,
     "exportedSymbols": {
       "DefifaTierRedemptionWeight": [
-        7494
+        9314
       ],
       "IDefifaDelegate": [
-        6322
+        8146
       ],
       "IDefifaGovernor": [
-        6488
+        8312
       ],
       "IERC165": [
-        60776
+        62596
       ],
       "IERC721": [
-        59038
+        60858
       ],
       "IJB721Delegate": [
-        38253
+        40073
       ],
       "IJB721TieredGovernance": [
-        38351
+        40171
       ],
       "IJBDirectory": [
-        51044
+        52864
       ],
       "IJBFundingCycleBallot": [
-        51078
+        52898
       ],
       "IJBFundingCycleStore": [
-        51215
+        53035
       ],
       "IJBPaymentTerminal": [
-        51388
+        53208
       ],
       "IJBPriceFeed": [
-        51751
+        53571
       ],
       "IJBPrices": [
-        51795
+        53615
       ],
       "IJBProjects": [
-        51874
+        53694
       ],
       "IJBTiered721Delegate": [
-        38538
+        40358
       ],
       "IJBTiered721DelegateStore": [
-        38904
+        40724
       ],
       "IJBTokenUriResolver": [
-        52493
+        54313
       ],
       "JB721PricingParams": [
-        39482
+        41302
       ],
       "JB721Tier": [
-        39507
+        41327
       ],
       "JB721TierParams": [
-        39530
+        41350
       ],
       "JBBallotState": [
-        50472
+        52292
       ],
       "JBFundingCycle": [
-        53481
+        55301
       ],
       "JBFundingCycleData": [
-        53494
+        55314
       ],
       "JBProjectMetadata": [
-        53607
+        55427
       ],
       "JBTiered721Flags": [
-        39679
+        41499
       ],
       "JBTiered721MintForTiersData": [
-        39694
+        41514
       ],
       "JBTiered721MintReservesForTiersData": [
-        39701
+        41521
       ],
       "JBTiered721SetTierDelegatesData": [
-        39708
+        41528
       ]
     },
     "nodeType": "SourceUnit",
     "src": "32:574:6",
     "nodes": [
       {
-        "id": 6451,
+        "id": 8275,
         "nodeType": "PragmaDirective",
         "src": "32:23:6",
         "literals": [
@@ -223,36 +223,36 @@
         ]
       },
       {
-        "id": 6452,
+        "id": 8276,
         "nodeType": "ImportDirective",
         "src": "57:51:6",
         "absolutePath": "contracts/structs/DefifaTierRedemptionWeight.sol",
         "file": "../structs/DefifaTierRedemptionWeight.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 6489,
-        "sourceUnit": 7495,
+        "scope": 8313,
+        "sourceUnit": 9315,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 6453,
+        "id": 8277,
         "nodeType": "ImportDirective",
         "src": "109:31:6",
         "absolutePath": "contracts/interfaces/IDefifaDelegate.sol",
         "file": "./IDefifaDelegate.sol",
         "nameLocation": "-1:-1:-1",
-        "scope": 6489,
-        "sourceUnit": 6323,
+        "scope": 8313,
+        "sourceUnit": 8147,
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
-        "id": 6488,
+        "id": 8312,
         "nodeType": "ContractDefinition",
         "src": "142:463:6",
         "nodes": [
           {
-            "id": 6458,
+            "id": 8282,
             "nodeType": "FunctionDefinition",
             "src": "172:65:6",
             "functionSelector": "4b501fbd",
@@ -262,23 +262,23 @@
             "name": "MAX_VOTING_POWER_TIER",
             "nameLocation": "181:21:6",
             "parameters": {
-              "id": 6454,
+              "id": 8278,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "202:2:6"
             },
             "returnParameters": {
-              "id": 6457,
+              "id": 8281,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6456,
+                  "id": 8280,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6458,
+                  "scope": 8282,
                   "src": "228:7:6",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -287,7 +287,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6455,
+                    "id": 8279,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "228:7:6",
@@ -301,13 +301,13 @@
               ],
               "src": "227:9:6"
             },
-            "scope": 6488,
+            "scope": 8312,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 6464,
+            "id": 8288,
             "nodeType": "FunctionDefinition",
             "src": "241:66:6",
             "functionSelector": "58d5ac0a",
@@ -317,47 +317,47 @@
             "name": "defifaDelegate",
             "nameLocation": "250:14:6",
             "parameters": {
-              "id": 6459,
+              "id": 8283,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "264:2:6"
             },
             "returnParameters": {
-              "id": 6463,
+              "id": 8287,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6462,
+                  "id": 8286,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6464,
+                  "scope": 8288,
                   "src": "290:15:6",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_IDefifaDelegate_$6322",
+                    "typeIdentifier": "t_contract$_IDefifaDelegate_$8146",
                     "typeString": "contract IDefifaDelegate"
                   },
                   "typeName": {
-                    "id": 6461,
+                    "id": 8285,
                     "nodeType": "UserDefinedTypeName",
                     "pathNode": {
-                      "id": 6460,
+                      "id": 8284,
                       "name": "IDefifaDelegate",
                       "nameLocations": [
                         "290:15:6"
                       ],
                       "nodeType": "IdentifierPath",
-                      "referencedDeclaration": 6322,
+                      "referencedDeclaration": 8146,
                       "src": "290:15:6"
                     },
-                    "referencedDeclaration": 6322,
+                    "referencedDeclaration": 8146,
                     "src": "290:15:6",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IDefifaDelegate_$6322",
+                      "typeIdentifier": "t_contract$_IDefifaDelegate_$8146",
                       "typeString": "contract IDefifaDelegate"
                     }
                   },
@@ -366,13 +366,13 @@
               ],
               "src": "289:17:6"
             },
-            "scope": 6488,
+            "scope": 8312,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 6469,
+            "id": 8293,
             "nodeType": "FunctionDefinition",
             "src": "311:59:6",
             "functionSelector": "2019a608",
@@ -382,23 +382,23 @@
             "name": "votingStartTime",
             "nameLocation": "320:15:6",
             "parameters": {
-              "id": 6465,
+              "id": 8289,
               "nodeType": "ParameterList",
               "parameters": [],
               "src": "335:2:6"
             },
             "returnParameters": {
-              "id": 6468,
+              "id": 8292,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6467,
+                  "id": 8291,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6469,
+                  "scope": 8293,
                   "src": "361:7:6",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -407,7 +407,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6466,
+                    "id": 8290,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "361:7:6",
@@ -421,13 +421,13 @@
               ],
               "src": "360:9:6"
             },
-            "scope": 6488,
+            "scope": 8312,
             "stateMutability": "view",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 6478,
+            "id": 8302,
             "nodeType": "FunctionDefinition",
             "src": "374:113:6",
             "functionSelector": "59f397bd",
@@ -437,50 +437,50 @@
             "name": "submitScorecards",
             "nameLocation": "383:16:6",
             "parameters": {
-              "id": 6474,
+              "id": 8298,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6473,
+                  "id": 8297,
                   "mutability": "mutable",
                   "name": "_tierWeights",
                   "nameLocation": "438:12:6",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6478,
+                  "scope": 8302,
                   "src": "400:50:6",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$7494_calldata_ptr_$dyn_calldata_ptr",
+                    "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$9314_calldata_ptr_$dyn_calldata_ptr",
                     "typeString": "struct DefifaTierRedemptionWeight[]"
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 6471,
+                      "id": 8295,
                       "nodeType": "UserDefinedTypeName",
                       "pathNode": {
-                        "id": 6470,
+                        "id": 8294,
                         "name": "DefifaTierRedemptionWeight",
                         "nameLocations": [
                           "400:26:6"
                         ],
                         "nodeType": "IdentifierPath",
-                        "referencedDeclaration": 7494,
+                        "referencedDeclaration": 9314,
                         "src": "400:26:6"
                       },
-                      "referencedDeclaration": 7494,
+                      "referencedDeclaration": 9314,
                       "src": "400:26:6",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_DefifaTierRedemptionWeight_$7494_storage_ptr",
+                        "typeIdentifier": "t_struct$_DefifaTierRedemptionWeight_$9314_storage_ptr",
                         "typeString": "struct DefifaTierRedemptionWeight"
                       }
                     },
-                    "id": 6472,
+                    "id": 8296,
                     "nodeType": "ArrayTypeName",
                     "src": "400:28:6",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$7494_storage_$dyn_storage_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$9314_storage_$dyn_storage_ptr",
                       "typeString": "struct DefifaTierRedemptionWeight[]"
                     }
                   },
@@ -490,17 +490,17 @@
               "src": "399:52:6"
             },
             "returnParameters": {
-              "id": 6477,
+              "id": 8301,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6476,
+                  "id": 8300,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6478,
+                  "scope": 8302,
                   "src": "478:7:6",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -509,7 +509,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6475,
+                    "id": 8299,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "478:7:6",
@@ -523,13 +523,13 @@
               ],
               "src": "477:9:6"
             },
-            "scope": 6488,
+            "scope": 8312,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
           },
           {
-            "id": 6487,
+            "id": 8311,
             "nodeType": "FunctionDefinition",
             "src": "491:112:6",
             "functionSelector": "64d87a61",
@@ -539,50 +539,50 @@
             "name": "ratifyScorecard",
             "nameLocation": "500:15:6",
             "parameters": {
-              "id": 6483,
+              "id": 8307,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6482,
+                  "id": 8306,
                   "mutability": "mutable",
                   "name": "_tierWeights",
                   "nameLocation": "554:12:6",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6487,
+                  "scope": 8311,
                   "src": "516:50:6",
                   "stateVariable": false,
                   "storageLocation": "calldata",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$7494_calldata_ptr_$dyn_calldata_ptr",
+                    "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$9314_calldata_ptr_$dyn_calldata_ptr",
                     "typeString": "struct DefifaTierRedemptionWeight[]"
                   },
                   "typeName": {
                     "baseType": {
-                      "id": 6480,
+                      "id": 8304,
                       "nodeType": "UserDefinedTypeName",
                       "pathNode": {
-                        "id": 6479,
+                        "id": 8303,
                         "name": "DefifaTierRedemptionWeight",
                         "nameLocations": [
                           "516:26:6"
                         ],
                         "nodeType": "IdentifierPath",
-                        "referencedDeclaration": 7494,
+                        "referencedDeclaration": 9314,
                         "src": "516:26:6"
                       },
-                      "referencedDeclaration": 7494,
+                      "referencedDeclaration": 9314,
                       "src": "516:26:6",
                       "typeDescriptions": {
-                        "typeIdentifier": "t_struct$_DefifaTierRedemptionWeight_$7494_storage_ptr",
+                        "typeIdentifier": "t_struct$_DefifaTierRedemptionWeight_$9314_storage_ptr",
                         "typeString": "struct DefifaTierRedemptionWeight"
                       }
                     },
-                    "id": 6481,
+                    "id": 8305,
                     "nodeType": "ArrayTypeName",
                     "src": "516:28:6",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$7494_storage_$dyn_storage_ptr",
+                      "typeIdentifier": "t_array$_t_struct$_DefifaTierRedemptionWeight_$9314_storage_$dyn_storage_ptr",
                       "typeString": "struct DefifaTierRedemptionWeight[]"
                     }
                   },
@@ -592,17 +592,17 @@
               "src": "515:52:6"
             },
             "returnParameters": {
-              "id": 6486,
+              "id": 8310,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 6485,
+                  "id": 8309,
                   "mutability": "mutable",
                   "name": "",
                   "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 6487,
+                  "scope": 8311,
                   "src": "594:7:6",
                   "stateVariable": false,
                   "storageLocation": "default",
@@ -611,7 +611,7 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 6484,
+                    "id": 8308,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
                     "src": "594:7:6",
@@ -625,7 +625,7 @@
               ],
               "src": "593:9:6"
             },
-            "scope": 6488,
+            "scope": 8312,
             "stateMutability": "nonpayable",
             "virtual": false,
             "visibility": "external"
@@ -638,11 +638,11 @@
         "contractKind": "interface",
         "fullyImplemented": false,
         "linearizedBaseContracts": [
-          6488
+          8312
         ],
         "name": "IDefifaGovernor",
         "nameLocation": "152:15:6",
-        "scope": 6489,
+        "scope": 8313,
         "usedErrors": []
       }
     ],
