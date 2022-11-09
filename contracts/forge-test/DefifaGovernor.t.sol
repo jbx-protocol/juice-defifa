@@ -1101,13 +1101,13 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     _nft = DefifaDelegate(_jbFundingCycleStore.currentOf(_projectId).dataSource());
 
     // We should be in the minting phase now
-    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, _nft.MINT_GAME_PHASE());
+    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, 1);
     // Queue Phase 2
     deployer.queueNextPhaseOf(_projectId);
 
     // Go to the end of the minting phase and check if we are still in the minting phase
     vm.warp(_launchProjectAt + _mintDuration - 1);
-    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, _nft.MINT_GAME_PHASE());
+    assertEq(_jbFundingCycleStore.currentOf(_projectId).number, 1);
 
     // We should now be in phase 2, minting is paused and the treasury is frozen
     vm.warp(_launchProjectAt + _mintDuration);
