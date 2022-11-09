@@ -100,7 +100,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     uint8 nTiers = 10;
     address[] memory _users = new address[](nTiers);
 
-    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+    (uint256 _projectId, DefifaDelegate _nft,) = createDefifaProject(
       uint256(nTiers),
       getBasicDefifaLaunchData()
     );
@@ -258,7 +258,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     uint8 nTiers = 10;
     address[] memory _users = new address[](nTiers);
 
-    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+    (uint256 _projectId, DefifaDelegate _nft,) = createDefifaProject(
       uint256(nTiers),
       getBasicDefifaLaunchData()
     );
@@ -1038,7 +1038,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         terminal: _jbETHPaymentTerminal
       });
 
-    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+    (uint256 _projectId, DefifaDelegate _nft,) = createDefifaProject(
       uint256(10),
       _launchData
     );
@@ -1238,10 +1238,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     vm.warp(block.timestamp + 1 days);
     deployer.queueNextPhaseOf(_projectId);
 
-    address[] memory targets = new address[](1);
-    uint256[] memory values = new uint256[](1);
-    bytes[] memory calldatas = new bytes[](1);
-
     // Generate the scorecards
     DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
 
@@ -1338,10 +1334,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     // Phase 3
     vm.warp(block.timestamp + 1 days);
     deployer.queueNextPhaseOf(_projectId);
-
-    address[] memory targets = new address[](1);
-    uint256[] memory values = new uint256[](1);
-    bytes[] memory calldatas = new bytes[](1);
 
     // Generate the scorecards
     DefifaTierRedemptionWeight[] memory scorecards = new DefifaTierRedemptionWeight[](nTiers);
