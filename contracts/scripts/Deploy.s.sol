@@ -23,7 +23,7 @@ contract DeployMainnet is Script {
     address _defifaBallcats = 0x11834239698c7336EF232C00a2A9926d3375DF9D;
     // Game params.
     uint48 _start = 1669024800; // 2am PST, Nov 21.
-    uint48 _mintDuration = 1209600; // 2 weeks.
+    uint48 _mintDuration = 1036800; // 12 days.
     uint48 _tradeDeadline = 1670598000; // 7am, Dec 9.
     uint48 _end = 1671375600 + 604800; // 7 days after the finals. Dec 25, 7am PST.
 
@@ -163,10 +163,10 @@ contract DeployGoerli is Script {
 
     address _defifaBallcats = 0x11834239698c7336EF232C00a2A9926d3375DF9D;
     // Game params.
-    uint48 _start = 1667968400; // 1pm PST, Nov 6.
-    uint48 _mintDuration = 7200; // 2 hours.
-    uint48 _tradeDeadline = 1667968400 + 7200; // 2 hours after start.
-    uint48 _end = 1667968400 + 7200 + 7200; // 2 hours after trade deadline.
+    uint48 _start = 1669024800; // 2am PST, Nov 21.
+    uint48 _mintDuration = 1036800; // 12 days.
+    uint48 _tradeDeadline = 1670598000; // 7am, Dec 9.
+    uint48 _end = 1671375600 + 604800; // 7 days after the finals. Dec 25, 7am PST.
 
     JB721TierParams[] memory _tiers = new JB721TierParams[](32);
 

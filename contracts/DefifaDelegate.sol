@@ -2,6 +2,7 @@
 pragma solidity ^0.8.16;
 
 import '@jbx-protocol/juice-721-delegate/contracts/JB721TieredGovernance.sol';
+import '@jbx-protocol/juice-contracts-v3/contracts/interfaces/IJBSingleTokenPaymentTerminal.sol';
 
 import './interfaces/IDefifaDelegate.sol';
 
@@ -39,35 +40,47 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     The redemption weight for each tier.
 
     @dev
-    Tiers are limited to ID 100
+    Tiers are limited to ID 128
   */
-  uint256[100] private _tierRedemptionWeights;
-
-  //*********************************************************************//
-  // -------------------- private constant properties ------------------ //
-  //*********************************************************************//
-
-  /** 
-    @notice
-    The funding cycle number of the mint phase. 
-  */
-  uint256 public constant MINT_GAME_PHASE = 1;
-
-  /** 
-    @notice
-    The funding cycle number of the end game phase. 
-  */
-  uint256 public constant END_GAME_PHASE = 4;
+  uint256[128] private _tierRedemptionWeights;
 
   //*********************************************************************//
   // --------------------- public constant properties ------------------ //
   //*********************************************************************//
 
   /** 
+    @notice
+    The funding cycle number of the mint phase. 
+  */
+  uint256 public constant override MINT_GAME_PHASE = 1;
+
+  /** 
+    @notice
+    The funding cycle number of the end game phase. 
+  */
+  uint256 public constant override END_GAME_PHASE = 4;
+
+  /** 
     @notice 
     The total weight that can be divided among tiers.
   */
-  uint256 public constant TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
+  uint256 public constant override TOTAL_REDEMPTION_WEIGHT = 1_000_000_000;
+
+  //*********************************************************************//
+  // --------------------- public stored properties -------------------- //
+  //*********************************************************************//
+
+  /**
+    @notice
+    The amount that has been redeemed.
+   */
+  uint256 public override amountRedeemed;
+
+  /**
+    @notice
+    The amount of tokens that have been redeemed from a tier, refunds are not counted
+  */
+  mapping(uint256 => uint256) public override redeemedFromTier;
 
   //*********************************************************************//
   // ------------------------- external views -------------------------- //
@@ -79,7 +92,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
     @return The array of weights, indexed by tier.
   */
-  function tierRedemptionWeights() external view override returns (uint256[100] memory) {
+  function tierRedemptionWeights() external view override returns (uint256[128] memory) {
     return _tierRedemptionWeights;
   }
 
@@ -147,7 +160,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Return the weighted overflow, and this contract as the delegate so that tokens can be deleted.
     return (
       PRBMath.mulDiv(
-        _data.overflow,
+        _data.overflow + amountRedeemed,
         _redemptionWeightOf(_decodedTokenIds, _data),
         _totalRedemptionWeight(_data)
       ),
@@ -209,6 +222,72 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
 
     // Make sure the cumulative amount is contained within the total redemption weight.
     if (_cumulativeRedemptionWeight > TOTAL_REDEMPTION_WEIGHT) revert INVALID_REDEMPTION_WEIGHTS();
+  }
+
+  /**
+    @notice
+    Part of IJBRedeemDelegate, this function gets called when the token holder redeems. It will burn the specified NFTs to reclaim from the treasury to the _data.beneficiary.
+
+    @dev
+    This function will revert if the contract calling is not one of the project's terminals.
+
+    @param _data The Juicebox standard project redemption data.
+  */
+  function didRedeem(JBDidRedeemData calldata _data) external payable virtual override {
+    // Make sure the caller is a terminal of the project, and the call is being made on behalf of an interaction with the correct project.
+    if (
+      msg.value != 0 ||
+      !directory.isTerminalOf(projectId, IJBPaymentTerminal(msg.sender)) ||
+      _data.projectId != projectId
+    ) revert INVALID_REDEMPTION_EVENT();
+
+    // Check the 4 bytes interfaceId and handle the case where the metadata was not intended for this contract
+    // Skip 32 bytes reserved for generic extension parameters.
+    if (
+      _data.metadata.length < 36 ||
+      bytes4(_data.metadata[32:36]) != type(IJB721Delegate).interfaceId
+    ) revert INVALID_REDEMPTION_METADATA();
+
+    // Decode the metadata.
+    (, , uint256[] memory _decodedTokenIds) = abi.decode(
+      _data.metadata,
+      (bytes32, bytes4, uint256[])
+    );
+
+    // Get a reference to the number of token IDs being checked.
+    uint256 _numberOfTokenIds = _decodedTokenIds.length;
+
+    // Keep a reference to the token ID being iterated on.
+    uint256 _tokenId;
+
+    // Get a reference to the current funding cycle.
+    JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
+
+    // Keep track of whether the redemption is happening during the end phase.
+    bool _isEndPhase = _currentFundingCycle.number == END_GAME_PHASE;
+
+    // Iterate through all tokens, burning them if the owner is correct.
+    for (uint256 _i; _i < _numberOfTokenIds; ) {
+      // Set the token's ID.
+      _tokenId = _decodedTokenIds[_i];
+
+      // Make sure the token's owner is correct.
+      if (_owners[_tokenId] != _data.holder) revert UNAUTHORIZED();
+
+      // Burn the token.
+      _burn(_tokenId);
+
+      unchecked {
+        if (_isEndPhase) ++redeemedFromTier[store.tierIdOfToken(_tokenId)];
+        ++_i;
+      }
+    }
+
+    // Call the hook.
+    _didBurn(_decodedTokenIds);
+
+    // Increment the amount redeemed if this is the end phase.
+    if (_isEndPhase) amountRedeemed += _data.reclaimedAmount.value;
   }
 
   //*********************************************************************//
@@ -273,7 +352,7 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       cumulativeWeight +=
         // Tier's are 1 indexed and are stored 0 indexed.
         _tierRedemptionWeights[_tierId - 1] /
-        (_tier.initialQuantity - _tier.remainingQuantity);
+        (_tier.initialQuantity - _tier.remainingQuantity + redeemedFromTier[_tierId]);
 
       unchecked {
         ++_i;

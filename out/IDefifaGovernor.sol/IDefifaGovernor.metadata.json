@@ -165,6 +165,14 @@
         "dweb:/ipfs/QmWu2W1GteoLMsBU1jYkrKYM3eUzsRadhzpoGqPFBc3PHz"
       ]
     },
+    "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJB721Delegate.sol": {
+      "keccak256": "0xa8fbb99c63314f21fb37435c4c3beb7b036b1fa423091ecb4908333612598e6f",
+      "license": "MIT",
+      "urls": [
+        "bzz-raw://f06796c0da61e0642eb7d2170e0ddd2ebd97d33c42b8f01ea5dd233882b2fb87",
+        "dweb:/ipfs/QmXmfmSScCwpimkyJEB3USwvzfA18zoL4KqkPvE2ZPuP8J"
+      ]
+    },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJB721TieredGovernance.sol": {
       "keccak256": "0x2919ae0682a56517691009fa632ac5318633a52499314dbbc21e0414703de4f3",
       "license": "MIT",
@@ -174,11 +182,11 @@
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721Delegate.sol": {
-      "keccak256": "0xd514619d1c1bfce3d7f83606e15194e09f61416dc9d51ed6553d408304722d15",
+      "keccak256": "0x323d9023292e6994e22d253adb9c185dc73fbee4bbb2bc266ddcc80ee47c292a",
       "license": "MIT",
       "urls": [
-        "bzz-raw://9733e6affc80da81c1fe303e8050c66597af545c1091f9e76ae88e9bc06e4beb",
-        "dweb:/ipfs/QmRSFGiXAkxpXMmdcfeNgH2piFAiC7jLCjw8cudXsKgToS"
+        "bzz-raw://4f34da8e019554376049670eeec991bad268f0dd19bbca0790fbe027d57457cc",
+        "dweb:/ipfs/QmUxjktmXDKxDz4cuUX2t1Kv6EKZXubsUvRUoann63F4ER"
       ]
     },
     "node_modules/@jbx-protocol/juice-721-delegate/contracts/interfaces/IJBTiered721DelegateStore.sol": {
