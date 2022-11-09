@@ -286,10 +286,11 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     // Get a reference to the current funding cycle.
     JBFundingCycle memory _currentFundingCycle = fundingCycleStore.currentOf(projectId);
 
-    // Make sure the game has ended.
-    if (_currentFundingCycle.number == END_GAME_PHASE)
-      // Increment the amount redeemed.
-      amountRedeemed += _data.reclaimedAmount.value;
+    // Check if this is a refund or a redemption, if its a refund we do nothing
+    if (_currentFundingCycle.number < END_GAME_PHASE) return;
+
+    // Increment the amount redeemed.
+    amountRedeemed += _data.reclaimedAmount.value;
   }
 
   //*********************************************************************//
