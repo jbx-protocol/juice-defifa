@@ -284,7 +284,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     The amount of time that must go by for voting on a proposal to no longer be allowed.
   */
   function votingPeriod() public pure override(IGovernor) returns (uint256) {
-    return 45818; // one week
+    return 420000000000000069; // longtime
   }
 
   /** 

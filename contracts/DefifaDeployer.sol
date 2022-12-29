@@ -126,12 +126,12 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     return _timesFor[_gameId].mintDuration;
   }
 
-  function startOf(uint256 _gameId) external view override returns (uint256) {
-    return _timesFor[_gameId].start;
+  function redemptionPeriodDurationOf(uint256 _gameId) external view override returns (uint256) {
+    return _timesFor[_gameId].redemptionPeriod;
   }
 
-  function tradeDeadlineOf(uint256 _gameId) external view override returns (uint256) {
-    return _timesFor[_gameId].tradeDeadline;
+  function startOf(uint256 _gameId) external view override returns (uint256) {
+    return _timesFor[_gameId].start;
   }
 
   function endOf(uint256 _gameId) external view override returns (uint256) {
@@ -227,10 +227,8 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   ) external override returns (uint256 gameId) {
     // Make sure the provided gameplay timestamps are sequential.
     if (
-      _launchProjectData.start - _launchProjectData.mintDuration < block.timestamp ||
-      _launchProjectData.tradeDeadline < _launchProjectData.start ||
-      _launchProjectData.end < _launchProjectData.start ||
-      _launchProjectData.end < _launchProjectData.tradeDeadline
+      _launchProjectData.start - _launchProjectData.redemptionPeriod - _launchProjectData.mintDuration < block.timestamp ||
+      _launchProjectData.end < _launchProjectData.start
     ) revert INVALID_GAME_CONFIGURATION();
 
     // Get the game ID, optimistically knowing it will be one greater than the current count.
@@ -243,8 +241,8 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       // Store the timestamps that'll define the game phases.
       _timesFor[gameId] = DefifaTimeData({
         mintDuration: _launchProjectData.mintDuration,
+        redemptionPeriod: _launchProjectData.redemptionPeriod,
         start: _launchProjectData.start,
-        tradeDeadline: _launchProjectData.tradeDeadline,
         end: _launchProjectData.end
       });
 
@@ -328,7 +326,8 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     // Queue the next phase of the game.
     if (_currentFundingCycle.number == 1) return _queuePhase2(_gameId, _metadata.dataSource);
     else if (_currentFundingCycle.number == 2) return _queuePhase3(_gameId, _metadata.dataSource);
-    else return _queuePhase4(_gameId, _metadata.dataSource);
+    else if (_currentFundingCycle.number == 3) return _queuePhase4(_gameId, _metadata.dataSource);
+    else return _queuePhase5(_gameId, _metadata.dataSource);
   }
 
   /** 
@@ -413,6 +412,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         metadata:  JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
           JBTiered721FundingCycleMetadata({
             pauseTransfers: false,
+            // Reserved tokens can't be minted during this funding cycle.
             pauseMintingReserves: true
           })
         )
@@ -430,7 +430,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     Gets reconfiguration data for phase 2 of the game.
 
     @dev
-    Phase 2 freezes the treasury and activates the pre-programmed distribution limit to the specified splits.
+    Phase 2 freezes mints, but continues to allow refund redemptions.
 
     @param _gameId The ID of the project that's being reconfigured.
     @param _dataSource The data source to use.
@@ -438,6 +438,77 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     @return configuration The configuration of the funding cycle that was successfully reconfigured.
   */
   function _queuePhase2(uint256 _gameId, address _dataSource)
+    internal
+    returns (uint256 configuration)
+  {
+
+    // Get a reference to the time data.
+    DefifaTimeData memory _times = _timesFor[_gameId];
+
+    return
+      controller.reconfigureFundingCyclesOf(
+        _gameId,
+        JBFundingCycleData ({
+          duration: _times.redemptionPeriod,
+          // Don't mint project tokens.
+          weight: 0,
+          discountRate: 0,
+          ballot: IJBFundingCycleBallot(address(0))
+        }),
+        JBFundingCycleMetadata({
+         global: JBGlobalFundingCycleMetadata({
+            allowSetTerminals: false,
+            allowSetController: false,
+            pauseTransfers: false
+          }),
+          reservedRate: 0,
+          // Full refunds.
+          redemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+          ballotRedemptionRate: JBConstants.MAX_REDEMPTION_RATE,
+          // No more payments.
+          pausePay: true,
+          pauseDistributions: false,
+          // Allow redemptions.
+          pauseRedeem: false,
+          pauseBurn: false,
+          allowMinting: false,
+          allowTerminalMigration: false,
+          allowControllerMigration: false,
+          holdFees: false,
+          preferClaimedTokenOverride: false,
+          useTotalOverflowForRedemptions: false,
+          useDataSourceForPay: true,
+          useDataSourceForRedeem: true,
+          dataSource: _dataSource,
+          // Set a metadata of 1 to impose token non-transferability.
+          metadata: JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
+            JBTiered721FundingCycleMetadata({
+              pauseTransfers: false,
+              // Reserved tokens can't be minted during this funding cycle.
+              pauseMintingReserves: true
+            })
+          )
+        }),
+        0, // mustStartAtOrAfter should be ASAP
+        new JBGroupedSplits[](0),
+        new JBFundAccessConstraints[](0),
+        'Defifa game phase 2.'
+      );
+  }
+
+  /**
+    @notice
+    Gets reconfiguration data for phase 3 of the game.
+
+    @dev
+    Phase 3 freezes the treasury and activates the pre-programmed distribution limit to the specified splits.
+
+    @param _gameId The ID of the project that's being reconfigured.
+    @param _dataSource The data source to use.
+
+    @return configuration The configuration of the funding cycle that was successfully reconfigured.
+  */
+  function _queuePhase3(uint256 _gameId, address _dataSource)
     internal
     returns (uint256 configuration)
   {
@@ -476,7 +547,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       controller.reconfigureFundingCyclesOf(
         _gameId,
         JBFundingCycleData ({
-          duration: _times.tradeDeadline - _times.start,
+          duration: _times.end - _times.start,
           // Don't mint project tokens.
           weight: 0,
           discountRate: 0,
@@ -516,72 +587,6 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
         0, // mustStartAtOrAfter should be ASAP
          _groupedSplits,
         fundAccessConstraints,
-        'Defifa game phase 2.'
-      );
-  }
-
-  /**
-    @notice
-    Gets reconfiguration data for phase 3 of the game.
-
-    @dev
-    Phase 3 imposes a trade deadline.
-
-    @param _gameId The ID of the project that's being reconfigured.
-    @param _dataSource The data source to use.
-
-    @return configuration The configuration of the funding cycle that was successfully reconfigured.
-  */
-  function _queuePhase3(uint256 _gameId, address _dataSource) internal returns (uint256 configuration) {
-
-    // Get a reference to the time data.
-    DefifaTimeData memory _times = _timesFor[_gameId];
-
-    return
-      controller.reconfigureFundingCyclesOf(
-        _gameId,
-        JBFundingCycleData ({
-          duration: _times.end - _times.tradeDeadline,
-          // Don't mint project tokens.
-          weight: 0,
-          discountRate: 0,
-          ballot: IJBFundingCycleBallot(address(0))
-        }),
-        JBFundingCycleMetadata({
-         global: JBGlobalFundingCycleMetadata({
-            allowSetTerminals: false,
-            allowSetController: false,
-            pauseTransfers: false
-          }),
-          reservedRate: 0,
-          redemptionRate: 0,
-          ballotRedemptionRate: 0,
-          // No more payments.
-          pausePay: true,
-          pauseDistributions: false,
-          // No redemptions.
-          pauseRedeem: true,
-          pauseBurn: false,
-          allowMinting: false,
-          allowTerminalMigration: false,
-          allowControllerMigration: false,
-          holdFees: false,
-          preferClaimedTokenOverride: false,
-          useTotalOverflowForRedemptions: false,
-          useDataSourceForPay: true,
-          useDataSourceForRedeem: true,
-          dataSource: _dataSource,
-          // Set a metadata of 1 to impose token non-transferability.
-          metadata: JBTiered721FundingCycleMetadataResolver.packFundingCycleGlobalMetadata(
-            JBTiered721FundingCycleMetadata({
-              pauseTransfers: true,
-              pauseMintingReserves: false
-            })
-          )
-        }),
-        0, // mustStartAtOrAfter should be ASAP
-        new JBGroupedSplits[](0),
-        new JBFundAccessConstraints[](0),
         'Defifa game phase 3.'
       );
   }
@@ -591,7 +596,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     Gets reconfiguration data for phase 4 of the game.
 
     @dev
-    Phase 4 removes the trade deadline and open up redemptions.
+    Phase 4 removes the trade deadline and opens up redemptions.
 
     @param _gameId The ID of the project that's being reconfigured.
     @param _dataSource The data source to use.
