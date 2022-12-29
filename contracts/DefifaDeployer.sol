@@ -326,8 +326,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     // Queue the next phase of the game.
     if (_currentFundingCycle.number == 1) return _queuePhase2(_gameId, _metadata.dataSource);
     else if (_currentFundingCycle.number == 2) return _queuePhase3(_gameId, _metadata.dataSource);
-    else if (_currentFundingCycle.number == 3) return _queuePhase4(_gameId, _metadata.dataSource);
-    else return _queuePhase5(_gameId, _metadata.dataSource);
+    else return _queuePhase4(_gameId, _metadata.dataSource);
   }
 
   /** 
