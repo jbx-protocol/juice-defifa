@@ -88,7 +88,6 @@ contract DeployMainnet is Script {
       }),
       mintDuration: _mintDuration,
       start: _start,
-      tradeDeadline: _tradeDeadline,
       redemptionPeriodDuration: _redemptionPeriodDuration,
       end: _end,
       holdFees: false,
