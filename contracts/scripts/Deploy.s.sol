@@ -22,10 +22,10 @@ contract DeployMainnet is Script {
 
     address _defifaBallcats = 0x11834239698c7336EF232C00a2A9926d3375DF9D;
     // Game params.
-    uint48 _start = 1642136400; // 12am EST, Jan 14.
+    uint48 _start = 1673672400; // 12am EST, Jan 14.
     uint48 _mintDuration = 432000; // 5 days.
-    uint48 _redemptionPeriod = 86400; // 1 day.
-    uint48 _end = 1671375600; // Superbowl.
+    uint48 _redemptionPeriodDuration = 86400; // 1 day.
+    uint48 _end = 1676178000; // 12am EST, Feb 12.
     uint80 _price = 0.1 ether;
     string memory _name = 'Defifa: NFL Playoffs 2023';
     string memory _symbol = 'DEFIFA NFL 2023';
@@ -89,7 +89,7 @@ contract DeployMainnet is Script {
       mintDuration: _mintDuration,
       start: _start,
       tradeDeadline: _tradeDeadline,
-      redemptionPeriod: _redemptionPeriod,
+      redemptionPeriodDuration: _redemptionPeriodDuration,
       end: _end,
       holdFees: false,
       splits: new JBSplit[](0),
