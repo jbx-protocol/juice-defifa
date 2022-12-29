@@ -9,7 +9,7 @@ import './DefifaTimeData.sol';
 /**
   @member projectMetadata Metadata to associate with the project within a particular domain. This can be updated any time by the owner of the project.
   @member mintDuration The duration of the game's first phase.
-  @member redemptionPeriodDuration The time between the mint period and the start time where mint's are no longer open but refunds are still allowed.
+  @member refundPeriodDuration The time between the mint period and the start time where mint's are no longer open but refunds are still allowed.
   @member start The timestamp at which the game should start.
   @member end The timestamp at which the game should end.
   @member holdFees A flag indicating if fees should be held when distributing funds during the second funding cycle.
@@ -20,7 +20,7 @@ import './DefifaTimeData.sol';
 struct DefifaLaunchProjectData {
   JBProjectMetadata projectMetadata;
   uint48 mintDuration;
-  uint48 redemptionPeriodDuration;
+  uint48 refundPeriodDuration;
   uint48 start;
   uint48 end;
   bool holdFees;

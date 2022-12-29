@@ -24,7 +24,7 @@ contract DeployMainnet is Script {
     // Game params.
     uint48 _start = 1673672400; // 12am EST, Jan 14.
     uint48 _mintDuration = 432000; // 5 days.
-    uint48 _redemptionPeriodDuration = 86400; // 1 day.
+    uint48 _refundPeriodDuration = 86400; // 1 day.
     uint48 _end = 1676178000; // 12am EST, Feb 12.
     uint80 _price = 0.1 ether;
     string memory _name = 'Defifa: NFL Playoffs 2023';
@@ -88,7 +88,7 @@ contract DeployMainnet is Script {
       }),
       mintDuration: _mintDuration,
       start: _start,
-      redemptionPeriodDuration: _redemptionPeriodDuration,
+      refundPeriodDuration: _refundPeriodDuration,
       end: _end,
       holdFees: false,
       splits: new JBSplit[](0),

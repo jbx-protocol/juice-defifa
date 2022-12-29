@@ -126,8 +126,8 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
     return _timesFor[_gameId].mintDuration;
   }
 
-  function redemptionPeriodDurationOf(uint256 _gameId) external view override returns (uint256) {
-    return _timesFor[_gameId].redemptionPeriodDuration;
+  function refundPeriodDurationOf(uint256 _gameId) external view override returns (uint256) {
+    return _timesFor[_gameId].refundPeriodDuration;
   }
 
   function startOf(uint256 _gameId) external view override returns (uint256) {
@@ -227,7 +227,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
   ) external override returns (uint256 gameId) {
     // Make sure the provided gameplay timestamps are sequential.
     if (
-      _launchProjectData.start - _launchProjectData.redemptionPeriodDuration - _launchProjectData.mintDuration < block.timestamp ||
+      _launchProjectData.start - _launchProjectData.refundPeriodDuration - _launchProjectData.mintDuration < block.timestamp ||
       _launchProjectData.end < _launchProjectData.start
     ) revert INVALID_GAME_CONFIGURATION();
 
@@ -241,7 +241,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       // Store the timestamps that'll define the game phases.
       _timesFor[gameId] = DefifaTimeData({
         mintDuration: _launchProjectData.mintDuration,
-        redemptionPeriodDuration: _launchProjectData.redemptionPeriodDuration,
+        refundPeriodDuration: _launchProjectData.refundPeriodDuration,
         start: _launchProjectData.start,
         end: _launchProjectData.end
       });
@@ -448,7 +448,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       controller.reconfigureFundingCyclesOf(
         _gameId,
         JBFundingCycleData ({
-          duration: _times.redemptionPeriodDuration,
+          duration: _times.refundPeriodDuration,
           // Don't mint project tokens.
           weight: 0,
           discountRate: 0,
