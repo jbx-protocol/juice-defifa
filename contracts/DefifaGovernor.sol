@@ -272,10 +272,6 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     @return The delay in number of blocks.
   */
   function votingDelay() public view override(IGovernor) returns (uint256) {
-    if (votingStartTime > block.timestamp)
-      return (votingStartTime - block.timestamp) / _BLOCKTIME_SECONDS;
-
-    // no voting delay once voting is active
     return 0;
   }
 
@@ -284,7 +280,8 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     The amount of time that must go by for voting on a proposal to no longer be allowed.
   */
   function votingPeriod() public pure override(IGovernor) returns (uint256) {
-    return 420000000000000069; // longtime
+    // the max value i.e 2**64 - 1
+    return 18446744073709551615; // longtime
   }
 
   /** 
