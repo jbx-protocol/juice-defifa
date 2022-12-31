@@ -9,8 +9,6 @@ interface IDefifaGovernor {
 
   function defifaDelegate() external view returns (IDefifaDelegate);
 
-  function votingStartTime() external view returns (uint256);
-
   function submitScorecards(DefifaTierRedemptionWeight[] calldata _tierWeights)
     external
     returns (uint256);

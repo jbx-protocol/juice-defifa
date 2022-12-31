@@ -122,7 +122,7 @@ contract DeployMainnet is Script {
 
     // Deploy the governor
     {
-      address _governor = address(new DefifaGovernor(DefifaDelegate(_metadata.dataSource), _end));
+      address _governor = address(new DefifaGovernor(DefifaDelegate(_metadata.dataSource)));
       
       // These 3 should be the same:
       console.log(_delegateData.owner);
