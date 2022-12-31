@@ -13,6 +13,8 @@ interface IDefifaGovernor {
     external
     returns (uint256);
 
+  function attestToScorecard(uint256 _scorecardId) external;
+
   function ratifyScorecard(DefifaTierRedemptionWeight[] calldata _tierWeights)
     external
     returns (uint256);
