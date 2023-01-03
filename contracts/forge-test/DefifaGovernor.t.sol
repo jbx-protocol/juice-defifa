@@ -1085,7 +1085,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       projectMetadata: JBProjectMetadata({content: '', domain: 0}),
       mintDuration: _mintDuration,
       start: _launchProjectAt + uint48(_mintDuration),
-      tradeDeadline: _launchProjectAt + uint48(_mintDuration) + uint48(_inBetweenMintAndFifa),
+      refundPeriodDuration: 1 days,
+      //tradeDeadline: _launchProjectAt + uint48(_mintDuration) + uint48(_inBetweenMintAndFifa),
       end: _end,
       holdFees: false,
       splits: new JBSplit[](0),
@@ -1412,9 +1413,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       DefifaLaunchProjectData({
         projectMetadata: JBProjectMetadata({content: '', domain: 0}),
         mintDuration: 1 days,
-        start: uint48(block.timestamp + 1 days),
-        tradeDeadline: uint48(block.timestamp + 1 days),
-        end: uint48(block.timestamp + 1 weeks),
+        start: uint48(block.timestamp + 10 days),
+        refundPeriodDuration: 1 days,
+        //tradeDeadline: uint48(block.timestamp + 1 days),
+        end: uint48(block.timestamp + 10 days + 1 weeks),
         holdFees: false,
         splits: new JBSplit[](0),
         distributionLimit: 0,
@@ -1454,7 +1456,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     JBFundingCycle memory _fc = _jbFundingCycleStore.currentOf(projectId);
 
     // Deploy the governor
-    governor = new DefifaGovernor(DefifaDelegate(_fc.dataSource()), defifaLaunchData.tradeDeadline);
+    governor = new DefifaGovernor(DefifaDelegate(_fc.dataSource()));
 
     // making sure the addresses match
     assertEq(address(governor), _owner);
