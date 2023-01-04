@@ -8,31 +8,32 @@ import '../DefifaGovernor.sol';
 import 'forge-std/Script.sol';
 
 contract DeployMainnet is Script {
+  // V3 mainnet controller.
+  IJBController controller = IJBController(0xFFdD70C318915879d5192e8a0dcbFcB0285b3C98);
+  // mainnet 721 store.
+  IJBTiered721DelegateStore store =
+    IJBTiered721DelegateStore(0xffB2Cd8519439A7ddcf2C933caedd938053067D2);
+  // V3 goerli Payment terminal.
+  IJBPaymentTerminal terminal = IJBPaymentTerminal(0x594Cb208b5BB48db1bcbC9354d1694998864ec63);
+
+  address _defifaBallcats = 0x11834239698c7336EF232C00a2A9926d3375DF9D;
+  // Game params.
+  uint48 _start = 1673672400; // 12am EST, Jan 14.
+  uint48 _mintDuration = 432000; // 5 days.
+  uint48 _refundPeriodDuration = 86400; // 1 day.
+  uint48 _end = 1676178000; // 12am EST, Feb 12.
+  uint80 _price = 0.1 ether;
+  // We don't have to do this effenciently since this contract never gets deployed, its just used to build the broadcast txs
+  string _name = 'Defifa: NFL Playoffs 2023';
+  string _symbol = 'DEFIFA NFL 2023';
+  string _contractUri = 'QmaK1Hib3Umokija4bRwoPdxHgGY3unRreeeLoJss3vw4Y';
+  string _projectMetadataUri = 'QmT7VFuF7cPMwMnqh3YruuYcRk2tKMb2xcXSbK2wV82Hdy';
+  uint16 _reserved = 9; // 1 reserved NFT mintable to reserved beneficiary for every 9 NFTs minted outwardly. Inclusive, so 1 reserved can be minted as soon as the first token is minted outwardly.
+
+
   function run() external {
     vm.startBroadcast();
-
-    // V3 mainnet controller.
-    IJBController controller = IJBController(0xFFdD70C318915879d5192e8a0dcbFcB0285b3C98);
-    // mainnet 721 store.
-    IJBTiered721DelegateStore store = IJBTiered721DelegateStore(
-      0xffB2Cd8519439A7ddcf2C933caedd938053067D2
-    );
-    // V3 goerli Payment terminal.
-    IJBPaymentTerminal terminal = IJBPaymentTerminal(0x594Cb208b5BB48db1bcbC9354d1694998864ec63);
-
-    address _defifaBallcats = 0x11834239698c7336EF232C00a2A9926d3375DF9D;
-    // Game params.
-    uint48 _start = 1673672400; // 12am EST, Jan 14.
-    uint48 _mintDuration = 432000; // 5 days.
-    uint48 _refundPeriodDuration = 86400; // 1 day.
-    uint48 _end = 1676178000; // 12am EST, Feb 12.
-    uint80 _price = 0.1 ether;
-    string memory _name = 'Defifa: NFL Playoffs 2023';
-    string memory _symbol = 'DEFIFA NFL 2023';
-    string memory _contractUri = 'QmaK1Hib3Umokija4bRwoPdxHgGY3unRreeeLoJss3vw4Y';
-    string memory _projectMetadataUri = 'QmT7VFuF7cPMwMnqh3YruuYcRk2tKMb2xcXSbK2wV82Hdy';
-    uint16 _reserved = 9; // 1 reserved NFT mintable to reserved beneficiary for every 9 NFTs minted outwardly. Inclusive, so 1 reserved can be minted as soon as the first token is minted outwardly.
-
+ 
     JB721TierParams[] memory _tiers = new JB721TierParams[](32);
 
     bytes32[] memory _teamEncodedIPFSUris = new bytes32[](32);
@@ -82,10 +83,7 @@ contract DeployMainnet is Script {
     });
 
     DefifaLaunchProjectData memory _launchProjectData = DefifaLaunchProjectData({
-      projectMetadata: JBProjectMetadata({
-        content: _projectMetadataUri, 
-        domain: 0
-      }),
+      projectMetadata: JBProjectMetadata({content: _projectMetadataUri, domain: 0}),
       mintDuration: _mintDuration,
       start: _start,
       refundPeriodDuration: _refundPeriodDuration,
@@ -264,7 +262,7 @@ contract DeployMainnet is Script {
 //     // Deploy the governor
 //     {
 //       address _governor = address(new DefifaGovernor(DefifaDelegate(_metadata.dataSource), _end));
-      
+
 //       // These 3 should be the same:
 //       console.log(_delegateData.owner);
 //       console.log(_governor);

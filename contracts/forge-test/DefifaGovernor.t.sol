@@ -249,7 +249,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     uint8 nTiers = 10;
     address[] memory _users = new address[](nTiers);
 
-    (uint256 _projectId, DefifaDelegate _nft, ) = createDefifaProject(
+    (uint256 _projectId,, ) = createDefifaProject(
       uint256(nTiers),
       getBasicDefifaLaunchData()
     );
