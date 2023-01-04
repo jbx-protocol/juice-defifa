@@ -1456,7 +1456,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     JBFundingCycle memory _fc = _jbFundingCycleStore.currentOf(projectId);
 
     // Deploy the governor
-    governor = new DefifaGovernor(DefifaDelegate(_fc.dataSource()));
+    governor = new DefifaGovernor(DefifaDelegate(_fc.dataSource()), uint48(block.timestamp + 10 days + 1 weeks));
 
     // making sure the addresses match
     assertEq(address(governor), _owner);

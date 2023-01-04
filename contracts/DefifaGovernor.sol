@@ -33,6 +33,11 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
   //*********************************************************************//
+  /** 
+    @notice
+    The duration of one block. 
+  */
+  uint256 internal constant _BLOCKTIME_SECONDS = 12;
 
   //*********************************************************************//
   // ------------------------ public constants ------------------------- //
@@ -54,15 +59,25 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
   */
   IDefifaDelegate public immutable override defifaDelegate;
 
+  /** 
+    @notice
+    Voting start timestamp after which voting can begin.
+  */
+  uint256 public immutable override votingStartTime;
+
   //*********************************************************************//
   // -------------------------- constructor ---------------------------- //
   //*********************************************************************//
 
   /**     
     @param _defifaDelegate The Defifa delegate contract that this contract is Governing.
+    @param _votingStartTime Voting start time .
   */
-  constructor(IDefifaDelegate _defifaDelegate) Governor('DefifaGovernor') {
+  constructor(IDefifaDelegate _defifaDelegate, uint256 _votingStartTime)
+    Governor('DefifaGovernor')
+  {
     defifaDelegate = _defifaDelegate;
+    votingStartTime = _votingStartTime;
   }
 
   //*********************************************************************//
@@ -266,8 +281,11 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
 
     @return The delay in number of blocks.
   */
-  function votingDelay() public pure override(IGovernor) returns (uint256) {
-    return 0;
+  function votingDelay() public view override(IGovernor) returns (uint256) {
+    return
+      votingStartTime > block.timestamp
+        ? (votingStartTime - block.timestamp) / _BLOCKTIME_SECONDS
+        : 0;
   }
 
   /** 
