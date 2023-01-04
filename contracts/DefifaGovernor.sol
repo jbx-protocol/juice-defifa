@@ -61,9 +61,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
   /**     
     @param _defifaDelegate The Defifa delegate contract that this contract is Governing.
   */
-  constructor(IDefifaDelegate _defifaDelegate)
-    Governor('DefifaGovernor')
-  {
+  constructor(IDefifaDelegate _defifaDelegate) Governor('DefifaGovernor') {
     defifaDelegate = _defifaDelegate;
   }
 
@@ -103,7 +101,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
   */
   function attestToScorecard(uint256 _scorecardId) external override {
     // Vote.
-    super._castVote(_scorecardId, msg.sender, 1, '');
+    super._castVote(_scorecardId, msg.sender, 1, '', _defaultParams());
   }
 
   /**
