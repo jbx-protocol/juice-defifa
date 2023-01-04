@@ -1602,7 +1602,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       reservedTokenBeneficiary: reserveBeneficiary,
       store: new JBTiered721DelegateStore(),
       flags: JBTiered721Flags({
-        preventOverspending: false,
+        preventOverspending: true,
         lockReservedTokenChanges: false,
         lockVotingUnitChanges: false,
         lockManualMintingChanges: false
