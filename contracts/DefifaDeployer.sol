@@ -283,6 +283,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
       _pricingParams,
       _delegateData.store,
       JBTiered721Flags({
+          preventOverspending: false,
           lockReservedTokenChanges: false,
           lockVotingUnitChanges: false,
           lockManualMintingChanges: false
