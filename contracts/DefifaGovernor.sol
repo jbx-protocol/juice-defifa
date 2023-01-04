@@ -29,6 +29,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
   error INCORRECT_TIER_ORDER();
+  error DISABLED();
 
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
@@ -105,7 +106,7 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     ) = _buildScorecardCalldata(_tierWeights);
 
     // Submit the proposal.
-    return propose(_targets, _values, _calldatas, '');
+    return this.propose(_targets, _values, _calldatas, '');
   }
 
   /**
@@ -318,6 +319,10 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     bytes[] memory calldatas,
     string memory description
   ) public override(Governor) returns (uint256) {
+    // We don't allow submitting proposals other than scorecards
+    if (_msgSender() != address(this))
+      revert DISABLED();
+
     return super.propose(targets, values, calldatas, description);
   }
 

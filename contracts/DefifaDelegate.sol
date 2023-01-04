@@ -178,7 +178,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     public
     view
     virtual
-    override
     returns (uint256 cumulativeWeight)
   {
     // If the game is over, set the weight based on the scorecard results.
@@ -217,7 +216,6 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     public
     view
     virtual
-    override
     returns (uint256)
   {
     // Set the total weight as the total scorecard weight.
