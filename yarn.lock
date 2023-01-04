@@ -51,10 +51,10 @@
   resolved "https://registry.yarnpkg.com/@ethersproject/logger/-/logger-5.7.0.tgz#6ce9ae168e74fecf287be17062b590852c311892"
   integrity sha512-0odtFdXu/XHtjQXJYA3u9G0G8btm0ND5Cu8M7i5vhEcE8/HmF4Lbdqanwyv4uQTr2tx6b7fQRmgLrsnpQlmnig==
 
-"@jbx-protocol/juice-721-delegate@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@jbx-protocol/juice-721-delegate/-/juice-721-delegate-3.0.2.tgz#da6de37cbb024cc3799f7221ec206e1a11e115e7"
-  integrity sha512-d0FoHLCQt5fHKuu7tUs1DelAQgYFAyA6FWPOie6kpQqoVNilAtU5njGv+/eATJSVhnIPriXI5cSmssekob1j4g==
+"@jbx-protocol/juice-721-delegate@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@jbx-protocol/juice-721-delegate/-/juice-721-delegate-3.0.3.tgz#ede21a641267dd7c6c3338206221eac168edad56"
+  integrity sha512-0W/tJcjEmETCLJ6gSDl0ROJ1wp3fJjVtGoA7KfbLNUpKEC+m4I6BwlrYsuIBhWSqvBaYleTqL87lnd4jYEIbaA==
   dependencies:
     "@jbx-protocol/juice-contracts-v3" "^2.0.0"
     "@openzeppelin/contracts" "^4.6.0"

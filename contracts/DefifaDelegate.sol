@@ -158,12 +158,70 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
     return (
       PRBMath.mulDiv(
         _data.overflow + _amountRedeemed,
-        _redemptionWeightOf(_decodedTokenIds, _data),
-        _totalRedemptionWeight(_data)
+        redemptionWeightOf(_decodedTokenIds, _data),
+        totalRedemptionWeight(_data)
       ),
       _data.memo,
       delegateAllocations
     );
+  }
+
+  /** 
+    @notice
+    The cumulative weight the given token IDs have in redemptions compared to the `_totalRedemptionWeight`. 
+
+    @param _tokenIds The IDs of the tokens to get the cumulative redemption weight of.
+
+    @return cumulativeWeight The weight.
+  */
+  function redemptionWeightOf(uint256[] memory _tokenIds, JBRedeemParamsData calldata)
+    public
+    view
+    virtual
+    override
+    returns (uint256 cumulativeWeight)
+  {
+    // If the game is over, set the weight based on the scorecard results.
+    // Keep a reference to the number of tokens being redeemed.
+    uint256 _tokenCount = _tokenIds.length;
+
+    for (uint256 _i; _i < _tokenCount; ) {
+      // Keep a reference to the token's tier ID.
+      uint256 _tierId = store.tierIdOfToken(_tokenIds[_i]);
+
+      // Keep a reference to the tier.
+      JB721Tier memory _tier = store.tier(address(this), _tierId);
+
+      // Calculate what percentage of the tier redemption amount a single token counts for.
+      cumulativeWeight +=
+        // Tier's are 1 indexed and are stored 0 indexed.
+        _tierRedemptionWeights[_tierId - 1] /
+        (_tier.initialQuantity - _tier.remainingQuantity + _redeemedFromTier[_tierId]);
+
+      unchecked {
+        ++_i;
+      }
+    }
+
+    // If there's nothing to claim, revert to prevent burning for nothing.
+    if (cumulativeWeight == 0) revert NOTHING_TO_CLAIM();
+  }
+
+  /** 
+    @notice
+    The cumulative weight that all token IDs have in redemptions. 
+
+    @return The total weight.
+  */
+  function totalRedemptionWeight(JBRedeemParamsData calldata)
+    public
+    view
+    virtual
+    override
+    returns (uint256)
+  {
+    // Set the total weight as the total scorecard weight.
+    return TOTAL_REDEMPTION_WEIGHT;
   }
 
   //*********************************************************************//
@@ -315,63 +373,5 @@ contract DefifaDelegate is IDefifaDelegate, JB721TieredGovernance {
       // Transfer the voting units.
       _transferTierVotingUnits(_from, _to, _tier.id, _tier.votingUnits);
     }
-  }
-
-  /** 
-    @notice
-    The cumulative weight the given token IDs have in redemptions compared to the `_totalRedemptionWeight`. 
-
-    @param _tokenIds The IDs of the tokens to get the cumulative redemption weight of.
-
-    @return cumulativeWeight The weight.
-  */
-  function _redemptionWeightOf(uint256[] memory _tokenIds, JBRedeemParamsData calldata)
-    internal
-    view
-    virtual
-    override
-    returns (uint256 cumulativeWeight)
-  {
-    // If the game is over, set the weight based on the scorecard results.
-    // Keep a reference to the number of tokens being redeemed.
-    uint256 _tokenCount = _tokenIds.length;
-
-    for (uint256 _i; _i < _tokenCount; ) {
-      // Keep a reference to the token's tier ID.
-      uint256 _tierId = store.tierIdOfToken(_tokenIds[_i]);
-
-      // Keep a reference to the tier.
-      JB721Tier memory _tier = store.tier(address(this), _tierId);
-
-      // Calculate what percentage of the tier redemption amount a single token counts for.
-      cumulativeWeight +=
-        // Tier's are 1 indexed and are stored 0 indexed.
-        _tierRedemptionWeights[_tierId - 1] /
-        (_tier.initialQuantity - _tier.remainingQuantity + _redeemedFromTier[_tierId]);
-
-      unchecked {
-        ++_i;
-      }
-    }
-
-    // If there's nothing to claim, revert to prevent burning for nothing.
-    if (cumulativeWeight == 0) revert NOTHING_TO_CLAIM();
-  }
-
-  /** 
-    @notice
-    The cumulative weight that all token IDs have in redemptions. 
-
-    @return The total weight.
-  */
-  function _totalRedemptionWeight(JBRedeemParamsData calldata)
-    internal
-    view
-    virtual
-    override
-    returns (uint256)
-  {
-    // Set the total weight as the total scorecard weight.
-    return TOTAL_REDEMPTION_WEIGHT;
   }
 }
