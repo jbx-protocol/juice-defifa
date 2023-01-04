@@ -63,8 +63,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       bytes32(0),
       type(IJB721Delegate).interfaceId,
       false,
-      false,
-      false,
       rawMetadata
     );
 
@@ -129,8 +127,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         bytes32(0),
         type(IJB721Delegate).interfaceId,
-        false,
-        false,
         false,
         rawMetadata
       );
@@ -235,7 +231,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
     address[] memory _users = new address[](nTiers);
 
     DefifaLaunchProjectData memory defifaData = getBasicDefifaLaunchData();
-    (uint256 _projectId, DefifaDelegate _nft, DefifaGovernor _governor) = createDefifaProject(
+    (uint256 _projectId,,) = createDefifaProject(
       uint256(nTiers),
       defifaData
     );
@@ -265,8 +261,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         bytes32(0),
         type(IJB721Delegate).interfaceId,
-        false,
-        false,
         false,
         rawMetadata
       );
@@ -308,8 +302,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         type(IJB721Delegate).interfaceId,
         false,
-        false,
-        false,
         rawMetadata
       );
 
@@ -349,8 +341,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         bytes32(0),
         type(IJB721Delegate).interfaceId,
-        false,
-        false,
         false,
         rawMetadata
       );
@@ -469,8 +459,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         type(IJB721Delegate).interfaceId,
         false,
-        false,
-        false,
         rawMetadata
       );
 
@@ -575,8 +563,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         bytes32(0),
         type(IJB721Delegate).interfaceId,
-        false,
-        false,
         false,
         rawMetadata
       );
@@ -693,8 +679,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         bytes32(0),
         type(IJB721Delegate).interfaceId,
-        false,
-        false,
         false,
         rawMetadata
       );
@@ -862,8 +846,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
           bytes32(0),
           type(IJB721Delegate).interfaceId,
           false,
-          false,
-          false,
           rawMetadata
         );
 
@@ -894,8 +876,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
           bytes32(0),
           bytes32(0),
           type(IJB721Delegate).interfaceId,
-          false,
-          false,
           false,
           rawMetadata
         );
@@ -1146,8 +1126,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         type(IJB721Delegate).interfaceId,
         false,
-        false,
-        false,
         rawMetadata
       );
 
@@ -1217,8 +1195,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         bytes32(0),
         type(IJB721Delegate).interfaceId,
-        false,
-        false,
         false,
         rawMetadata
       );
@@ -1319,8 +1295,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         bytes32(0),
         bytes32(0),
         type(IJB721Delegate).interfaceId,
-        false,
-        false,
         false,
         rawMetadata
       );
@@ -1481,8 +1455,6 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       bytes32(0),
       type(IJB721Delegate).interfaceId,
       false,
-      false,
-      false,
       rawMetadata
     );
 
@@ -1599,6 +1571,7 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       reservedTokenBeneficiary: reserveBeneficiary,
       store: new JBTiered721DelegateStore(),
       flags: JBTiered721Flags({
+        preventOverspending: true,
         lockReservedTokenChanges: false,
         lockVotingUnitChanges: false,
         lockManualMintingChanges: false
