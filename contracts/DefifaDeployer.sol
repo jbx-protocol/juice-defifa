@@ -416,7 +416,7 @@ contract DefifaDeployer is IDefifaDeployer, IERC721Receiver {
           })
         )
       }),
-      _launchProjectData.start - _launchProjectData.mintDuration,
+      _launchProjectData.start - _launchProjectData.mintDuration - _launchProjectData.refundPeriodDuration,
       new JBGroupedSplits[](0),
       new JBFundAccessConstraints[](0),
       _terminals,

@@ -1413,10 +1413,10 @@ contract DefifaGovernorTest is TestBaseWorkflow {
       DefifaLaunchProjectData({
         projectMetadata: JBProjectMetadata({content: '', domain: 0}),
         mintDuration: 1 days,
-        start: uint48(block.timestamp + 10 days),
+        start: uint48(block.timestamp + 2 days),
         refundPeriodDuration: 1 days,
         //tradeDeadline: uint48(block.timestamp + 1 days),
-        end: uint48(block.timestamp + 10 days + 1 weeks),
+        end: uint48(block.timestamp + 2 days + 1 weeks),
         holdFees: false,
         splits: new JBSplit[](0),
         distributionLimit: 0,
