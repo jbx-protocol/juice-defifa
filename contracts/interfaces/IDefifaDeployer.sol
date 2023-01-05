@@ -24,7 +24,7 @@ interface IDefifaDeployer {
 
   function startOf(uint256 _gameId) external view returns (uint256);
 
-  function tradeDeadlineOf(uint256 _gameId) external view returns (uint256);
+  function refundPeriodDurationOf(uint256 _gameId) external view returns (uint256);
 
   function endOf(uint256 _gameId) external view returns (uint256);
 

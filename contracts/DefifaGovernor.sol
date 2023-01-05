@@ -29,11 +29,11 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
   // --------------------------- custom errors ------------------------- //
   //*********************************************************************//
   error INCORRECT_TIER_ORDER();
+  error DISABLED();
 
   //*********************************************************************//
   // -------------------- private constant properties ------------------ //
   //*********************************************************************//
-
   /** 
     @notice
     The duration of one block. 
@@ -106,7 +106,29 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     ) = _buildScorecardCalldata(_tierWeights);
 
     // Submit the proposal.
-    return propose(_targets, _values, _calldatas, '');
+    return this.propose(_targets, _values, _calldatas, '');
+  }
+
+  /**
+    @notice
+    Attests to a scorecard.
+
+    @param _scorecardId The scorecard ID. 
+  */
+  function attestToScorecard(uint256 _scorecardId) external override {
+    // Vote.
+    super._castVote(_scorecardId, msg.sender, 1, '', _defaultParams());
+  }
+
+  /**
+    @notice
+    Attests to a scorecard with the set of ordered tier id's.
+
+    @param _scorecardId The scorecard ID. 
+  */
+  function attestToScorecardWithReasonAndParams(uint256 _scorecardId, bytes memory params) external override {
+    // Vote.
+    super._castVote(_scorecardId, msg.sender, 1, '', params);
   }
 
   /**
@@ -272,11 +294,10 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     @return The delay in number of blocks.
   */
   function votingDelay() public view override(IGovernor) returns (uint256) {
-    if (votingStartTime > block.timestamp)
-      return (votingStartTime - block.timestamp) / _BLOCKTIME_SECONDS;
-
-    // no voting delay once voting is active
-    return 0;
+    return
+      votingStartTime > block.timestamp
+        ? (votingStartTime - block.timestamp) / _BLOCKTIME_SECONDS
+        : 0;
   }
 
   /** 
@@ -284,7 +305,8 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     The amount of time that must go by for voting on a proposal to no longer be allowed.
   */
   function votingPeriod() public pure override(IGovernor) returns (uint256) {
-    return 45818; // one week
+    // blocks worth 2 weeks
+    return 100381;
   }
 
   /** 
@@ -308,6 +330,10 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
     bytes[] memory calldatas,
     string memory description
   ) public override(Governor) returns (uint256) {
+    // We don't allow submitting proposals other than scorecards
+    if (_msgSender() != address(this))
+      revert DISABLED();
+
     return super.propose(targets, values, calldatas, description);
   }
 
