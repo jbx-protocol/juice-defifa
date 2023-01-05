@@ -122,6 +122,17 @@ contract DefifaGovernor is Governor, GovernorCountingSimple, IDefifaGovernor {
 
   /**
     @notice
+    Attests to a scorecard with the set of ordered tier id's.
+
+    @param _scorecardId The scorecard ID. 
+  */
+  function attestToScorecardWithReasonAndParams(uint256 _scorecardId, bytes memory params) external override {
+    // Vote.
+    super._castVote(_scorecardId, msg.sender, 1, '', params);
+  }
+
+  /**
+    @notice
     Ratifies a scorecard that has been approved.
 
     @param _tierWeights The weights of each tier in the approved scorecard.
