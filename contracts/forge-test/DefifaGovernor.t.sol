@@ -980,7 +980,8 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         );
         redemptionMetadata = abi.encode(bytes32(0), type(IJB721Delegate).interfaceId, redemptionId);
       }
-
+      uint256 _expectedTierRedemption;
+      {
       // Calculate how much weight his tier has
       uint256 _tierWeight = _tier == nOfOtherTiers + 1
         ? uint256(baseRedemptionWeight) + uint256(winningTierExtraWeight)
@@ -1001,19 +1002,19 @@ contract DefifaGovernorTest is TestBaseWorkflow {
         _metadata: redemptionMetadata
       });
 
-      // TODO: Uncomment below code and optimize to allow compiling without '--via-ir', had to temp comment this because compiltion is taking way too long
-      // // We calculate the expected output based on the given distribution and how much is in the pot
-      // uint256 _expectedTierRedemption = (uint256(_users.length) * 1 ether * _tierWeight) /
-      //   totalWeight;
-      // {
-      //   // If this is the winning tier then the amount is divided among the nUsersWithWinningTier
-      //   if (_tier == nOfOtherTiers + 1)
-      //     _expectedTierRedemption = _expectedTierRedemption / nUsersWithWinningTier;
-      // }
+      // We calculate the expected output based on the given distribution and how much is in the pot
+      _expectedTierRedemption = (uint256(_users.length) * 1 ether * _tierWeight) /
+        totalWeight;
+      }
+      {
+        // If this is the winning tier then the amount is divided among the nUsersWithWinningTier
+        if (_tier == nOfOtherTiers + 1)
+          _expectedTierRedemption = _expectedTierRedemption / nUsersWithWinningTier;
+      }
 
-      // // Assert that our expected tier redemption is ~equal to the actual amount
-      // // Allowing for some rounding errors, max allowed error is 0.000001 ether
-      // assertLt(_expectedTierRedemption - _user.balance, 10**12);
+      // Assert that our expected tier redemption is ~equal to the actual amount
+      // Allowing for some rounding errors, max allowed error is 0.000001 ether
+      assertLt(_expectedTierRedemption - _user.balance, 10**12);
     }
 
     // All NFTs should have been redeemed, only some dust should be left
